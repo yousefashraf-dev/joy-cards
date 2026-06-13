@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Crown, Flame, Zap, Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone, Shield, Droplets } from "lucide-react";
+import { Crown, Flame, Zap, Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone, Shield, Droplets, Terminal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Theme, AutoTapFormData } from "@/lib/types";
@@ -23,6 +23,7 @@ const themeButtons: { theme: Theme; icon: React.ElementType; label: string }[] =
   { theme: "auto-nardo-stealth", icon: Shield, label: "Nardo Stealth Luxury" },
   { theme: "classic-royal-silver", icon: Crown, label: "Classic Royal Silver" },
   { theme: "liquid-aurora", icon: Droplets, label: "Liquid Aurora" },
+  { theme: "terminal-dark-glow", icon: Terminal, label: "Terminal Dark Glow" },
 ];
 
 interface AutoTapPreviewProps {
@@ -280,6 +281,31 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                   "flex-1 text-start text-[11px] font-light tracking-wide uppercase",
                   "text-cyan/40 group-hover:text-cyan"
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Theme 6: Terminal Dark Glow — Deep slate terminal with cyan glassmorphism */}
+          {themeId === "terminal-dark-glow" && (
+            <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-[#0A0A0F] to-[#0F172A] border border-cyan/30 shadow-[0_0_30px_rgba(0,243,255,0.12)]">
+              <p className="font-mono text-[10px] text-white/30 tracking-[0.2em] mb-4">
+                GOTAP.EG TERMINAL
+              </p>
+              {avatarCircle("ring-2 ring-cyan/60 shadow-[0_0_25px_rgba(0,243,255,0.3)]")}
+              <h3 className="text-lg font-bold text-white mb-5 tracking-wide">
+                {data.stickerName || data.customerName || "USER"}
+              </h3>
+              {renderLinks(
+                "flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/30 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group"
+                  + (isSingle ? "" : ""),
+                "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/30 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group",
+                "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/30 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group",
+                "w-8 h-8 rounded-full bg-cyan/15 flex items-center justify-center group-hover:bg-cyan/25 transition-colors",
+                "flex-1 text-start text-xs font-mono font-bold tracking-wider",
+                "text-cyan/60 group-hover:text-cyan"
+              )}
+              <div className="mt-4 pt-3 border-t border-cyan/10">
+                <p className="text-[10px] text-cyan/50 font-mono tracking-widest">POWERED BY GOTAP.EG</p>
               </div>
             </div>
           )}

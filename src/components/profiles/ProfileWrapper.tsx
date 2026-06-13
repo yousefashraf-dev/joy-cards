@@ -9,6 +9,7 @@ import NeonRedTrackProfile from "./NeonRedTrackProfile";
 import NardoStealthProfile from "./NardoStealthProfile";
 import ClassicRoyalSilverProfile from "./ClassicRoyalSilverProfile";
 import LiquidAuroraProfile from "./LiquidAuroraProfile";
+import TerminalDarkGlowProfile from "./TerminalDarkGlowProfile";
 import { CldImage } from "next-cloudinary";
 import { THEME_ARCHETYPE } from "@/lib/constants";
 import {
@@ -131,6 +132,7 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
   if (profile.theme === "auto-nardo-stealth") return <NardoStealthProfile {...sharedProps} />;
   if (profile.theme === "classic-royal-silver") return <ClassicRoyalSilverProfile {...sharedProps} />;
   if (profile.theme === "liquid-aurora") return <LiquidAuroraProfile {...sharedProps} />;
+  if (profile.theme === "terminal-dark-glow") return <TerminalDarkGlowProfile {...sharedProps} />;
 
   // Non-Auto-Tap themes: use archetype-based rendering
   switch (archetype) {

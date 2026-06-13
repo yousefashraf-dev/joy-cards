@@ -179,7 +179,9 @@
         "classicRoyalSilver": "Classic Royal Silver",
         "classicRoyalSilverDesc": "Timeless royal silver borders with premium serif typography",
         "liquidAurora": "Liquid Aurora",
-        "liquidAuroraDesc": "Sleek purple-to-cyan gradient border with smooth glass overlay"
+        "liquidAuroraDesc": "Sleek purple-to-cyan gradient border with smooth glass overlay",
+        "terminalDarkGlow": "Terminal Dark Glow",
+        "terminalDarkGlowDesc": "Deep slate terminal-style with cyan neon glassmorphism"
       },
       "socialHelperText": "Please add your profile links or usernames directly, the system will format and verify them.",
       "uploadHelper": "Upload your logo or profile image (PNG, JPG)",

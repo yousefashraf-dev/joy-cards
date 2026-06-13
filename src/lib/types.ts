@@ -12,7 +12,8 @@ export type Theme =
   | "auto-nardo-stealth"
   | "cyber-cyan-drift"
   | "classic-royal-silver"
-  | "liquid-aurora";
+  | "liquid-aurora"
+  | "terminal-dark-glow";
 
 export type ThemeArchetype = "dark-premium" | "neon-sporty" | "glass-clean";
 

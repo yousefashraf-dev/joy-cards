@@ -220,14 +220,26 @@ export default function DigitalCardsPage() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass bg-matte-card/60 border border-nardo/20 rounded-2xl p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm"
+          className="glass bg-matte-card/60 border border-nardo/20 rounded-2xl p-5 lg:p-6"
         >
-          <Info className="w-4 h-4 text-nardo" />
-          <span className="text-slate-light">{p("digitalCardBase", { price: PRICES.DIGITAL_CARD_BASE })}</span>
-          <span className="text-slate-muted/60">+</span>
-          <span className="text-slate-muted">{p("digitalCardPrint", { price: PRICES.DIGITAL_CARD_PRINT })}</span>
-          <span className="text-slate-muted/60">+</span>
-          <span className="text-slate-muted">{p("digitalCardShipping")}</span>
+          <div className="flex items-center gap-2 mb-4">
+            <Info className="w-4 h-4 text-nardo shrink-0" />
+            <p className="text-xs font-medium text-nardo/70">{t("title")}</p>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-nardo/15 text-nardo text-xs font-bold shrink-0">1</div>
+              <p className="text-sm text-slate-light">{p("digitalCardBase", { price: PRICES.DIGITAL_CARD_BASE })}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-nardo/15 text-nardo text-xs font-bold shrink-0">2</div>
+              <p className="text-sm text-slate-light">{p("digitalCardPrint", { price: PRICES.DIGITAL_CARD_PRINT })}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-nardo/15 text-nardo text-xs font-bold shrink-0">3</div>
+              <p className="text-sm text-slate-light">{p("digitalCardShipping")}</p>
+            </div>
+          </div>
         </motion.div>
       </div>
       <BaseForm

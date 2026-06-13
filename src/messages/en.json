@@ -1,4 +1,12 @@
 {
+  "contactFab": {
+    "contactUs": "Contact Us"
+  },
+  "onboarding": {
+    "orderLogo": "Order your NFC logo",
+    "previewDesign": "Preview your design",
+    "enterData": "Enter your data"
+  },
   "floatingWhatsapp": {
     "title": "Contact us on WhatsApp",
     "option1": "Bulk orders & restaurant/cafe order fulfillment",
@@ -63,11 +71,22 @@
         "digitalMenu": "Digital Menu",
         "googleReviews": "Google Reviews",
         "tapToOrder": "Tap to Order",
-        "businessProfile": "Business Profile"
+        "businessProfile": "Business Profile",
+        "wifiAccess": "Wi-Fi Access",
+        "instaPay": "InstaPay Payment"
       },
       "badge": "NFC Restaurant Tags",
       "marketing": "Place your full menu on every table with one tap, create a custom sticker that opens your Wi-Fi password directly, or an InstaPay sticker for instant payment transfers.",
-      "whatsappMessage": "Hello GoTap! I want to order a business NFC tag.\n\nName: {name}\nPhone: {phone}\nEstablishment: {establishment}\nQuantity: {quantity}"
+      "whatsappMessage": "Hello GoTap! I want to order a business NFC tag.\n\nName: {name}\nPhone: {phone}\nEstablishment: {establishment}\nQuantity: {quantity}",
+      "services": {
+        "digitalMenu": "Digital Menu",
+        "googleReviews": "Google Reviews",
+        "tapToOrder": "Tap to Order",
+        "businessProfile": "Business Profile",
+        "wifiAccess": "Wi-Fi Access",
+        "instaPay": "InstaPay Payment"
+      },
+      "servicesDesc": "Everything you need to modernize your establishment"
     },
     "pricing": {
       "title": "Auto Tap Sticker Pricing",

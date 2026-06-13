@@ -1,4 +1,12 @@
 {
+  "contactFab": {
+    "contactUs": "تواصل معنا"
+  },
+  "onboarding": {
+    "orderLogo": "اطلب شعار NFC الخاص بك",
+    "previewDesign": "شاهد معاينة التصميم",
+    "enterData": "أدخل بياناتك"
+  },
   "floatingWhatsapp": {
     "title": "تواصل معنا عبر واتساب",
     "option1": "لطلب كميات وتنفيذ أوردرات المطاعم والكافيهات",
@@ -63,11 +71,22 @@
         "digitalMenu": "قائمة رقمية",
         "googleReviews": "تقييمات جوجل",
         "tapToOrder": "اطلب بلمسة",
-        "businessProfile": "ملف تجاري"
+        "businessProfile": "ملف تجاري",
+        "wifiAccess": "واي فاي",
+        "instaPay": "إنستا باي"
       },
       "badge": "تاجات NFC للمطاعم",
       "marketing": "يمكنك وضع المنيو الخاص بك بالكامل على كل طاولة بلمسة واحدة، أو إنشاء ستيكر مخصص يفتح باسورد الواي فاي (Wi-Fi) مباشرة، أو حساب إنستا باي (InstaPay) للتحويل والدفع الفوري.",
-      "whatsappMessage": "مرحباً GoTap! أريد طلب تاج NFC للمطعم.\n\nالاسم: {name}\nالهاتف: {phone}\nالمنشأة: {establishment}\nالكمية: {quantity}"
+      "whatsappMessage": "مرحباً GoTap! أريد طلب تاج NFC للمطعم.\n\nالاسم: {name}\nالهاتف: {phone}\nالمنشأة: {establishment}\nالكمية: {quantity}",
+      "services": {
+        "digitalMenu": "قائمة رقمية",
+        "googleReviews": "تقييمات جوجل",
+        "tapToOrder": "اطلب بلمسة",
+        "businessProfile": "ملف تجاري",
+        "wifiAccess": "واي فاي",
+        "instaPay": "إنستا باي"
+      },
+      "servicesDesc": "كل ما تحتاجه لتحديث منشأتك"
     },
     "pricing": {
       "title": "أسعار ملصقات تاپ السيارة",

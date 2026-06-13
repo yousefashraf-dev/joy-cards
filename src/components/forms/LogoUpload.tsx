@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Upload, X, ImageIcon } from "lucide-react";
+import { useLoading } from "@/components/ui/LoadingProvider";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface LogoUploadProps {
   value: string;
@@ -14,12 +16,15 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
   const t = useTranslations("products.forms");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const { showLoading, hideLoading } = useLoading();
+  const { showToast } = useToast();
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
+    showLoading("جاري رفع الصورة...");
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -32,10 +37,13 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
       const data = await res.json();
       if (data.url) {
         onChange(data.url);
+        showToast("تم رفع الصورة بنجاح", "success");
       }
     } catch (err) {
       console.error("Upload failed:", err);
+      showToast("فشل رفع الصورة، حاول مرة أخرى", "error");
     } finally {
+      hideLoading();
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }

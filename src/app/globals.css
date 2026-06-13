@@ -24,6 +24,7 @@
   body {
     @apply bg-matte-black text-slate-light;
     font-family: var(--font-sans);
+    overflow-x: hidden;
   }
   ::selection {
     background-color: #7A7A7A;

@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Store, Utensils, Star, Smartphone, Wifi, CreditCard } from "lucide-react";
-import BaseForm from "@/components/forms/BaseForm";
-import FormC_BusinessTap from "@/components/forms/FormC_BusinessTap";
+import {
+  Store, Utensils, Star, Smartphone, Wifi, CreditCard,
+} from "lucide-react";
+import ContactFab from "@/components/ui/ContactFab";
 
 export default function BusinessTapPage() {
   const t = useTranslations("products.businessTap");
@@ -17,14 +18,18 @@ export default function BusinessTapPage() {
     { icon: Store, key: "businessProfile" },
   ];
 
-  const marketingItems = [
-    { icon: Utensils, text: "Place your complete menu on every table with a single tap" },
-    { icon: Wifi, text: "Wi-Fi password sticker for instant guest access" },
-    { icon: CreditCard, text: "InstaPay sticker for instant payment transfers" },
+  const services = [
+    { icon: Utensils, key: "digitalMenu" },
+    { icon: Star, key: "googleReviews" },
+    { icon: Smartphone, key: "tapToOrder" },
+    { icon: Store, key: "businessProfile" },
+    { icon: Wifi, key: "wifiAccess" },
+    { icon: CreditCard, key: "instaPay" },
   ];
 
-  const productSection = (
+  return (
     <>
+      {/* Hero Section */}
       <section className="pt-28 pb-12 lg:pt-36 lg:pb-16 bg-gradient-to-b from-neon-green/5 via-matte-black to-matte-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -74,42 +79,52 @@ export default function BusinessTapPage() {
         </div>
       </section>
 
-      <section className="py-8 lg:py-10 bg-matte-dark/30">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Services Grid */}
+      <section className="py-16 lg:py-20 bg-matte-dark/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="glass bg-matte-card/60 border border-neon-green/20 rounded-2xl p-6 lg:p-8"
           >
-            <h3 className="text-lg font-semibold text-neon-green mb-4 flex items-center gap-2">
-              <Smartphone className="w-5 h-5" />
-              {t("marketing")}
-            </h3>
-            <div className="grid sm:grid-cols-3 gap-4">
-              {marketingItems.map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-start gap-3 p-3 rounded-xl bg-dark-card border border-white/5">
-                  <div className="w-9 h-9 rounded-lg bg-neon-green/10 flex items-center justify-center shrink-0">
-                    <Icon className="w-4 h-4 text-neon-green" />
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-light mb-3">
+                {t("title")}
+              </h2>
+              <p className="text-slate-muted text-sm">
+                {t("servicesDesc")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {services.map(({ icon: Icon, key }, index) => (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.08 }}
+                  className="glass bg-dark-card/50 border border-white/5 rounded-2xl p-5 hover:border-neon-green/20 hover:bg-dark-card/70 transition-all duration-300 group"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-neon-green/10 flex items-center justify-center mb-4 group-hover:bg-neon-green/20 transition-colors duration-300">
+                    <Icon className="w-6 h-6 text-neon-green" />
                   </div>
-                  <p className="text-xs text-slate-muted leading-relaxed">{text}</p>
-                </div>
+                  <h3 className="text-sm font-semibold text-slate-light mb-1">
+                    {t(`services.${key}`)}
+                  </h3>
+                  <p className="text-xs text-slate-muted/70 leading-relaxed">
+                    {t(`features.${key}`)}
+                  </p>
+                </motion.div>
               ))}
             </div>
           </motion.div>
         </div>
       </section>
-    </>
-  );
 
-  return (
-    <BaseForm
-      productType="business-tap"
-      productSection={productSection}
-      specificFields={({ data, onChange, errors }) => (
-        <FormC_BusinessTap data={data} onChange={onChange} errors={errors} />
-      )}
-    />
+      {/* Contact Fab */}
+      <ContactFab />
+    </>
   );
 }

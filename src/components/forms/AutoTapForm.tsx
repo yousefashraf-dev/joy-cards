@@ -14,6 +14,8 @@ import { PLATFORM_OPTIONS } from "@/lib/constants";
 import { calcTotal } from "@/lib/pricing";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SuccessModal from "./SuccessModal";
+import { useLoading } from "@/components/ui/LoadingProvider";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const STEPS = ["shipping", "profile", "sizing"] as const;
 
@@ -37,6 +39,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const [orderPricing, setOrderPricing] = useState<{ totalPrice: number; shippingFee: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const { showLoading, hideLoading } = useLoading();
+  const { showToast } = useToast();
 
   const clearError = useCallback((key: string) => {
     setErrors((prev) => {
@@ -123,6 +127,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const handleSubmit = async () => {
     if (!validateStep()) return;
     setSubmitting(true);
+    showLoading("جاري إرسال الطلب...");
 
     const pricing = calcTotal(data.profileType, data.addressDetail);
     setOrderPricing({ totalPrice: pricing.total, shippingFee: pricing.shippingFee });
@@ -142,27 +147,32 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       }
     }
 
-    await submitOrder({
-      customerName: data.customerName.trim(),
-      phone: data.phone.trim(),
-      governorate: "",
-      city: "",
-      street: data.addressDetail.trim(),
-      theme: data.theme,
-      productType: "auto-tap",
-      logo: data.logo || undefined,
-      socialLinks: formattedSocials,
-      autoTapFields: {
-        profileType: data.profileType,
-        logoWidthCm: data.logoWidthCm.trim(),
-        orderNotes: data.orderNotes.trim() || undefined,
-        addressDetail: data.addressDetail.trim(),
-        selectedPlatform: data.selectedPlatform || undefined,
-        singlePlatformValue: data.singlePlatformValue.trim() || undefined,
-        stickerName: data.stickerName.trim() || undefined,
-      },
-    }, pricing.total, locale);
-
+    try {
+      await submitOrder({
+        customerName: data.customerName.trim(),
+        phone: data.phone.trim(),
+        governorate: "",
+        city: "",
+        street: data.addressDetail.trim(),
+        theme: data.theme,
+        productType: "auto-tap",
+        logo: data.logo || undefined,
+        socialLinks: formattedSocials,
+        autoTapFields: {
+          profileType: data.profileType,
+          logoWidthCm: data.logoWidthCm.trim(),
+          orderNotes: data.orderNotes.trim() || undefined,
+          addressDetail: data.addressDetail.trim(),
+          selectedPlatform: data.selectedPlatform || undefined,
+          singlePlatformValue: data.singlePlatformValue.trim() || undefined,
+          stickerName: data.stickerName.trim() || undefined,
+        },
+      }, pricing.total, locale);
+      showToast("تم إرسال الطلب بنجاح", "success");
+    } catch {
+      showToast("فشل الإرسال، حاول مرة أخرى", "error");
+    }
+    hideLoading();
     setSubmitting(false);
     setShowSuccess(true);
   };
@@ -401,22 +411,24 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 <p className="text-xs text-nardo/80 italic">
                   {t("socialHelperText")}
                 </p>
-                {PLATFORM_OPTIONS.map((platform) => (
-                  <div key={platform.id}>
-                    <label className="block text-sm text-slate-muted mb-1.5">
-                      {t(`fields.${platform.id}`)}
-                <span className="text-xs text-slate-muted/50 ms-1">({t("fields.optional")})</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={data.socialLinks[platform.id] || ""}
-                      onChange={(e) => handleSocialLinkChange(platform.id, e.target.value)}
-                      placeholder={t(`fields.${platform.id}`)}
-                      className={inputClass(platform.id)}
-                    />
-                    {renderError(platform.id)}
-                  </div>
-                ))}
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {PLATFORM_OPTIONS.map((platform) => (
+                    <div key={platform.id}>
+                      <label className="block text-sm text-slate-muted mb-1.5">
+                        {t(`fields.${platform.id}`)}
+                  <span className="text-xs text-slate-muted/50 ms-1">({t("fields.optional")})</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={data.socialLinks[platform.id] || ""}
+                        onChange={(e) => handleSocialLinkChange(platform.id, e.target.value)}
+                        placeholder={t(`fields.${platform.id}`)}
+                        className={inputClass(platform.id)}
+                      />
+                      {renderError(platform.id)}
+                    </div>
+                  ))}
+                </div>
                 {errors.socialLinks && (
                   <p className="text-red-400 text-xs">{errors.socialLinks}</p>
                 )}

@@ -151,6 +151,7 @@ export default function AutoTapPage() {
                     src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&q=80"
                     alt="Luxury car with NFC sticker"
                     fill
+                    sizes="(max-width: 1024px) 0vw, 288px"
                     className="object-cover"
                   />
                 </div>

@@ -11,6 +11,8 @@ import SocialLinksBlock from "./SocialLinksBlock";
 import LogoUpload from "./LogoUpload";
 import SuccessModal from "./SuccessModal";
 import PrimaryButton from "@/components/ui/PrimaryButton";
+import { useLoading } from "@/components/ui/LoadingProvider";
+import { useToast } from "@/components/ui/ToastProvider";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FormData = Record<string, any>;
@@ -44,6 +46,8 @@ export default function BaseForm({ productType, specificFields, productSection, 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const { showLoading, hideLoading } = useLoading();
+  const { showToast } = useToast();
 
   const handleSocialChange = useCallback((id: string, value: string) => {
     setSocialLinks((prev) => ({ ...prev, [id]: value }));
@@ -96,6 +100,7 @@ export default function BaseForm({ productType, specificFields, productSection, 
     if (!validate()) return;
 
     setSubmitting(true);
+    showLoading("جاري إرسال الطلب...");
 
     const formattedSocials: Record<string, string> = {};
     for (const [key, val] of Object.entries(socialLinks)) {
@@ -134,7 +139,13 @@ export default function BaseForm({ productType, specificFields, productSection, 
       };
     }
 
-    await submitOrder(basePayload as OrderPayload, undefined, locale);
+    try {
+      await submitOrder(basePayload as OrderPayload, undefined, locale);
+      showToast("تم إرسال الطلب بنجاح", "success");
+    } catch {
+      showToast("فشل الإرسال، حاول مرة أخرى", "error");
+    }
+    hideLoading();
     setSubmitting(false);
     setShowSuccess(true);
   };

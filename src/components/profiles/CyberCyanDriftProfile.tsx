@@ -48,7 +48,7 @@ export default function CyberCyanDriftProfile({ name, logo, buttons, iconMap }: 
             {name}
           </motion.h1>
 
-          <div className="space-y-2.5">
+          <div className="grid grid-cols-2 gap-2.5">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
               return (
@@ -57,18 +57,17 @@ export default function CyberCyanDriftProfile({ name, logo, buttons, iconMap }: 
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.08] transition-all duration-300 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.08] transition-all duration-300 group"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97, boxShadow: "0 0 25px rgba(0,243,255,0.4)" }}
                 >
-                  <div className="w-8 h-8 rounded-full bg-cyan/15 flex items-center justify-center group-hover:bg-cyan/25 transition-colors">
-                    <Icon className="w-4 h-4 text-cyan" />
+                  <div className="w-10 h-10 rounded-xl bg-cyan/15 flex items-center justify-center group-hover:bg-cyan/25 transition-colors">
+                    <Icon className="w-5 h-5 text-cyan" />
                   </div>
-                  <span className="flex-1 text-start text-xs font-bold tracking-wider">{btn.label}</span>
-                  <span className="text-cyan/60 group-hover:text-cyan transition-colors">→</span>
+                  <span className="text-center text-xs font-bold tracking-wider">{btn.label}</span>
                 </motion.a>
               );
             })}

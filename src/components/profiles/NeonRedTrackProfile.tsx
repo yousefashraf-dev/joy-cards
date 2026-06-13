@@ -42,7 +42,7 @@ export default function NeonRedTrackProfile({ name, logo, buttons, iconMap }: Th
             {name}
           </motion.h1>
 
-          <div className="space-y-2.5">
+          <div className="grid grid-cols-2 gap-2.5">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
               return (
@@ -51,18 +51,17 @@ export default function NeonRedTrackProfile({ name, logo, buttons, iconMap }: Th
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 w-full p-3 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-xs font-bold rounded-lg"
+                  className="flex flex-col items-center gap-2 p-3 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-xs font-bold rounded-lg"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97, boxShadow: "0 0 25px rgba(255,49,49,0.5)" }}
                 >
-                  <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center group-hover:bg-red-500/30 transition-colors">
-                    <Icon className="w-4 h-4 text-red-500" />
+                  <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center group-hover:bg-red-500/30 transition-colors">
+                    <Icon className="w-5 h-5 text-red-500" />
                   </div>
-                  <span className="flex-1 text-start text-xs font-bold tracking-wider">{btn.label}</span>
-                  <span className="text-red-500/60 group-hover:text-red-500 transition-colors">→</span>
+                  <span className="text-center text-xs font-bold tracking-wider">{btn.label}</span>
                 </motion.a>
               );
             })}

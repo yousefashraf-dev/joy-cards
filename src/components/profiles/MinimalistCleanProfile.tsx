@@ -40,7 +40,7 @@ export default function MinimalistCleanProfile({ name, logo, buttons, iconMap }:
             {name}
           </motion.h1>
 
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
               return (
@@ -49,18 +49,17 @@ export default function MinimalistCleanProfile({ name, logo, buttons, iconMap }:
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 w-full p-3.5 rounded-sm border border-slate-200 text-slate-700 hover:border-slate-400 hover:shadow-sm transition-all duration-200 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-sm border border-slate-200 text-slate-700 hover:border-slate-400 hover:shadow-sm transition-all duration-200 group"
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.06, duration: 0.3 }}
-                  whileHover={{ x: 2 }}
+                  whileHover={{ y: -1 }}
                   whileTap={{ scale: 0.97, boxShadow: "0 0 15px rgba(148,163,184,0.2)" }}
                 >
-                  <div className="w-9 h-9 rounded-sm bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
-                    <Icon className="w-4 h-4 text-slate-500" />
+                  <div className="w-10 h-10 rounded-sm bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                    <Icon className="w-5 h-5 text-slate-500" />
                   </div>
-                  <span className="flex-1 text-sm font-medium text-start text-slate-600">{btn.label}</span>
-                  <span className="text-slate-300 group-hover:text-slate-500 transition-colors text-sm">→</span>
+                  <span className="text-center text-sm font-medium text-slate-600">{btn.label}</span>
                 </motion.a>
               );
             })}

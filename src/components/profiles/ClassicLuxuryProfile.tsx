@@ -40,7 +40,7 @@ export default function ClassicLuxuryProfile({ name, logo, buttons, iconMap }: T
             {name}
           </motion.h1>
 
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
               return (
@@ -49,18 +49,17 @@ export default function ClassicLuxuryProfile({ name, logo, buttons, iconMap }: T
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 w-full p-4 rounded-2xl bg-[#0F172A] border border-nardo/20 text-slate-light hover:border-nardo/50 hover:glow-silver transition-all duration-300 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-[#0F172A] border border-nardo/20 text-slate-light hover:border-nardo/50 hover:glow-silver transition-all duration-300 group"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(122,122,122,0.25)" }}
                 >
                   <div className="w-10 h-10 rounded-xl bg-nardo/10 flex items-center justify-center group-hover:bg-nardo/20 transition-colors">
                     <Icon className="w-5 h-5 text-nardo" />
                   </div>
-                  <span className="flex-1 text-sm font-medium text-start">{btn.label}</span>
-                  <span className="text-nardo/60 group-hover:text-nardo transition-colors">→</span>
+                  <span className="text-center text-sm font-medium">{btn.label}</span>
                 </motion.a>
               );
             })}

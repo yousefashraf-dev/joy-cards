@@ -42,7 +42,7 @@ export default function SportyCarbonProfile({ name, logo, buttons, iconMap }: Th
             {name}
           </motion.h1>
 
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
               return (
@@ -51,7 +51,7 @@ export default function SportyCarbonProfile({ name, logo, buttons, iconMap }: Th
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 w-full p-4 rounded-lg bg-black/60 border border-neon-green/20 text-white hover:border-neon-green/50 hover:shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-300 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-lg bg-black/60 border border-neon-green/20 text-white hover:border-neon-green/50 hover:shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-300 group"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
@@ -61,8 +61,7 @@ export default function SportyCarbonProfile({ name, logo, buttons, iconMap }: Th
                   <div className="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center group-hover:bg-neon-green/20 transition-colors">
                     <Icon className="w-5 h-5 text-neon-green" />
                   </div>
-                  <span className="flex-1 text-sm font-semibold text-start tracking-wide">{btn.label}</span>
-                  <span className="text-neon-green/60 group-hover:text-neon-green transition-colors">→</span>
+                  <span className="text-center text-sm font-semibold tracking-wide">{btn.label}</span>
                 </motion.a>
               );
             })}

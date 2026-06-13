@@ -54,7 +54,7 @@ export default function MinimalistCleanProfile({ name, logo, buttons, iconMap }:
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.06, duration: 0.3 }}
                   whileHover={{ x: 2 }}
-                  whileTap={{ scale: 0.99 }}
+                  whileTap={{ scale: 0.97, boxShadow: "0 0 15px rgba(148,163,184,0.2)" }}
                 >
                   <div className="w-9 h-9 rounded-sm bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
                     <Icon className="w-4 h-4 text-slate-500" />

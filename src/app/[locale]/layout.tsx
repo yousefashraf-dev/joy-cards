@@ -2,9 +2,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Inter, Noto_Kufi_Arabic } from "next/font/google";
 import { routing } from "@/i18n/routing";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import FloatingWhatsApp from "@/components/layout/FloatingWhatsApp";
 import { notFound } from "next/navigation";
 
 const inter = Inter({
@@ -47,10 +44,7 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col bg-matte-black text-slate-light font-sans">
         <NextIntlClientProvider messages={messages}>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <FloatingWhatsApp />
+          {children}
         </NextIntlClientProvider>
       </body>
     </html>

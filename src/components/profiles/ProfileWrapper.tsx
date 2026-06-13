@@ -4,6 +4,11 @@ import type { Profile, ProfileButton, ThemeArchetype } from "@/lib/types";
 import ClassicLuxuryProfile from "./ClassicLuxuryProfile";
 import SportyCarbonProfile from "./SportyCarbonProfile";
 import MinimalistCleanProfile from "./MinimalistCleanProfile";
+import CyberCyanDriftProfile from "./CyberCyanDriftProfile";
+import NeonRedTrackProfile from "./NeonRedTrackProfile";
+import NardoStealthProfile from "./NardoStealthProfile";
+import ClassicRoyalSilverProfile from "./ClassicRoyalSilverProfile";
+import LiquidAuroraProfile from "./LiquidAuroraProfile";
 import { CldImage } from "next-cloudinary";
 import { THEME_ARCHETYPE } from "@/lib/constants";
 import {
@@ -27,6 +32,14 @@ const iconMap: Record<string, React.ElementType> = {
   Star,
   ShoppingCart,
 };
+
+const AUTO_TAP_THEMES = new Set([
+  "cyber-cyan-drift",
+  "neon-red-track",
+  "auto-nardo-stealth",
+  "classic-royal-silver",
+  "liquid-aurora",
+]);
 
 function buildButtons(profile: Profile): ProfileButton[] {
   const buttons: ProfileButton[] = [];
@@ -105,34 +118,28 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
     );
   };
 
+  const sharedProps = {
+    name: profile.name,
+    logo: renderLogo(),
+    buttons,
+    iconMap,
+  };
+
+  // Auto-Tap themes: render the exact preview design
+  if (profile.theme === "cyber-cyan-drift") return <CyberCyanDriftProfile {...sharedProps} />;
+  if (profile.theme === "neon-red-track") return <NeonRedTrackProfile {...sharedProps} />;
+  if (profile.theme === "auto-nardo-stealth") return <NardoStealthProfile {...sharedProps} />;
+  if (profile.theme === "classic-royal-silver") return <ClassicRoyalSilverProfile {...sharedProps} />;
+  if (profile.theme === "liquid-aurora") return <LiquidAuroraProfile {...sharedProps} />;
+
+  // Non-Auto-Tap themes: use archetype-based rendering
   switch (archetype) {
     case "neon-sporty":
-      return (
-        <SportyCarbonProfile
-          name={profile.name}
-          logo={renderLogo()}
-          buttons={buttons}
-          iconMap={iconMap}
-        />
-      );
+      return <SportyCarbonProfile {...sharedProps} />;
     case "glass-clean":
-      return (
-        <MinimalistCleanProfile
-          name={profile.name}
-          logo={renderLogo()}
-          buttons={buttons}
-          iconMap={iconMap}
-        />
-      );
+      return <MinimalistCleanProfile {...sharedProps} />;
     case "dark-premium":
     default:
-      return (
-        <ClassicLuxuryProfile
-          name={profile.name}
-          logo={renderLogo()}
-          buttons={buttons}
-          iconMap={iconMap}
-        />
-      );
+      return <ClassicLuxuryProfile {...sharedProps} />;
   }
 }

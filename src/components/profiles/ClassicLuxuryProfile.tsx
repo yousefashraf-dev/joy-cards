@@ -54,7 +54,7 @@ export default function ClassicLuxuryProfile({ name, logo, buttons, iconMap }: T
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
                   whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(122,122,122,0.25)" }}
                 >
                   <div className="w-10 h-10 rounded-xl bg-nardo/10 flex items-center justify-center group-hover:bg-nardo/20 transition-colors">
                     <Icon className="w-5 h-5 text-nardo" />

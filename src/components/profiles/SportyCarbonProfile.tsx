@@ -56,7 +56,7 @@ export default function SportyCarbonProfile({ name, logo, buttons, iconMap }: Th
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
                   whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.96, boxShadow: "0 0 25px rgba(57,255,20,0.35)" }}
                 >
                   <div className="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center group-hover:bg-neon-green/20 transition-colors">
                     <Icon className="w-5 h-5 text-neon-green" />

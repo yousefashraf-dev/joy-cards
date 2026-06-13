@@ -1,0 +1,233 @@
+{
+  "floatingWhatsapp": {
+    "title": "Contact us on WhatsApp",
+    "option1": "Bulk orders & restaurant/cafe order fulfillment",
+    "option1Phone": "01095976766",
+    "option2": "Personal order support if you face any issues",
+    "option2Phone": "01558599678"
+  },
+  "nav": {
+    "home": "Home",
+    "digitalCards": "Digital Card",
+    "autoTap": "Auto Tap",
+    "businessTap": "Business & Menu",
+    "language": "العربية"
+  },
+  "hero": {
+    "headline": "Your Digital Identity, One Tap Away",
+    "subheadline": "Replace paper with premium NFC technology. Share your world with a single tap — business cards, car profiles, restaurant menus, and more.",
+    "cta": "Explore Products"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1": "Tap",
+    "step1Desc": "Tap your GoTap NFC device to any smartphone",
+    "step2": "Share",
+    "step2Desc": "Instantly open your digital profile",
+    "step3": "Connect",
+    "step3Desc": "Connect via social links, calls, and more"
+  },
+  "products": {
+    "title": "Our Products",
+    "digitalCards": {
+      "title": "Personal ID Card (Digital NFC)",
+      "desc": "A card the size of a Visa or ID card, allowing you to add all your personal and professional data. The card comes plain so you can print your company design or brand logo on it.",
+      "cta": "Order Now",
+      "premiumDesc": "Credit card sized NFC card. Add your full personal & professional data. Comes plain for custom print.",
+      "features": {
+        "instantSharing": "Instant Sharing",
+        "secureNfc": "Secure NFC Chip",
+        "customUrl": "Custom URL",
+        "premiumDesign": "Premium Design"
+      },
+      "badge": "NFC Smart Card"
+    },
+    "autoTap": {
+      "title": "Auto Tap Stickers",
+      "desc": "Waterproof NFC stickers for your car. Share your profile with a tap on the window.",
+      "cta": "Order Now",
+      "features": {
+        "waterproof": "Waterproof",
+        "instantConnect": "Instant Connect",
+        "weatherproof": "Weatherproof",
+        "carIdentity": "Car Identity"
+      },
+      "badge": "NFC Car Stickers",
+      "windowNotice": "Standard rear side window size: 35cm. Custom sizes available."
+    },
+    "businessTap": {
+      "title": "Restaurants & Cafes",
+      "desc": "Place your full menu on every table with one tap, create a custom sticker for easy Wi-Fi password access, or an InstaPay sticker for instant smart payments, and more tailored services for your comfort and your customers' convenience.",
+      "cta": "Order Now",
+      "features": {
+        "digitalMenu": "Digital Menu",
+        "googleReviews": "Google Reviews",
+        "tapToOrder": "Tap to Order",
+        "businessProfile": "Business Profile"
+      },
+      "badge": "NFC Restaurant Tags",
+      "marketing": "Place your full menu on every table with one tap, create a custom sticker that opens your Wi-Fi password directly, or an InstaPay sticker for instant payment transfers.",
+      "whatsappMessage": "Hello GoTap! I want to order a business NFC tag.\n\nName: {name}\nPhone: {phone}\nEstablishment: {establishment}\nQuantity: {quantity}"
+    },
+    "pricing": {
+      "title": "Auto Tap Sticker Pricing",
+      "single": "Single User Layout: 100 EGP",
+      "singleDesign": "+ 50 EGP Design Fee",
+      "multiple": "Multiple Users Layout: 150 EGP",
+      "multipleDesign": "+ 50 EGP Design Fee",
+      "logoSticker": "Logo Sticker: +50 EGP",
+      "shipping": "Shipping:",
+      "shippingCairo": "Cairo & Governorates: 50 EGP",
+      "shippingUpper": "Upper Egypt & Coastal Cities: 70 EGP",
+      "duration": "Delivery: 2 to 3 days maximum",
+      "disclaimer": "Prices include design and setup; shipping fees are calculated by region",
+      "digitalCardBase": "NFC Smart Card: {price} EGP",
+      "digitalCardPrint": "Custom Print Design: +{price} EGP",
+      "digitalCardShipping": "+ Shipping"
+    },
+    "steps": {
+      "shipping": "Shipping",
+      "profile": "Profile",
+      "sizing": "Sizing"
+    },
+    "forms": {
+      "section": {
+        "personal": "Personal Information",
+        "theme": "Choose Your Theme",
+        "logo": "Upload Logo",
+        "social": "Social Media Links",
+        "product": "Product Details",
+        "premium": "Premium Fields (Optional)"
+      },
+      "fields": {
+        "customerName": "Full Name (Arabic Full Name)",
+        "phone": "Phone Number",
+        "governorate": "Governorate",
+        "city": "City",
+        "street": "Street / Address Details",
+        "addressDetail": "Detailed Address",
+        "orderNotes": "Additional Notes",
+        "planType": "Plan Type",
+        "singleUser": "Single User",
+        "multipleUsers": "Multiple Users",
+        "group": "Group - 200 EGP + Shipping",
+        "stickerName": "Sticker Display Name / Alias",
+        "stickerNameHelper": "The name that appears on the sticker (English/aliases)",
+        "stickerSize": "Sticker Size (cm)",
+        "stickerColor": "Sticker Color",
+        "customPrintDesign": "Custom Print Design",
+        "customPrintDesignDesc": "Add a professional print design to the card",
+        "establishmentName": "Establishment / Restaurant Name",
+        "quantity": "Quantity",
+        "logo": "Company Logo / Profile Image",
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "tiktok": "TikTok",
+        "snapchat": "Snapchat",
+        "whatsapp": "WhatsApp",
+        "phoneSocial": "Phone Number",
+        "website": "Website URL",
+        "googleMaps": "Google Maps Location Link",
+        "linkedin": "LinkedIn Profile",
+        "email": "Direct Email",
+        "pdfProfile": "Company Profile (PDF)",
+        "menuLink": "Digital Menu Link",
+        "googleReviews": "Google Reviews Link",
+        "onlineOrdering": "Online Ordering / Reservation Link",
+        "pdfUpload": "Upload Company Profile PDF",
+        "pdfUploaded": "PDF uploaded",
+        "pdfRemove": "Remove",
+        "logoWidthCm": "Logo Width (cm)",
+        "singlePlatformValue": "Link or Username",
+        "selectPlatform": "Select Platform",
+        "optional": "Optional",
+        "rearWindow": "Rear Side Window",
+        "windowStandard": "Standard size for the rear side window: {size}cm. Adjust if you want it bigger or smaller.",
+        "windowDiagram": "Width (cm)"
+      },
+      "profileType": {
+        "single": "Single User",
+        "singleDesc": "Personal profile with one link",
+        "multiple": "Multiple Users",
+        "multipleDesc": "Multiple links for different accounts"
+      },
+      "themeOptions": {
+        "nardo-stealth": "Nardo Stealth",
+        "nardo-stealthDesc": "Dark & Silver — Premium rounded cards",
+        "carbon-track": "Carbon Track",
+        "carbon-trackDesc": "Carbon Fiber & Turquoise — Bold grid layout",
+        "neon-drift": "Neon Drift",
+        "neon-driftDesc": "Glass dark mode — Sleek minimal rows",
+        "modern-bistro": "Modern Bistro",
+        "modern-bistroDesc": "Dark & Silver — Best for restaurants",
+        "luxury-lounge": "Luxury Lounge",
+        "luxury-loungeDesc": "Carbon Fiber & Neon — Lounge style",
+        "cyber-cafe": "Cyber Cafe",
+        "cyber-cafeDesc": "Dark glass with neon — Modern cafe",
+        "classic-executive": "Classic Executive",
+        "classic-executiveDesc": "Dark & Silver — Best for business cards",
+        "minimal-glass": "Minimal Glass",
+        "minimal-glassDesc": "Carbon Fiber & Neon — Modern business",
+        "midnight-slate": "Midnight Slate",
+        "midnight-slateDesc": "Dark glass with silver accents",
+        "neonRedTrack": "Neon Red Track",
+        "neonRedTrackDesc": "High-contrast neon red with aggressive sporty typography",
+        "autoNardoStealth": "Nardo Stealth",
+        "autoNardoStealthDesc": "Minimalist Nardo Grey & Matte Black clean layout",
+        "cyberCyanDrift": "Cyber Cyan Drift",
+        "cyberCyanDriftDesc": "Ultra-modern floating glass layout with electric cyan neon accents",
+        "classicRoyalSilver": "Classic Royal Silver",
+        "classicRoyalSilverDesc": "Timeless royal silver borders with premium serif typography",
+        "liquidAurora": "Liquid Aurora",
+        "liquidAuroraDesc": "Sleek purple-to-cyan gradient border with smooth glass overlay"
+      },
+      "socialHelperText": "Please add your profile links or usernames directly, the system will format and verify them.",
+      "uploadHelper": "Upload your logo or profile image (PNG, JPG)",
+      "uploading": "Uploading...",
+      "logoText": "You can add a logo image",
+      "submit": "Submit Order",
+      "submitting": "Submitting...",
+      "next": "Next",
+      "back": "Back",
+      "contactWhatsapp": "Contact us for pricing & order",
+      "helper": {
+        "logoWidth": "Example: 20, 25, 30, 35, or 40 cm",
+        "previewGuide": "Enter your data below and watch your design change here instantly ✨",
+        "customerName": "Full name for shipping and order confirmation",
+        "phone": "For delivery updates and order confirmation",
+        "addressDetail": "City, district, street, building number for shipping"
+      },
+      "placeholders": {
+        "addressDetail": "City, district, street, building number",
+        "orderNotes": "Any extra comments or custom requests (optional)",
+        "logoWidthCm": "Enter width in centimeters"
+      }
+    },
+    "success": {
+      "title": "Order Registered Successfully!",
+      "description": "Please transfer the order amount via InstaPay or Vodafone Cash to: 01095976766, then click the button below to send the transfer screenshot via WhatsApp to start instant production.",
+      "whatsappBtn": "Send via WhatsApp",
+      "whatsappMessage": "New order from GoTap\nProduct: {product}\nName: {name}\nPhone: {phone}\nTotal: {total} EGP (incl. shipping {shipping} EGP)\n- Please confirm payment to start instant production",
+      "total": {
+        "base": "Service & Design",
+        "shipping": "Shipping",
+        "total": "Total"
+      }
+    },
+    "errors": {
+      "required": "This field is required",
+      "invalidPhone": "Please enter a valid phone number",
+      "invalidUrl": "Please enter a valid URL",
+      "invalidEmail": "Please enter a valid email address",
+      "invalidNumber": "Please enter a valid number",
+      "selectPlatform": "Please select a platform"
+    },
+    "profile": {
+      "poweredBy": "Powered by GoTap"
+    },
+    "footer": {
+      "rights": "All rights reserved.",
+      "tagline": "Premium NFC Technology Solutions"
+    }
+  }
+}

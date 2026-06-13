@@ -1,0 +1,106 @@
+"use client";
+
+import { useState } from "react";
+import { usePathname, useRouter } from "@/i18n/routing";
+import { useLocale, useTranslations } from "next-intl";
+import { Menu, X, Globe } from "lucide-react";
+import Link from "next/link";
+
+export default function Navbar() {
+  const t = useTranslations("nav");
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const links = [
+    { href: "/", label: t("home") },
+    { href: "/digital-cards", label: t("digitalCards") },
+    { href: "/auto-tap", label: t("autoTap") },
+    { href: "/business-tap", label: t("businessTap") },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
+  const toggleLocale = () => {
+    const newLocale = locale === "en" ? "ar" : "en";
+    router.replace(pathname, { locale: newLocale });
+  };
+
+  return (
+    <nav className="fixed top-0 inset-x-0 z-50 glass-strong bg-matte-black/80 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-silver flex items-center justify-center">
+              <span className="text-matte-dark font-bold text-sm">G</span>
+            </div>
+            <span className="text-xl font-bold text-gradient-silver">GoTap</span>
+          </Link>
+
+          <div className="hidden lg:flex items-center gap-8">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                 className={`text-sm font-medium transition-colors duration-200 ${
+                   isActive(link.href)
+                     ? "text-nardo"
+                     : "text-slate-muted hover:text-slate-light"
+                 }`}
+               >
+                 {link.label}
+               </Link>
+             ))}
+             <button
+               onClick={toggleLocale}
+               className="flex items-center gap-1.5 text-sm text-slate-muted hover:text-nardo transition-colors duration-200"
+            >
+              <Globe className="w-4 h-4" />
+              <span>{t("language")}</span>
+            </button>
+          </div>
+
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="lg:hidden text-slate-light p-2"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </div>
+
+      {isOpen && (
+        <div className="lg:hidden fixed inset-0 top-16 bg-matte-black/98 backdrop-blur-xl z-40">
+          <div className="flex flex-col items-center justify-center gap-8 h-full">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                 className={`text-lg font-medium transition-colors ${
+                   isActive(link.href)
+                     ? "text-nardo"
+                     : "text-slate-muted hover:text-slate-light"
+                 }`}
+               >
+                 {link.label}
+               </Link>
+             ))}
+             <button
+               onClick={toggleLocale}
+               className="flex items-center gap-2 text-lg text-slate-muted hover:text-nardo transition-colors mt-4"
+            >
+              <Globe className="w-5 h-5" />
+              <span>{t("language")}</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}

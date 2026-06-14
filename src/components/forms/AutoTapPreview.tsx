@@ -90,6 +90,31 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
       );
     }
 
+    if (effectiveLinks.length === 1) {
+      const link = effectiveLinks[0];
+      const Icon = iconMap[link.icon] || Camera;
+      return (
+        <div className="space-y-2.5">
+          <motion.a
+            key={link.label}
+            href="#"
+            className={singleClass}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className={iconClass}>
+              <Icon className="w-4 h-4" />
+            </div>
+            <span className={textClass}>{link.label}</span>
+            <span className={arrowClass}>→</span>
+          </motion.a>
+        </div>
+      );
+    }
+
     return (
       <div className="grid grid-cols-2 gap-2">
         {effectiveLinks.map((link, i) => {

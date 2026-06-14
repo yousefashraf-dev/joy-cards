@@ -192,17 +192,17 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           <div
             className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
               i === step
-                ? "bg-nardo text-matte-dark shadow-[0_0_10px_rgba(192,192,192,0.3)]"
+                ? "bg-nardo text-matte-dark shadow-[0_0_14px_rgba(192,192,192,0.4)]"
                 : i < step
-                  ? "bg-nardo/30 text-nardo"
-                  : "bg-dark-card border border-white/10 text-slate-muted"
+                  ? "bg-nardo/30 text-nardo border border-nardo/10"
+                  : "bg-dark-card border border-white/20 text-slate-body"
             }`}
           >
             {i < step ? "✓" : i + 1}
           </div>
           <span
             className={`text-xs hidden sm:block ${
-              i === step ? "text-nardo font-medium" : "text-slate-muted"
+              i === step ? "text-nardo font-bold" : "text-slate-body"
             }`}
           >
             {st(s)}
@@ -220,8 +220,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   );
 
   const inputClass = (key: string) =>
-    `w-full px-4 py-2.5 rounded-lg glass bg-dark-card border text-sm text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-nardo/50 focus:ring-1 focus:ring-nardo/20 transition-all duration-200 ${
-      errors[key] ? "border-red-400" : "border-white/10"
+    `w-full px-4 py-2.5 rounded-lg glass bg-dark-card border text-sm text-slate-light placeholder:text-slate-muted/60 focus:outline-none focus:border-nardo focus:ring-1 focus:ring-nardo/30 transition-all duration-200 ${
+      errors[key] ? "border-red-400" : "border-white/20"
     }`;
 
   const renderError = (key: string) =>
@@ -244,7 +244,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               {t("section.personal")}
             </h3>
             <div>
-              <label className="block text-sm text-slate-muted mb-1.5">
+              <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.customerName")}
               </label>
               <input
@@ -253,11 +253,11 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 onChange={(e) => handleFieldChange("customerName", e.target.value)}
                 className={inputClass("customerName")}
               />
-              <p className="text-xs text-slate-muted/60 mt-1">{t("helper.customerName")}</p>
+              <p className="text-xs text-slate-body/70 mt-1">{t("helper.customerName")}</p>
               {renderError("customerName")}
             </div>
             <div>
-              <label className="block text-sm text-slate-muted mb-1.5">
+              <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.phone")}
               </label>
               <input
@@ -266,11 +266,11 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 onChange={(e) => handleFieldChange("phone", e.target.value)}
                 className={inputClass("phone")}
               />
-              <p className="text-xs text-slate-muted/60 mt-1">{t("helper.phone")}</p>
+              <p className="text-xs text-slate-body/70 mt-1">{t("helper.phone")}</p>
               {renderError("phone")}
             </div>
             <div>
-              <label className="block text-sm text-slate-muted mb-1.5">
+              <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.addressDetail")}
               </label>
               <input
@@ -280,13 +280,13 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 placeholder={t("placeholders.addressDetail")}
                 className={inputClass("addressDetail")}
               />
-              <p className="text-xs text-slate-muted/60 mt-1">{t("helper.addressDetail")}</p>
+              <p className="text-xs text-slate-body/70 mt-1">{t("helper.addressDetail")}</p>
               {renderError("addressDetail")}
             </div>
             <div>
-              <label className="block text-sm text-slate-muted mb-1.5">
+              <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.orderNotes")}
-                <span className="text-xs text-slate-muted/50 ms-1">(Optional)</span>
+                <span className="text-xs text-slate-body/60 ms-1">(Optional)</span>
               </label>
               <textarea
                 value={data.orderNotes}
@@ -312,8 +312,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 onClick={() => handleFieldChange("profileType", "single")}
                 className={`p-4 rounded-xl border text-left transition-all duration-300 ${
                   data.profileType === "single"
-                    ? "border-nardo/40 bg-nardo/10 shadow-[0_0_12px_rgba(192,192,192,0.1)]"
-                    : "border-white/10 bg-dark-card hover:border-white/30"
+                    ? "border-nardo bg-nardo/15 shadow-[0_0_20px_rgba(192,192,192,0.15)] ring-1 ring-nardo/30"
+                    : "border-white/20 bg-dark-card hover:border-white/40 hover:bg-dark-card/80"
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -325,7 +325,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 >
                   {pt("single")}
                 </span>
-                <p className="text-xs text-slate-muted mt-1">
+                <p className="text-xs text-slate-body/80 mt-1">
                   {pt("singleDesc")}
                 </p>
               </motion.button>
@@ -334,8 +334,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 onClick={() => handleFieldChange("profileType", "multiple")}
                 className={`p-4 rounded-xl border text-left transition-all duration-300 ${
                   data.profileType === "multiple"
-                    ? "border-nardo/40 bg-nardo/10 shadow-[0_0_12px_rgba(192,192,192,0.1)]"
-                    : "border-white/10 bg-dark-card hover:border-white/30"
+                    ? "border-nardo bg-nardo/15 shadow-[0_0_20px_rgba(192,192,192,0.15)] ring-1 ring-nardo/30"
+                    : "border-white/20 bg-dark-card hover:border-white/40 hover:bg-dark-card/80"
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -347,20 +347,20 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 >
                   {pt("multiple")}
                 </span>
-                <p className="text-xs text-slate-muted mt-1">
+                <p className="text-xs text-slate-body/80 mt-1">
                   {pt("multipleDesc")}
                 </p>
               </motion.button>
             </div>
 
-            <p className="text-xs text-slate-muted/70 leading-relaxed bg-white/[0.03] border border-white/5 rounded-xl p-3">
+            <p className="text-xs text-slate-body leading-relaxed bg-white/[0.06] border border-white/20 rounded-xl p-3">
               💡 (150 ج.م شامل التصميم والطباعة للمستخدم الواحد / 200 ج.م للمجموعة + مصاريف الشحن: 50 ج.م للقاهرة والمحافظات، و70 ج.م للصعيد والمدن الساحلية)
             </p>
 
             <div>
-              <label className="block text-sm text-slate-muted mb-1.5">
+              <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.displayName")}
-                <span className="text-xs text-slate-muted/50 ms-1">(Optional)</span>
+                <span className="text-xs text-slate-body/60 ms-1">(Optional)</span>
               </label>
               <input
                 type="text"
@@ -369,13 +369,13 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 placeholder={t("fields.displayNameHelper")}
                 className={inputClass("displayName")}
               />
-              <p className="text-xs text-slate-muted/60 mt-1">{t("fields.displayNameHelper")}</p>
+              <p className="text-xs text-slate-body/70 mt-1">{t("fields.displayNameHelper")}</p>
             </div>
 
             {data.profileType === "single" ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-slate-muted mb-1.5">
+                  <label className="block text-sm text-slate-body mb-1.5">
                     {t("fields.selectPlatform")}
                   </label>
                   <select
@@ -393,7 +393,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                   {renderError("selectedPlatform")}
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-muted mb-1.5">
+                  <label className="block text-sm text-slate-body mb-1.5">
                     {t("fields.singlePlatformValue")}
                   </label>
                   <input
@@ -410,15 +410,15 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               </div>
             ) : (
               <div className="space-y-4">
-                <p className="text-xs text-nardo/80 italic">
+                <p className="text-xs text-nardo font-medium">
                   {t("socialHelperText")}
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {PLATFORM_OPTIONS.map((platform) => (
                     <div key={platform.id}>
-                      <label className="block text-sm text-slate-muted mb-1.5">
+                      <label className="block text-sm text-slate-body mb-1.5">
                         {t(`fields.${platform.id}`)}
-                  <span className="text-xs text-slate-muted/50 ms-1">({t("fields.optional")})</span>
+                  <span className="text-xs text-slate-body/60 ms-1">({t("fields.optional")})</span>
                       </label>
                       <input
                         type="text"
@@ -438,12 +438,12 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             )}
 
             <div>
-              <label className="flex items-center gap-2 text-sm text-slate-muted mb-1.5">
+              <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
                 <ImageIcon className="w-4 h-4" />
                 <span>{t("fields.logo")}</span>
-                <span className="text-xs text-slate-muted/50">({t("fields.optional")})</span>
+                <span className="text-xs text-slate-body/60">({t("fields.optional")})</span>
               </label>
-              <p className="text-xs text-slate-muted/60 mb-2">{t("logoText")}</p>
+              <p className="text-xs text-slate-body/70 mb-2">{t("logoText")}</p>
               {data.logo ? (
                 <div className="relative inline-block">
                   <Image
@@ -471,10 +471,10 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 >
                   <Upload
                     className={`w-6 h-6 ${
-                      uploading ? "text-nardo animate-pulse" : "text-slate-muted"
+                      uploading ? "text-nardo animate-pulse" : "text-slate-body"
                     }`}
                   />
-                  <span className="text-sm text-slate-muted">
+                  <span className="text-sm text-slate-body">
                     {uploading ? t("uploading") : t("uploadHelper")}
                   </span>
                 </button>
@@ -497,7 +497,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               {t("fields.logoWidthCm")}
             </h3>
 
-              <p className="text-xs text-slate-muted/70 mb-2">
+              <p className="text-xs text-slate-body/80 mb-2">
                 {t("fields.windowStandard", { size: "35" })}
               </p>
 
@@ -569,7 +569,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             </div>
 
             <div>
-              <label className="flex items-center gap-2 text-sm text-slate-muted mb-1.5">
+              <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
                 <Ruler className="w-4 h-4" />
                 <span>{t("fields.logoWidthCm")}</span>
               </label>
@@ -580,7 +580,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 placeholder={t("placeholders.logoWidthCm")}
                 className={inputClass("logoWidthCm")}
               />
-              <p className="text-xs text-slate-muted/60 mt-1.5">
+              <p className="text-xs text-slate-body/70 mt-1.5">
                 {t("helper.logoWidth")}
               </p>
               {renderError("logoWidthCm")}

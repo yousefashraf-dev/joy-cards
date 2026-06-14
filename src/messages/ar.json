@@ -106,7 +106,8 @@
     },
     "steps": {
       "shipping": "الشحن",
-      "profile": "الحساب",
+      "social": "الحساب",
+      "design": "التصميم",
       "sizing": "المقاس"
     },
     "forms": {

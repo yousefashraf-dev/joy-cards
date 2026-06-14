@@ -106,7 +106,8 @@
     },
     "steps": {
       "shipping": "Shipping",
-      "profile": "Profile",
+      "social": "Social",
+      "design": "Design",
       "sizing": "Sizing"
     },
     "forms": {

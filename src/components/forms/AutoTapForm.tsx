@@ -6,18 +6,28 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import {
   ChevronRight, ChevronLeft, Upload, X, ImageIcon, Ruler,
+  Crown, Flame, Zap, Shield, Droplets, Terminal,
 } from "lucide-react";
-import type { AutoTapFormData } from "@/lib/types";
+import type { AutoTapFormData, Theme } from "@/lib/types";
 import { formatSocialLink, type Platform } from "@/lib/formatSocialLink";
 import { submitOrder } from "@/lib/submitOrder";
-import { PLATFORM_OPTIONS } from "@/lib/constants";
+import { PRODUCT_THEMES, ALL_THEMES, PLATFORM_OPTIONS } from "@/lib/constants";
 import { calcTotal } from "@/lib/pricing";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SuccessModal from "./SuccessModal";
 import { useLoading } from "@/components/ui/LoadingProvider";
 import { useToast } from "@/components/ui/ToastProvider";
 
-const STEPS = ["shipping", "profile", "sizing"] as const;
+const STEPS = ["shipping", "social", "design", "sizing"] as const;
+
+const themeIconMap: Record<string, React.ElementType> = {
+  Crown, Flame, Zap, Shield, Droplets, Terminal,
+};
+
+function themeIdToLabelKey(id: string): string {
+  // Convert "neon-red-track" → "neonRedTrack" to match JSON keys
+  return id.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+}
 
 interface AutoTapFormProps {
   data: AutoTapFormData;
@@ -105,6 +115,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         if (!hasAny) newErrors.socialLinks = e("required");
       }
     } else if (step === 2) {
+      // Design selection step — no required validation (theme has default)
+    } else if (step === 3) {
       if (!data.logoWidthCm.trim()) {
         newErrors.logoWidthCm = e("required");
       } else if (isNaN(Number(data.logoWidthCm)) || Number(data.logoWidthCm) <= 0) {
@@ -490,8 +502,66 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           </div>
         )}
 
-        {/* Step 3: Logo Sticker Sizing — Rear Side Window */}
+        {/* Step 3: Choose Your Design */}
         {step === 2 && (
+          <div className="space-y-5">
+            <h3 className="text-lg font-semibold text-nardo mb-4">
+              {t("section.theme")}
+            </h3>
+            <p className="text-xs text-slate-body/70 mb-2">
+              {t("helper.previewGuide")}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {PRODUCT_THEMES["auto-tap"].map((themeId) => {
+                const themeConfig = ALL_THEMES.find((th) => th.id === themeId);
+                if (!themeConfig) return null;
+                const Icon = themeIconMap[themeConfig.icon] || Crown;
+                const isSelected = data.theme === themeId;
+                const labelKey = themeIdToLabelKey(themeId);
+                return (
+                  <motion.button
+                    key={themeId}
+                    type="button"
+                    onClick={() => handleFieldChange("theme", themeId)}
+                    className={`relative rounded-xl p-5 text-left w-full h-full transition-all duration-300 ${
+                      isSelected
+                        ? "border-2 border-nardo bg-nardo/15 shadow-[0_0_20px_rgba(192,192,192,0.15)] ring-1 ring-nardo/30"
+                        : "border border-white/20 bg-dark-card hover:border-white/40 hover:bg-dark-card/80"
+                    }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        isSelected ? "bg-nardo/20" : "bg-white/5"
+                      }`}>
+                        <Icon className={`w-5 h-5 ${isSelected ? "text-nardo" : "text-slate-body"}`} />
+                      </div>
+                      <div className="min-w-0">
+                        <span className={`block text-sm font-bold leading-tight truncate ${
+                          isSelected ? "text-nardo" : "text-slate-light"
+                        }`}>
+                          {t(`themeOptions.${labelKey}`)}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-body/70 leading-relaxed line-clamp-2">
+                      {t(`themeOptions.${labelKey}Desc`)}
+                    </p>
+                    {isSelected && (
+                      <div className="absolute top-3 end-3 w-6 h-6 rounded-full bg-nardo flex items-center justify-center shadow-[0_0_10px_rgba(192,192,192,0.3)]">
+                        <span className="text-matte-dark text-xs font-bold">✓</span>
+                      </div>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Logo Sticker Sizing — Rear Side Window */}
+        {step === 3 && (
           <div className="space-y-5">
             <h3 className="text-lg font-semibold text-nardo mb-4">
               {t("fields.logoWidthCm")}

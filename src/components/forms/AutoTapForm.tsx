@@ -150,6 +150,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     try {
       await submitOrder({
         customerName: data.customerName.trim(),
+        displayName: data.displayName.trim() || undefined,
         phone: data.phone.trim(),
         governorate: "",
         city: "",
@@ -355,6 +356,21 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             <p className="text-xs text-slate-muted/70 leading-relaxed bg-white/[0.03] border border-white/5 rounded-xl p-3">
               💡 (150 ج.م شامل التصميم والطباعة للمستخدم الواحد / 200 ج.م للمجموعة + مصاريف الشحن: 50 ج.م للقاهرة والمحافظات، و70 ج.م للصعيد والمدن الساحلية)
             </p>
+
+            <div>
+              <label className="block text-sm text-slate-muted mb-1.5">
+                {t("fields.displayName")}
+                <span className="text-xs text-slate-muted/50 ms-1">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                value={data.displayName}
+                onChange={(e) => handleFieldChange("displayName", e.target.value)}
+                placeholder={t("fields.displayNameHelper")}
+                className={inputClass("displayName")}
+              />
+              <p className="text-xs text-slate-muted/60 mt-1">{t("fields.displayNameHelper")}</p>
+            </div>
 
             <div>
               <label className="block text-sm text-slate-muted mb-1.5">

@@ -13,6 +13,7 @@ const db = getFirestore();
 
 const testProfile = {
   name: "John Anderson",
+  displayName: "John",
   logo: "",
   theme: "classic-executive",
   active: true,

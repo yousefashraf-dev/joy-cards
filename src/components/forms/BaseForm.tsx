@@ -34,6 +34,7 @@ export default function BaseForm({ productType, specificFields, productSection, 
   const locale = useLocale();
 
   const [customerName, setCustomerName] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [phone, setPhone] = useState("");
   const [governorate, setGovernorate] = useState("");
   const [city, setCity] = useState("");
@@ -111,6 +112,7 @@ export default function BaseForm({ productType, specificFields, productSection, 
 
     const basePayload: Partial<OrderPayload> = {
       customerName: customerName.trim(),
+      displayName: displayName.trim() || undefined,
       phone: phone.trim(),
       governorate: governorate.trim(),
       city: city.trim(),
@@ -198,6 +200,7 @@ export default function BaseForm({ productType, specificFields, productSection, 
               <div className="glass bg-dark-card/50 border border-white/5 rounded-2xl p-6 lg:p-8 space-y-5">
                 <h3 className="text-lg font-semibold text-nardo mb-4">{t("section.personal")}</h3>
                 {renderField(t("fields.customerName"), customerName, setCustomerName, "customerName")}
+                {renderField(t("fields.displayName"), displayName, setDisplayName, "displayName", false)}
                 {renderField(t("fields.phone"), phone, setPhone, "phone", true, "tel")}
                 {renderField(t("fields.governorate"), governorate, setGovernorate, "governorate")}
                 {renderField(t("fields.city"), city, setCity, "city")}

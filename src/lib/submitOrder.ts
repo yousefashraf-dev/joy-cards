@@ -56,6 +56,7 @@ export async function submitOrder(
     const db = getClientDb();
     const docRef = await addDoc(collection(db, "profiles"), {
       name: data.customerName,
+      displayName: data.displayName || "",
       logo: data.logo || "",
       theme: data.theme,
       active: true,

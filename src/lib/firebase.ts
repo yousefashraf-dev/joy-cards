@@ -55,6 +55,7 @@ export async function getProfileById(id: string): Promise<Profile | null> {
     return {
       id: doc.id,
       name: data.name,
+      displayName: data.displayName || "",
       logo: data.logo,
       theme: data.theme,
       active: data.active,

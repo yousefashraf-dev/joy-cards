@@ -21,6 +21,7 @@ const INITIAL_DATA: AutoTapFormData = {
   logo: "",
   logoWidthCm: "",
   stickerName: "",
+  displayName: "",
   theme: "neon-red-track",
 };
 

@@ -130,6 +130,8 @@
         "singleUser": "Single User",
         "multipleUsers": "Multiple Users",
         "group": "Group - 200 EGP + Shipping",
+        "displayName": "Display Name / Nickname",
+        "displayNameHelper": "The name to display on your public profile (optional)",
         "stickerName": "Sticker Display Name / Alias",
         "stickerNameHelper": "The name that appears on the sticker (English/aliases)",
         "stickerSize": "Sticker Size (cm)",

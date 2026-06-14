@@ -59,6 +59,7 @@ export interface AutoTapFormData {
   logo: string;
   logoWidthCm: string;
   stickerName: string;
+  displayName: string;
   theme: Theme;
 }
 
@@ -80,6 +81,7 @@ export interface OrderPayload {
   productType: ProductType;
   logo?: string;
   socialLinks: SocialLinks;
+  displayName?: string;
   digitalCardsFields?: DigitalCardsFields;
   autoTapFields?: AutoTapFields;
   businessTapFields?: BusinessTapFields;
@@ -88,6 +90,7 @@ export interface OrderPayload {
 export interface Profile {
   id: string;
   name: string;
+  displayName?: string;
   logo: string;
   theme: Theme;
   active: boolean;

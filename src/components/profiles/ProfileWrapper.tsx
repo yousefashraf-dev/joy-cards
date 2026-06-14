@@ -84,12 +84,16 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
   const buttons = buildButtons(profile);
   const archetype = getArchetype(profile.theme);
 
+  const displayName = profile.displayName?.trim()
+    || profile.name.split(' ')[0]
+    || profile.name;
+
   const renderLogo = () => {
     if (!profile.logo) {
       return (
         <div className="w-28 h-28 rounded-full bg-dark-card border-2 border-white/10 flex items-center justify-center">
           <span className="text-3xl font-bold text-slate-muted">
-            {profile.name?.charAt(0)?.toUpperCase() || "?"}
+            {displayName?.charAt(0)?.toUpperCase() || "?"}
           </span>
         </div>
       );
@@ -99,7 +103,7 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
       return (
         <CldImage
           src={profile.logo}
-          alt={profile.name}
+          alt={displayName}
           width={120}
           height={120}
           crop="fill"
@@ -113,14 +117,14 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
       /* eslint-disable-next-line @next/next/no-img-element */
       <img
         src={profile.logo}
-        alt={profile.name}
+        alt={displayName}
         className="w-28 h-28 rounded-full object-cover border-2"
       />
     );
   };
 
   const sharedProps = {
-    name: profile.name,
+    name: displayName,
     logo: renderLogo(),
     buttons,
     iconMap,

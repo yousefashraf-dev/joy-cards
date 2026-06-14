@@ -44,6 +44,33 @@ export default function ClassicRoyalSilverProfile({ name, logo, buttons, iconMap
             {name}
           </motion.h1>
 
+          {buttons.length === 1 ? (
+            <div className="space-y-2.5">
+              {buttons.map((btn) => {
+                const Icon = iconMap[btn.icon] || iconMap.Globe;
+                return (
+                  <motion.a
+                    key={btn.url}
+                    href={btn.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-3 w-full p-3 rounded-md border border-silver/15 bg-[#1E1E1E] text-slate-light hover:border-silver/40 hover:bg-[#252525] transition-all duration-300 group"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(192,192,192,0.15)" }}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-silver/10 flex items-center justify-center group-hover:bg-silver/20 transition-colors shrink-0">
+                      <Icon className="w-5 h-5 text-silver" />
+                    </div>
+                    <span className="flex-1 text-center text-xs font-medium tracking-wide">{btn.label}</span>
+                    <span className="text-silver/40 group-hover:text-silver shrink-0">→</span>
+                  </motion.a>
+                );
+              })}
+            </div>
+          ) : (
           <div className="grid grid-cols-2 gap-2.5">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
@@ -68,6 +95,7 @@ export default function ClassicRoyalSilverProfile({ name, logo, buttons, iconMap
               );
             })}
           </div>
+          )}
 
           {buttons.length === 0 && (
             <p className="text-slate-muted/50 text-xs">No links available</p>

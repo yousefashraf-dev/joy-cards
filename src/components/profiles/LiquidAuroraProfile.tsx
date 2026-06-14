@@ -45,8 +45,9 @@ export default function LiquidAuroraProfile({ name, logo, buttons, iconMap }: Th
               {name}
             </motion.h1>
 
-            <div className="grid grid-cols-2 gap-2.5">
-              {buttons.map((btn, i) => {
+          {buttons.length === 1 ? (
+            <div className="space-y-2.5">
+              {buttons.map((btn) => {
                 const Icon = iconMap[btn.icon] || iconMap.Globe;
                 return (
                   <motion.a
@@ -54,21 +55,48 @@ export default function LiquidAuroraProfile({ name, logo, buttons, iconMap }: Th
                     href={btn.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group"
+                    className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
+                    transition={{ duration: 0.4 }}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97, boxShadow: "0 0 25px rgba(124,58,237,0.3)" }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-cyan/15 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-cyan/15 transition-colors shrink-0">
                       <Icon className="w-5 h-5 text-cyan" />
                     </div>
-                    <span className="text-center text-[11px] font-light tracking-wide uppercase">{btn.label}</span>
+                    <span className="flex-1 text-center text-[11px] font-light tracking-wide uppercase">{btn.label}</span>
+                    <span className="text-cyan/40 group-hover:text-cyan shrink-0">→</span>
                   </motion.a>
                 );
               })}
             </div>
+          ) : (
+          <div className="grid grid-cols-2 gap-2.5">
+            {buttons.map((btn, i) => {
+              const Icon = iconMap[btn.icon] || iconMap.Globe;
+              return (
+                <motion.a
+                  key={btn.url}
+                  href={btn.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97, boxShadow: "0 0 25px rgba(124,58,237,0.3)" }}
+                >
+                  <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-cyan/15 transition-colors">
+                    <Icon className="w-5 h-5 text-cyan" />
+                  </div>
+                  <span className="text-center text-[11px] font-light tracking-wide uppercase">{btn.label}</span>
+                </motion.a>
+              );
+            })}
+          </div>
+          )}
 
             {buttons.length === 0 && (
               <p className="text-slate-muted/50 text-xs">No links available</p>

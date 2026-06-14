@@ -44,6 +44,33 @@ export default function NardoStealthProfile({ name, logo, buttons, iconMap }: Th
             {name}
           </motion.h1>
 
+          {buttons.length === 1 ? (
+            <div className="space-y-2.5">
+              {buttons.map((btn) => {
+                const Icon = iconMap[btn.icon] || iconMap.Globe;
+                return (
+                  <motion.a
+                    key={btn.url}
+                    href={btn.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur border border-nardo/15 text-slate-light hover:border-nardo/40 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(192,192,192,0.1)] transition-all duration-300 group"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(192,192,192,0.2)" }}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-nardo/10 flex items-center justify-center group-hover:bg-nardo/20 transition-colors shrink-0">
+                      <Icon className="w-5 h-5 text-nardo" />
+                    </div>
+                    <span className="flex-1 text-center text-xs font-medium text-slate-muted group-hover:text-slate-light">{btn.label}</span>
+                    <span className="text-nardo/40 group-hover:text-nardo shrink-0">→</span>
+                  </motion.a>
+                );
+              })}
+            </div>
+          ) : (
           <div className="grid grid-cols-2 gap-2.5">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
@@ -68,6 +95,7 @@ export default function NardoStealthProfile({ name, logo, buttons, iconMap }: Th
               );
             })}
           </div>
+          )}
 
           {buttons.length === 0 && (
             <p className="text-slate-muted/50 text-xs">No links available</p>

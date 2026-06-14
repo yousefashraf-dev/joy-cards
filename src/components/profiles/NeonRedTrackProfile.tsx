@@ -42,6 +42,33 @@ export default function NeonRedTrackProfile({ name, logo, buttons, iconMap }: Th
             {name}
           </motion.h1>
 
+          {buttons.length === 1 ? (
+            <div className="space-y-2.5">
+              {buttons.map((btn) => {
+                const Icon = iconMap[btn.icon] || iconMap.Globe;
+                return (
+                  <motion.a
+                    key={btn.url}
+                    href={btn.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-3 w-full p-3 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-xs font-bold rounded-lg"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97, boxShadow: "0 0 25px rgba(255,49,49,0.5)" }}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center group-hover:bg-red-500/30 transition-colors shrink-0">
+                      <Icon className="w-5 h-5 text-red-500" />
+                    </div>
+                    <span className="flex-1 text-center text-xs font-bold tracking-wider">{btn.label}</span>
+                    <span className="text-red-500/60 group-hover:text-red-500 shrink-0">→</span>
+                  </motion.a>
+                );
+              })}
+            </div>
+          ) : (
           <div className="grid grid-cols-2 gap-2.5">
             {buttons.map((btn, i) => {
               const Icon = iconMap[btn.icon] || iconMap.Globe;
@@ -66,6 +93,7 @@ export default function NeonRedTrackProfile({ name, logo, buttons, iconMap }: Th
               );
             })}
           </div>
+          )}
 
           {buttons.length === 0 && (
             <p className="text-slate-muted/50 text-xs">No links available</p>

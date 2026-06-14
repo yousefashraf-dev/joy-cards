@@ -13,7 +13,8 @@ export type Theme =
   | "cyber-cyan-drift"
   | "classic-royal-silver"
   | "liquid-aurora"
-  | "terminal-dark-glow";
+  | "terminal-dark-glow"
+  | "energy-lightning";
 
 export type ThemeArchetype = "dark-premium" | "neon-sporty" | "glass-clean";
 

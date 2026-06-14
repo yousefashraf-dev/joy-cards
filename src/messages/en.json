@@ -86,6 +86,8 @@
         "wifiAccess": "Wi-Fi Access",
         "instaPay": "InstaPay Payment"
       },
+      "customOrder": "For ordering or custom execution",
+      "contactUs": "Contact Us",
       "servicesDesc": "Everything you need to modernize your establishment"
     },
     "pricing": {
@@ -201,7 +203,9 @@
         "liquidAurora": "Liquid Aurora",
         "liquidAuroraDesc": "Sleek purple-to-cyan gradient border with smooth glass overlay",
         "terminalDarkGlow": "Terminal Dark Glow",
-        "terminalDarkGlowDesc": "Deep slate terminal-style with cyan neon glassmorphism"
+        "terminalDarkGlowDesc": "Deep slate terminal-style with cyan neon glassmorphism",
+        "energyLightning": "Energy Lightning",
+        "energyLightningDesc": "Electric yellow-gold neon glow on dark charcoal base with bold impact typography"
       },
       "socialHelperText": "Please add your profile links or usernames directly, the system will format and verify them.",
       "uploadHelper": "Upload your logo or profile image (PNG, JPG)",

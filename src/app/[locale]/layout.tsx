@@ -51,7 +51,7 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${notoKufi.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
     >
-      <body className="min-h-full flex flex-col bg-matte-black text-slate-light font-sans">
+      <body className="min-h-full flex flex-col bg-matte-black text-slate-light font-sans" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

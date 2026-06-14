@@ -295,19 +295,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               <p className="text-xs text-slate-body/70 mt-1">{t("helper.addressDetail")}</p>
               {renderError("addressDetail")}
             </div>
-            <div>
-              <label className="block text-sm text-slate-body mb-1.5">
-                {t("fields.orderNotes")}
-                <span className="text-xs text-slate-body/60 ms-1">(Optional)</span>
-              </label>
-              <textarea
-                value={data.orderNotes}
-                onChange={(e) => handleFieldChange("orderNotes", e.target.value)}
-                placeholder={t("placeholders.orderNotes")}
-                rows={3}
-                className={inputClass("orderNotes")}
-              />
-            </div>
+
           </div>
         )}
 
@@ -654,6 +642,19 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 {t("helper.logoWidth")}
               </p>
               {renderError("logoWidthCm")}
+            </div>
+            <div>
+              <label className="block text-sm text-slate-body mb-1.5">
+                {t("fields.orderNotes")}
+                <span className="text-xs text-slate-body/60 ms-1">(Optional)</span>
+              </label>
+              <textarea
+                value={data.orderNotes}
+                onChange={(e) => handleFieldChange("orderNotes", e.target.value)}
+                placeholder={t("placeholders.orderNotes")}
+                rows={3}
+                className={inputClass("orderNotes")}
+              />
             </div>
           </div>
         )}

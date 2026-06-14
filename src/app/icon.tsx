@@ -11,7 +11,7 @@ export default function Icon() {
           width: 32,
           height: 32,
           borderRadius: 8,
-          background: "linear-gradient(135deg, #C0C0C0, #7A7A7A)",
+          background: "linear-gradient(135deg, #1A237E, #D50000)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -20,13 +20,13 @@ export default function Icon() {
       >
         <span
           style={{
-            fontSize: 16,
-            fontWeight: 800,
-            color: "#1A1A1A",
+            fontSize: 18,
+            fontWeight: 900,
+            color: "#ECEFF1",
             letterSpacing: "-0.5",
           }}
         >
-          Gt
+          G
         </span>
       </div>
     ),

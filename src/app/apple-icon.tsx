@@ -11,7 +11,7 @@ export default function AppleIcon() {
           width: 180,
           height: 180,
           borderRadius: 32,
-          background: "linear-gradient(135deg, #C0C0C0, #7A7A7A)",
+          background: "linear-gradient(135deg, #1A237E, #D50000)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -20,13 +20,13 @@ export default function AppleIcon() {
       >
         <span
           style={{
-            fontSize: 96,
-            fontWeight: 800,
-            color: "#1A1A1A",
+            fontSize: 110,
+            fontWeight: 900,
+            color: "#ECEFF1",
             letterSpacing: "-2",
           }}
         >
-          Gt
+          G
         </span>
       </div>
     ),

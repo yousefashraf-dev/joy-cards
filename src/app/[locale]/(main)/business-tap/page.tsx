@@ -4,9 +4,9 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import {
-  Store, Utensils, Star, Smartphone, Wifi, CreditCard,
+  Store, Utensils, Star, Smartphone, Wifi, CreditCard, MessageCircle,
 } from "lucide-react";
-import ContactFab from "@/components/ui/ContactFab";
+import { WHATSAPP_ORDERS_LINK } from "@/lib/constants";
 
 export default function BusinessTapPage() {
   const t = useTranslations("products.businessTap");
@@ -44,6 +44,21 @@ export default function BusinessTapPage() {
               </div>
               <h1 className="text-3xl md:text-5xl font-bold text-slate-light mb-6">{t("title")}</h1>
               <p className="text-slate-muted text-base md:text-lg leading-relaxed mb-8">{t("desc")}</p>
+
+              <div className="mb-8 p-5 rounded-2xl glass bg-dark-card/60 border border-neon-green/20">
+                <p className="text-sm text-slate-light font-semibold mb-3">
+                  {t("customOrder")}
+                </p>
+                <a
+                  href={WHATSAPP_ORDERS_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-neon-green/10 border border-neon-green/30 text-neon-green hover:bg-neon-green/20 hover:scale-105 active:scale-95 transition-all duration-200 text-sm font-semibold"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>{t("contactUs")}</span>
+                </a>
+              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 {features.map(({ icon: Icon, key }) => (
@@ -123,8 +138,7 @@ export default function BusinessTapPage() {
         </div>
       </section>
 
-      {/* Contact Fab */}
-      <ContactFab />
+
     </>
   );
 }

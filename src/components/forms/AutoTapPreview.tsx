@@ -24,6 +24,7 @@ const themeButtons: { theme: Theme; icon: React.ElementType; label: string }[] =
   { theme: "classic-royal-silver", icon: Crown, label: "Classic Royal Silver" },
   { theme: "liquid-aurora", icon: Droplets, label: "Liquid Aurora" },
   { theme: "terminal-dark-glow", icon: Terminal, label: "Terminal Dark Glow" },
+  { theme: "energy-lightning", icon: Zap, label: "Energy Lightning" },
 ];
 
 interface AutoTapPreviewProps {
@@ -331,6 +332,43 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               )}
               <div className="mt-4 pt-3 border-t border-cyan/10">
                 <p className="text-[10px] text-cyan/50 font-mono tracking-widest">POWERED BY GOTAP.EG</p>
+              </div>
+            </div>
+          )}
+
+          {/* Theme 7: Energy Lightning — Navy/Red/Silver + Cyan neon cyberpunk */}
+          {themeId === "energy-lightning" && (
+            <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-[#0F1440] via-[#1A237E]/30 to-[#0A0E27] border border-cyan/20 shadow-[0_0_40px_rgba(0,243,255,0.12),0_0_80px_rgba(0,243,255,0.06)] relative overflow-hidden">
+              <div className="absolute inset-0 opacity-[0.15]"
+                style={{
+                  backgroundImage: `radial-gradient(circle at 20% 20%, rgba(0,243,255,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(213,0,0,0.15) 0%, transparent 50%)`,
+                }}
+              />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan/40 to-transparent opacity-50" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent opacity-50" />
+              <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-cyan/5 blur-3xl" />
+              <div className="absolute bottom-1/4 -right-10 w-40 h-40 rounded-full bg-red-600/5 blur-3xl" />
+              <div className="relative z-10">
+                {avatarCircle("ring-2 ring-cyan/60 shadow-[0_0_30px_rgba(0,243,255,0.35)]")}
+                <h3 className="text-xl font-black text-white mb-2 uppercase tracking-[0.15em] drop-shadow-[0_0_12px_rgba(0,243,255,0.3)]"
+                  style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
+                >
+                  {data.displayName || data.customerName || "YOUR NAME"}
+                </h3>
+                <div className="flex items-center justify-center gap-3 mb-5">
+                  <span className="w-8 h-[2px] bg-gradient-to-r from-transparent via-cyan/50 to-transparent" />
+                  <span className="text-[9px] text-cyan/60 font-black tracking-[0.4em] uppercase">energy</span>
+                  <span className="w-8 h-[2px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent" />
+                </div>
+                {renderLinks(
+                  "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group"
+                    + (isSingle ? "" : ""),
+                  "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group",
+                  "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group",
+                  "w-8 h-8 rounded-full bg-gradient-to-br from-cyan/20 to-red-600/10 flex items-center justify-center group-hover:from-cyan/30 group-hover:to-red-600/20 transition-all duration-300",
+                  "flex-1 text-start text-xs font-bold tracking-wider text-[#ECEFF1]",
+                  "text-cyan/60 group-hover:text-cyan"
+                )}
               </div>
             </div>
           )}

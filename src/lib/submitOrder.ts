@@ -93,6 +93,7 @@ export async function submitOrder(
     "التصميم": data.theme,
     "تفاصيل المنتج": productDetails,
     "عرض اللوجو (سم)": data.autoTapFields?.logoWidthCm || "",
+    "ملاحظات": data.autoTapFields?.orderNotes || "",
     "تم الدفع": false,
     "جاهز للشحن": false,
     "الإجمالي": totalPrice,

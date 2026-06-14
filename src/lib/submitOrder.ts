@@ -32,7 +32,7 @@ function buildProductDetails(data: OrderPayload): string {
   if (data.autoTapFields) {
     details.push(`نوع الحساب: ${data.autoTapFields.profileType === "single" ? "مستخدم واحد" : "متعدد المستخدمين"}`);
     details.push(`عرض اللوجو: ${data.autoTapFields.logoWidthCm} سم`);
-    if (data.autoTapFields.stickerName) details.push(`الاسم على الاستيكر: ${data.autoTapFields.stickerName}`);
+
   } else if (data.digitalCardsFields) {
     if (data.digitalCardsFields.website) details.push(`الموقع: ${data.digitalCardsFields.website}`);
     if (data.digitalCardsFields.email) details.push(`البريد: ${data.digitalCardsFields.email}`);

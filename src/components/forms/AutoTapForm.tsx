@@ -166,7 +166,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           addressDetail: data.addressDetail.trim(),
           selectedPlatform: data.selectedPlatform || undefined,
           singlePlatformValue: data.singlePlatformValue.trim() || undefined,
-          stickerName: data.stickerName.trim() || undefined,
+
         },
       }, pricing.total, locale);
       showToast("تم إرسال الطلب بنجاح", "success");
@@ -370,20 +370,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 className={inputClass("displayName")}
               />
               <p className="text-xs text-slate-muted/60 mt-1">{t("fields.displayNameHelper")}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm text-slate-muted mb-1.5">
-                {t("fields.stickerName")}
-              </label>
-              <input
-                type="text"
-                value={data.stickerName}
-                onChange={(e) => handleFieldChange("stickerName", e.target.value)}
-                placeholder={t("fields.stickerNameHelper")}
-                className={inputClass("stickerName")}
-              />
-              <p className="text-xs text-slate-muted/60 mt-1">{t("fields.stickerNameHelper")}</p>
             </div>
 
             {data.profileType === "single" ? (

@@ -20,7 +20,6 @@ const INITIAL_DATA: AutoTapFormData = {
   socialLinks: {},
   logo: "",
   logoWidthCm: "",
-  stickerName: "",
   displayName: "",
   theme: "neon-red-track",
 };

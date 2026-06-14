@@ -44,7 +44,6 @@ export interface AutoTapFields {
   addressDetail: string;
   selectedPlatform?: string;
   singlePlatformValue?: string;
-  stickerName?: string;
 }
 
 export interface AutoTapFormData {
@@ -58,7 +57,6 @@ export interface AutoTapFormData {
   socialLinks: Record<string, string>;
   logo: string;
   logoWidthCm: string;
-  stickerName: string;
   displayName: string;
   theme: Theme;
 }

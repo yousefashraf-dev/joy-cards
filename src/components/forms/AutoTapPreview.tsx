@@ -176,7 +176,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                 <h3 className="text-lg font-black text-white mb-5 uppercase tracking-[0.15em] drop-shadow-[0_0_8px_rgba(0,243,255,0.3)]"
                   style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
                 >
-                  {data.stickerName || data.customerName || "YOUR NAME"}
+                  {data.displayName || data.customerName || "YOUR NAME"}
                 </h3>
                 {renderLinks(
                   "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.08] transition-all duration-300 group"
@@ -198,7 +198,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               <h3 className="text-lg font-black text-white mb-5 uppercase tracking-[0.15em] drop-shadow-[0_0_8px_rgba(255,49,49,0.3)]"
                 style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
               >
-                {data.stickerName || data.customerName || "YOUR NAME"}
+                {data.displayName || data.customerName || "YOUR NAME"}
               </h3>
               {renderLinks(
                 "flex items-center gap-3 w-full p-3 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-xs font-bold"
@@ -223,7 +223,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                 <h3 className="text-xl font-semibold text-white mb-5 tracking-wide"
                   style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontWeight: 500 }}
                 >
-                  {data.stickerName || data.customerName || "Your Name"}
+                  {data.displayName || data.customerName || "Your Name"}
                 </h3>
                 {renderLinks(
                   "flex items-center gap-3 w-full p-3 rounded-full bg-white/[0.04] backdrop-blur border border-nardo/15 text-slate-light hover:border-nardo/40 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(192,192,192,0.1)] transition-all duration-300 group"
@@ -246,7 +246,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               <h3 className="text-lg mb-5 tracking-wide text-slate-light"
                 style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontWeight: 600 }}
               >
-                {data.stickerName || data.customerName || "Your Name"}
+                {data.displayName || data.customerName || "Your Name"}
               </h3>
               {renderLinks(
                 "flex items-center gap-3 w-full p-3 rounded-md border border-silver/15 bg-[#1E1E1E] text-slate-light hover:border-silver/40 hover:bg-[#252525] transition-all duration-300 group"
@@ -270,7 +270,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               <div className="rounded-2xl p-6 text-center bg-gradient-to-br from-[#0D001A] via-[#0D001A] to-[#001A1A] backdrop-blur-2xl">
                 {avatarCircle("ring-2 ring-purple-500/40 shadow-[0_0_25px_rgba(124,58,237,0.2)]")}
                 <h3 className="text-lg font-extralight text-white mb-5 tracking-[0.15em] uppercase drop-shadow-[0_0_6px_rgba(0,243,255,0.15)]">
-                  {data.stickerName || data.customerName || "your name"}
+                  {data.displayName || data.customerName || "your name"}
                 </h3>
                 {renderLinks(
                   "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group"
@@ -293,7 +293,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               </p>
               {avatarCircle("ring-2 ring-cyan/60 shadow-[0_0_25px_rgba(0,243,255,0.3)]")}
               <h3 className="text-lg font-bold text-white mb-5 tracking-wide">
-                {data.stickerName || data.customerName || "USER"}
+                {data.displayName || data.customerName || "USER"}
               </h3>
               {renderLinks(
                 "flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/30 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group"

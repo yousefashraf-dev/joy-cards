@@ -111,16 +111,14 @@ export async function submitOrder(
   // 6. Send to Google Apps Script
   // Using mode: "no-cors" to bypass CORS restrictions.
   // GAS receives the JSON body via e.postData.contents regardless of content-type.
+  // IMPORTANT: No AbortController timeout — GAS cold starts can be slow.
+  // We rely on the caller's safety timer instead (30s in handleSubmit).
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
     await fetch(GAS_URL, {
       method: "POST",
       mode: "no-cors",
       body: JSON.stringify(gasPayload),
-      signal: controller.signal,
     });
-    clearTimeout(timeoutId);
     console.log("GAS request sent successfully (opaque response, cannot read body)");
   } catch (error) {
     console.error("==========================================");
@@ -128,6 +126,7 @@ export async function submitOrder(
     console.error("Error:", error);
     console.error("GAS URL:", GAS_URL);
     console.error("==========================================");
+    throw error;
   }
 
   return {

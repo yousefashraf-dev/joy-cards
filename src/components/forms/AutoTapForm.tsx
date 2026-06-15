@@ -158,7 +158,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     setErrors({});
   };
 
-  const TIMEOUT_MS = 20000;
+  const TIMEOUT_MS = 30000;
 
   const handleSubmit = async () => {
     if (!validateStep()) return;

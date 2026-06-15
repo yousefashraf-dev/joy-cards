@@ -464,21 +464,28 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                   </button>
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                  className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 disabled:opacity-50"
-                >
-                  <Upload
-                    className={`w-6 h-6 ${
-                      uploading ? "text-nardo animate-pulse" : "text-slate-body"
-                    }`}
-                  />
-                  <span className="text-sm text-slate-body">
-                    {uploading ? t("uploading") : t("uploadHelper")}
-                  </span>
-                </button>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 disabled:opacity-50"
+                  >
+                    <Upload
+                      className={`w-6 h-6 ${
+                        uploading ? "text-nardo animate-pulse" : "text-slate-body"
+                      }`}
+                    />
+                    <span className="text-sm text-slate-body">
+                      {uploading ? t("uploading") : t("uploadHelper")}
+                    </span>
+                  </button>
+                  {uploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-dark-card/80 rounded-xl">
+                      <div className="w-8 h-8 border-2 border-nardo border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                </div>
               )}
               <input
                 ref={fileInputRef}

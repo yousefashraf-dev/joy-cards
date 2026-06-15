@@ -75,17 +75,17 @@ export default function Navbar() {
       </div>
 
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 top-16 bg-matte-black/98 backdrop-blur-xl z-40">
-          <div className="flex flex-col items-center justify-center gap-8 h-full">
+        <div className="lg:hidden fixed inset-0 top-16 bg-matte-black/98 backdrop-blur-xl z-[60]">
+          <div className="flex flex-col items-stretch gap-2 h-full overflow-y-auto px-6 py-8">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                 className={`text-lg font-medium transition-colors ${
+                 className={`text-center text-lg font-medium py-3 px-4 rounded-xl transition-colors ${
                    isActive(link.href)
-                     ? "text-nardo"
-                     : "text-slate-muted hover:text-slate-light"
+                     ? "text-nardo bg-nardo/10"
+                     : "text-slate-muted hover:text-slate-light hover:bg-white/5"
                  }`}
                >
                  {link.label}
@@ -93,7 +93,7 @@ export default function Navbar() {
              ))}
              <button
                onClick={toggleLocale}
-               className="flex items-center gap-2 text-lg text-slate-muted hover:text-nardo transition-colors mt-4"
+               className="flex items-center justify-center gap-2 text-lg text-slate-muted hover:text-nardo transition-colors mt-4 py-3 px-4 rounded-xl hover:bg-white/5"
             >
               <Globe className="w-5 h-5" />
               <span>{t("language")}</span>

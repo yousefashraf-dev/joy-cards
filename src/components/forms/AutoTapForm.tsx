@@ -34,9 +34,10 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const locale = useLocale();
 
   const [step, setStep] = useState(0);
+  const stepperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [step]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -216,13 +217,15 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       }, pricing.total, locale);
       clearTimeout(safetyTimer);
       showToast("تم إرسال الطلب بنجاح", "success");
+      hideLoading();
+      setSubmitting(false);
+      setShowSuccess(true);
     } catch {
       clearTimeout(safetyTimer);
+      hideLoading();
+      setSubmitting(false);
       showToast("فشل الإرسال، حاول مرة أخرى", "error");
     }
-    hideLoading();
-    setSubmitting(false);
-    setShowSuccess(true);
   };
 
   const handleFormReset = useCallback(() => {
@@ -233,7 +236,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   }, [onSubmitComplete]);
 
   const renderStepIndicator = () => (
-    <div className="flex items-center justify-center gap-2 mb-8">
+    <div ref={stepperRef} className="flex items-center justify-center gap-2 mb-8">
       {STEPS.map((s, i) => (
         <div key={s} className="flex items-center gap-2">
           <div

@@ -75,7 +75,7 @@ export default function Navbar() {
       </div>
 
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 top-16 bg-matte-black/98 backdrop-blur-xl z-[60]">
+        <div className="lg:hidden fixed inset-x-0 start-0 top-16 bg-matte-black/95 backdrop-blur-xl z-[60]">
           <div className="flex flex-col items-stretch gap-2 h-full overflow-y-auto px-6 py-8">
             {links.map((link) => (
               <Link

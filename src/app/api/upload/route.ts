@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
     }
 
-    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "application/pdf"];
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "application/pdf"];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }
@@ -36,8 +36,9 @@ export async function POST(request: NextRequest) {
         {
           resource_type: resourceType,
           folder: "gotap",
-          quality: "auto",
-          fetch_format: "auto",
+          quality: "auto:good",
+          fetch_format: "webp",
+          format: "webp",
         },
         (error, result) => {
           if (error) reject(error);

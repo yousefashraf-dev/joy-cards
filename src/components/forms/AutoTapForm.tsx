@@ -1,33 +1,24 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import {
   ChevronRight, ChevronLeft, Upload, X, ImageIcon, Ruler,
-  Crown, Flame, Zap, Shield, Droplets, Terminal,
 } from "lucide-react";
-import type { AutoTapFormData, Theme } from "@/lib/types";
+import type { AutoTapFormData } from "@/lib/types";
 import { formatSocialLink, type Platform } from "@/lib/formatSocialLink";
 import { submitOrder } from "@/lib/submitOrder";
-import { PRODUCT_THEMES, ALL_THEMES, PLATFORM_OPTIONS } from "@/lib/constants";
+import { PLATFORM_OPTIONS } from "@/lib/constants";
 import { calcTotal } from "@/lib/pricing";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SuccessModal from "./SuccessModal";
+import AutoTapPreview from "./AutoTapPreview";
 import { useLoading } from "@/components/ui/LoadingProvider";
 import { useToast } from "@/components/ui/ToastProvider";
 
 const STEPS = ["shipping", "social", "design", "sizing"] as const;
-
-const themeIconMap: Record<string, React.ElementType> = {
-  Crown, Flame, Zap, Shield, Droplets, Terminal,
-};
-
-function themeIdToLabelKey(id: string): string {
-  // Convert "neon-red-track" → "neonRedTrack" to match JSON keys
-  return id.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-}
 
 interface AutoTapFormProps {
   data: AutoTapFormData;
@@ -43,6 +34,13 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const locale = useLocale();
 
   const [step, setStep] = useState(0);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [step]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -77,13 +75,38 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     [data.socialLinks, onChange, clearError]
   );
 
+  const convertToWebP = (file: File, quality = 0.8): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const imgEl = document.createElement("img");
+      imgEl.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = imgEl.width;
+        canvas.height = imgEl.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { reject(new Error("Canvas 2D context unavailable")); return; }
+        ctx.drawImage(imgEl, 0, 0);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("WebP conversion failed"));
+          },
+          "image/webp",
+          quality
+        );
+      };
+      imgEl.onerror = () => reject(new Error("Image load failed"));
+      imgEl.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     try {
+      const webpBlob = await convertToWebP(file, 0.8);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", webpBlob, "logo.webp");
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const resData = await res.json();
       if (resData.url) {
@@ -91,6 +114,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       }
     } catch (err) {
       console.error("Upload failed:", err);
+      showToast("فشل رفع الصورة، حاول مرة أخرى", "error");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -240,7 +264,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     errors[key] && <p className="text-red-400 text-xs mt-1">{errors[key]}</p>;
 
   return (
-    <>
+    <div ref={formRef}>
       {renderStepIndicator()}
 
       <motion.div
@@ -251,7 +275,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       >
         {/* Step 1: Shipping */}
         {step === 0 && (
-          <div className="space-y-5 overflow-y-auto max-h-[70vh] px-1">
+          <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-nardo mb-1">
               {t("section.personal")}
             </h3>
@@ -438,67 +462,70 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               </div>
             )}
 
-            <div>
-              <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
-                <ImageIcon className="w-4 h-4" />
-                <span>{t("fields.logo")}</span>
-                <span className="text-xs text-slate-body/60">({t("fields.optional")})</span>
-              </label>
-              <p className="text-xs text-slate-body/70 mb-2">{t("logoText")}</p>
-              {data.logo ? (
-                <div className="relative inline-block">
-                  <Image
-                    src={data.logo}
-                    alt="Logo preview"
-                    width={96}
-                    height={96}
-                    className="w-24 h-24 rounded-xl object-cover border border-white/10"
-                    unoptimized
-                  />
-                  <button
-                    type="button"
-                    onClick={() => onChange("logo", "")}
-                    className="absolute -top-2 -end-2 w-6 h-6 rounded-full bg-red-500/80 flex items-center justify-center hover:bg-red-500 transition-colors"
-                  >
-                    <X className="w-3 h-3 text-white" />
-                  </button>
-                </div>
-              ) : (
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 disabled:opacity-50"
-                  >
-                    <Upload
-                      className={`w-6 h-6 ${
-                        uploading ? "text-nardo animate-pulse" : "text-slate-body"
-                      }`}
+              <div>
+                <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
+                  <ImageIcon className="w-4 h-4" />
+                  <span>{t("fields.logo")}</span>
+                  <span className="text-xs text-slate-body/60">({t("fields.optional")})</span>
+                </label>
+                <p className="text-xs text-slate-body/70 mb-2">{t("logoText")}</p>
+                {data.logo ? (
+                  <div className="relative inline-block">
+                    <Image
+                      src={data.logo}
+                      alt="Logo preview"
+                      width={96}
+                      height={96}
+                      className="w-24 h-24 rounded-xl object-cover border border-white/10"
+                      unoptimized
                     />
-                    <span className="text-sm text-slate-body">
-                      {uploading ? t("uploading") : t("uploadHelper")}
-                    </span>
-                  </button>
-                  {uploading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-dark-card/80 rounded-xl">
-                      <div className="w-8 h-8 border-2 border-nardo border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  )}
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/jpg"
-                onChange={handleLogoUpload}
-                className="hidden"
-              />
-            </div>
+                    <button
+                      type="button"
+                      onClick={() => onChange("logo", "")}
+                      className="absolute -top-2 -end-2 w-6 h-6 rounded-full bg-red-500/80 flex items-center justify-center hover:bg-red-500 transition-colors"
+                    >
+                      <X className="w-3 h-3 text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 disabled:opacity-50"
+                    >
+                      <Upload
+                        className={`w-6 h-6 ${
+                          uploading ? "text-nardo animate-pulse" : "text-slate-body"
+                        }`}
+                      />
+                      <span className="text-sm text-slate-body">
+                        {uploading ? t("uploading") : t("uploadHelper")}
+                      </span>
+                    </button>
+                    {uploading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-matte-dark/90 rounded-xl z-10">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-10 h-10 border-3 border-nardo border-t-transparent rounded-full animate-spin" />
+                          <span className="text-xs text-slate-body/70">{t("uploading")}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+              </div>
           </div>
         )}
 
-        {/* Step 3: Choose Your Design */}
+        {/* Step 3: Choose Your Design — Interactive Preview Carousel */}
         {step === 2 && (
           <div className="space-y-5">
             <h3 className="text-lg font-semibold text-nardo mb-4">
@@ -508,52 +535,10 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               {t("helper.previewGuide")}
             </p>
             <p className="text-sm text-nardo font-medium mb-3">{t("helper.themeHeader")}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {PRODUCT_THEMES["auto-tap"].map((themeId) => {
-                const themeConfig = ALL_THEMES.find((th) => th.id === themeId);
-                if (!themeConfig) return null;
-                const Icon = themeIconMap[themeConfig.icon] || Crown;
-                const isSelected = data.theme === themeId;
-                const labelKey = themeIdToLabelKey(themeId);
-                return (
-                  <motion.button
-                    key={themeId}
-                    type="button"
-                    onClick={() => handleFieldChange("theme", themeId)}
-                    className={`relative rounded-xl p-5 text-left w-full h-full transition-all duration-300 ${
-                      isSelected
-                        ? "border-2 border-nardo bg-nardo/15 shadow-[0_0_20px_rgba(192,192,192,0.15)] ring-1 ring-nardo/30"
-                        : "border border-white/20 bg-dark-card hover:border-white/40 hover:bg-dark-card/80"
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                        isSelected ? "bg-nardo/20" : "bg-white/5"
-                      }`}>
-                        <Icon className={`w-5 h-5 ${isSelected ? "text-nardo" : "text-slate-body"}`} />
-                      </div>
-                      <div className="min-w-0">
-                        <span className={`block text-sm font-bold leading-tight truncate ${
-                          isSelected ? "text-nardo" : "text-slate-light"
-                        }`}>
-                          {t(`themeOptions.${labelKey}`)}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-body/70 leading-relaxed line-clamp-2">
-                      {t(`themeOptions.${labelKey}Desc`)}
-                    </p>
-                    {isSelected && (
-                      <div className="absolute top-3 end-3 w-6 h-6 rounded-full bg-nardo flex items-center justify-center shadow-[0_0_10px_rgba(192,192,192,0.3)]">
-                        <span className="text-matte-dark text-xs font-bold">✓</span>
-                      </div>
-                    )}
-                  </motion.button>
-                );
-              })}
-            </div>
+            <AutoTapPreview
+              data={data}
+              onThemeChange={(theme) => handleFieldChange("theme", theme)}
+            />
           </div>
         )}
 
@@ -710,6 +695,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         totalPrice={orderPricing?.totalPrice}
         shippingFee={orderPricing?.shippingFee}
       />
-    </>
+    </div>
   );
 }

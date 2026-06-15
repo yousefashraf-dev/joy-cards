@@ -5,9 +5,8 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Car, Droplets, Zap, Wind, Info } from "lucide-react";
-import type { AutoTapFormData, Theme } from "@/lib/types";
+import type { AutoTapFormData } from "@/lib/types";
 import AutoTapForm from "@/components/forms/AutoTapForm";
-import AutoTapPreview from "@/components/forms/AutoTapPreview";
 
 const INITIAL_DATA: AutoTapFormData = {
   customerName: "",
@@ -27,19 +26,11 @@ const INITIAL_DATA: AutoTapFormData = {
 export default function AutoTapPage() {
   const t = useTranslations("products.autoTap");
   const p = useTranslations("products.pricing");
-  const at = useTranslations("products.autoTap");
   const [formData, setFormData] = useState<AutoTapFormData>(INITIAL_DATA);
 
   const handleFieldChange = useCallback(
     (key: string, value: string | boolean | Record<string, string>) => {
       setFormData((prev) => ({ ...prev, [key]: value }));
-    },
-    []
-  );
-
-  const handleThemeChange = useCallback(
-    (theme: Theme) => {
-      setFormData((prev) => ({ ...prev, theme }));
     },
     []
   );
@@ -96,7 +87,7 @@ export default function AutoTapPage() {
             <p className="text-[10px] text-slate-muted/40 mt-2">{p("disclaimer")}</p>
             <p className="text-[10px] text-white/30 mt-1">
               <span className="text-nardo/60">★</span>{" "}
-              {at("windowNotice")}
+              {t("windowNotice")}
             </p>
           </motion.div>
         </div>
@@ -113,7 +104,7 @@ export default function AutoTapPage() {
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-green/10 border border-neon-green/20 text-neon-green text-xs mb-6">
                 <Car className="w-4 h-4" />
-                <span>{at("badge")}</span>
+                <span>{t("badge")}</span>
               </div>
               <h1 className="text-3xl md:text-5xl font-bold text-slate-light mb-6">
                 {t("title")}
@@ -131,7 +122,7 @@ export default function AutoTapPage() {
                       <Icon className="w-5 h-5 text-neon-green" />
                     </div>
                     <span className="text-sm text-slate-light">
-                      {at(`features.${key}`)}
+                      {t(`features.${key}`)}
                     </span>
                   </div>
                 ))}
@@ -165,29 +156,18 @@ export default function AutoTapPage() {
       <section className="py-12 lg:py-16 bg-matte-dark/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="grid lg:grid-cols-5 gap-8"
+            className="max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            {/* Mobile Preview (above form on small screens) */}
-            <div className="lg:hidden lg:col-span-2 order-first">
-              <AutoTapPreview data={formData} onThemeChange={handleThemeChange} />
-            </div>
-
-            {/* Form */}
-            <div className="lg:col-span-3 glass bg-dark-card/50 border border-white/5 rounded-2xl p-6 lg:p-8">
+            <div className="glass bg-dark-card/50 border border-white/5 rounded-2xl p-6 lg:p-8">
               <AutoTapForm
                 data={formData}
                 onChange={handleFieldChange}
                 onSubmitComplete={handleSubmitComplete}
               />
-            </div>
-
-            {/* Desktop Preview (right side, sticky) */}
-            <div className="hidden lg:block lg:col-span-2">
-              <AutoTapPreview data={formData} onThemeChange={handleThemeChange} />
             </div>
           </motion.div>
         </div>

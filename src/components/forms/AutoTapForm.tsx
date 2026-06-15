@@ -251,10 +251,11 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       >
         {/* Step 1: Shipping */}
         {step === 0 && (
-          <div className="space-y-5">
-            <h3 className="text-lg font-semibold text-nardo mb-4">
+          <div className="space-y-5 overflow-y-auto max-h-[70vh] px-1">
+            <h3 className="text-lg font-semibold text-nardo mb-1">
               {t("section.personal")}
             </h3>
+            <p className="text-xs text-slate-body/70 mb-4">{t("helper.shippingInfo")}</p>
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.customerName")}
@@ -499,6 +500,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             <p className="text-xs text-slate-body/70 mb-2">
               {t("helper.previewGuide")}
             </p>
+            <p className="text-sm text-nardo font-medium mb-3">{t("helper.themeHeader")}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {PRODUCT_THEMES["auto-tap"].map((themeId) => {
                 const themeConfig = ALL_THEMES.find((th) => th.id === themeId);

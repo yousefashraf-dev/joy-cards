@@ -62,7 +62,7 @@ export default function SuccessModal({ isOpen, onClose, onWhatsappClick, orderDe
           />
 
           <motion.div
-            className="relative glass-strong bg-dark-card border border-white/10 rounded-2xl p-8 max-w-md w-full text-center"
+            className="relative glass-strong bg-dark-card border border-white/10 rounded-2xl p-8 max-w-md w-full mx-4 text-center"
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}

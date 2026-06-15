@@ -10,7 +10,7 @@ export default function FloatingWhatsApp() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 end-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-5 end-5 z-50 flex flex-col items-end gap-3">
       {open && (
         <div
           className="glass bg-dark-card/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 w-80 shadow-2xl"
@@ -69,10 +69,10 @@ export default function FloatingWhatsApp() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="relative w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg shadow-[#25D366]/30 hover:shadow-[#25D366]/50 hover:scale-105 active:scale-95 transition-all duration-200 group"
+        className="relative w-11 h-11 rounded-full bg-[#25D366] flex items-center justify-center shadow-md shadow-black/20 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 group"
       >
-        <div className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20 group-hover:opacity-30" style={{ animationDuration: "2s" }} />
-        <MessageCircle className="w-7 h-7 text-white relative z-10" />
+        <div className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-10 group-hover:opacity-20" style={{ animationDuration: "2s" }} />
+        <MessageCircle className="w-5 h-5 text-white relative z-10" />
       </button>
     </div>
   );

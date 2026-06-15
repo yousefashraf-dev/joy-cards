@@ -43,7 +43,7 @@ export default function ProductCard({
             <p className="text-slate-muted text-sm leading-relaxed mb-6 flex-1">
               {description}
             </p>
-            <div className="flex items-center gap-2 text-nardo font-medium text-sm">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-light/90 text-matte-dark font-semibold text-sm hover:bg-slate-light group-hover:shadow-lg transition-all duration-300">
               <span>{cta}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
             </div>

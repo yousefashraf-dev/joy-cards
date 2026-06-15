@@ -221,7 +221,9 @@
         "previewGuide": "Enter your data below and watch your design change here instantly ✨",
         "customerName": "Full name for shipping and order confirmation",
         "phone": "For delivery updates and order confirmation",
-        "addressDetail": "City, district, street, building number for shipping"
+        "addressDetail": "City, district, street, building number for shipping",
+        "shippingInfo": "This data is required for the shipping company",
+        "themeHeader": "This is the design that will display your data, choose one:"
       },
       "placeholders": {
         "addressDetail": "City, district, street, building number",

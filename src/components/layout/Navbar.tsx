@@ -15,8 +15,8 @@ export default function Navbar() {
 
   const links = [
     { href: "/", label: t("home") },
-    { href: "/digital-cards", label: t("digitalCards") },
     { href: "/auto-tap", label: t("autoTap") },
+    { href: "/digital-cards", label: t("digitalCards") },
     { href: "/business-tap", label: t("businessTap") },
   ];
 
@@ -55,13 +55,14 @@ export default function Navbar() {
                  {link.label}
                </Link>
              ))}
-             <button
-               onClick={toggleLocale}
-               className="flex items-center gap-1.5 text-sm text-slate-muted hover:text-nardo transition-colors duration-200"
-            >
-              <Globe className="w-4 h-4" />
-              <span>{t("language")}</span>
-            </button>
+              <button
+                onClick={toggleLocale}
+                className="w-10 h-10 rounded-full glass bg-dark-card/80 border border-white/10 flex items-center justify-center gap-1 text-xs font-bold text-slate-muted hover:text-nardo hover:border-nardo/50 transition-all duration-200"
+                aria-label="Toggle language"
+              >
+                <Globe className="w-3.5 h-3.5" />
+                <span>{locale === "en" ? "AR" : "EN"}</span>
+              </button>
           </div>
 
           <button
@@ -91,13 +92,13 @@ export default function Navbar() {
                  {link.label}
                </Link>
              ))}
-             <button
-               onClick={toggleLocale}
-               className="flex items-center justify-center gap-2 text-lg text-slate-muted hover:text-nardo transition-colors mt-4 py-3 px-4 rounded-xl hover:bg-white/5"
-            >
-              <Globe className="w-5 h-5" />
-              <span>{t("language")}</span>
-            </button>
+              <button
+                onClick={toggleLocale}
+                className="flex items-center justify-center gap-2 text-lg text-slate-muted hover:text-nardo transition-colors mt-4 py-3 px-4 rounded-xl hover:bg-white/5"
+              >
+                <Globe className="w-5 h-5" />
+                <span>{locale === "en" ? "AR" : "EN"}</span>
+              </button>
           </div>
         </div>
       )}

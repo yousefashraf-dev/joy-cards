@@ -207,10 +207,10 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                     {renderLinks(
                       "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.08] transition-all duration-300 group"
                         + (isSingle ? "" : ""),
-                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.08] transition-all duration-300 group",
+                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.08] transition-all duration-300 group min-w-0",
                       "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.08] transition-all duration-300 group",
                       "w-8 h-8 rounded-full bg-cyan/15 flex items-center justify-center group-hover:bg-cyan/25 transition-colors",
-                      "flex-1 text-start text-xs font-bold tracking-wider",
+                      "flex-1 text-start text-xs font-bold truncate min-w-0",
                       "text-cyan/60 group-hover:text-cyan"
                     )}
                   </div>
@@ -229,11 +229,11 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                   {renderLinks(
                     "flex items-center gap-3 w-full p-3 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-xs font-bold"
                       + (isSingle ? " rounded-lg" : ""),
-                    "flex flex-col items-center gap-1.5 p-2.5 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-[10px] font-bold rounded-lg"
+                    "flex flex-col items-center gap-1.5 p-2.5 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-[10px] font-bold rounded-lg min-w-0"
                       + (!isSingle ? "" : ""),
                     "flex items-center gap-3 w-full p-3 border-2 border-red-500/50 bg-black/60 text-white hover:border-red-500 hover:shadow-[0_0_20px_rgba(255,49,49,0.35)] transition-all duration-300 group uppercase tracking-wider text-xs font-bold rounded-lg",
                     "w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center group-hover:bg-red-500/30 transition-colors",
-                    "flex-1 text-start text-xs font-bold tracking-wider",
+                    "flex-1 text-start text-xs font-bold truncate min-w-0",
                     "text-red-500/60 group-hover:text-red-500"
                   )}
                 </div>
@@ -254,14 +254,14 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                     {renderLinks(
                       "flex items-center gap-3 w-full p-3 rounded-full bg-white/[0.04] backdrop-blur border border-nardo/15 text-slate-light hover:border-nardo/40 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(192,192,192,0.1)] transition-all duration-300 group"
                         + (isSingle ? "" : ""),
-                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur border border-nardo/15 text-slate-light hover:border-nardo/40 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(192,192,192,0.1)] transition-all duration-300 group",
+                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur border border-nardo/15 text-slate-light hover:border-nardo/40 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(192,192,192,0.1)] transition-all duration-300 group min-w-0",
                       "flex items-center gap-3 w-full p-3 rounded-full bg-white/[0.04] backdrop-blur border border-nardo/15 text-slate-light hover:border-nardo/40 hover:bg-white/[0.08] hover:shadow-[0_0_15px_rgba(192,192,192,0.1)] transition-all duration-300 group",
-                      "w-8 h-8 rounded-full bg-nardo/10 flex items-center justify-center group-hover:bg-nardo/20 transition-colors",
-                      "flex-1 text-start text-xs font-medium text-slate-muted group-hover:text-slate-light",
-                      "text-nardo/40 group-hover:text-nardo"
-                    )}
-                  </div>
+                    "w-8 h-8 rounded-full bg-nardo/10 flex items-center justify-center group-hover:bg-nardo/20 transition-colors",
+                    "flex-1 text-start text-xs font-medium text-slate-muted group-hover:text-slate-light truncate min-w-0",
+                    "text-nardo/40 group-hover:text-nardo"
+                  )}
                 </div>
+              </div>
               )}
 
               {/* Theme 4: Classic Royal Silver */}
@@ -277,10 +277,10 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                   {renderLinks(
                     "flex items-center gap-3 w-full p-3 rounded-md border border-silver/15 bg-[#1E1E1E] text-slate-light hover:border-silver/40 hover:bg-[#252525] transition-all duration-300 group"
                       + (isSingle ? "" : ""),
-                    "flex flex-col items-center gap-1.5 p-2.5 rounded-md border border-silver/15 bg-[#1E1E1E] text-slate-light hover:border-silver/40 hover:bg-[#252525] transition-all duration-300 group",
-                    "flex items-center gap-3 w-full p-3 rounded-md border border-silver/15 bg-[#1E1E1E] text-slate-light hover:border-silver/40 hover:bg-[#252525] transition-all duration-300 group",
+"flex flex-col items-center gap-1.5 p-2.5 rounded-md border border-silver/15 bg-[#1E1E1E] text-slate-light hover:border-silver/40 hover:bg-[#252525] transition-all duration-300 group min-w-0",
+"flex items-center gap-3 w-full p-3 rounded-md border border-silver/15 bg-[#1E1E1E] text-slate-light hover:border-silver/40 hover:bg-[#252525] transition-all duration-300 group",
                     "w-8 h-8 rounded-full bg-silver/10 flex items-center justify-center group-hover:bg-silver/20 transition-colors",
-                    "flex-1 text-start text-xs font-medium tracking-wide"
+                    "flex-1 text-start text-xs font-medium truncate min-w-0"
                       + (isSingle ? "" : " text-center"),
                     "text-silver/30 group-hover:text-silver"
                   )}
@@ -301,14 +301,14 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                     {renderLinks(
                       "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group"
                         + (isSingle ? "" : ""),
-                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group",
-                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group",
-                      "w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-cyan/15 transition-colors",
-                      "flex-1 text-start text-[11px] font-light tracking-wide uppercase",
-                      "text-cyan/40 group-hover:text-cyan"
-                    )}
-                  </div>
+"flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group min-w-0",
+"flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-white/10 text-white/90 hover:border-cyan/40 hover:shadow-[0_0_20px_rgba(0,243,255,0.15)] hover:bg-white/[0.06] transition-all duration-300 group",
+                    "w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-cyan/15 transition-colors",
+                    "flex-1 text-start text-[11px] font-light truncate min-w-0 uppercase",
+                    "text-cyan/40 group-hover:text-cyan"
+                  )}
                 </div>
+              </div>
               )}
 
               {/* Theme 6: Terminal Dark Glow */}
@@ -324,10 +324,10 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                   {renderLinks(
                     "flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group"
                       + (isSingle ? "" : ""),
-                    "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group",
-                    "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group",
+"flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group min-w-0",
+"flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.03] backdrop-blur-md border border-cyan/20 text-white/90 hover:border-cyan/60 hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] hover:bg-white/[0.06] transition-all duration-300 group",
                     "w-8 h-8 rounded-full bg-cyan/15 flex items-center justify-center group-hover:bg-cyan/25 transition-colors",
-                    "flex-1 text-start text-xs font-mono font-bold tracking-wider",
+                    "flex-1 text-start text-xs font-mono font-bold truncate min-w-0",
                     "text-cyan/60 group-hover:text-cyan"
                   )}
                   <div className="mt-4 pt-3 border-t border-cyan/10">
@@ -363,12 +363,12 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                     {renderLinks(
                       "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group"
                         + (isSingle ? "" : ""),
-                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group",
-                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group",
-                      "w-8 h-8 rounded-full bg-gradient-to-br from-cyan/20 to-red-600/10 flex items-center justify-center group-hover:from-cyan/30 group-hover:to-red-600/20 transition-all duration-300",
-                      "flex-1 text-start text-xs font-bold tracking-wider text-[#ECEFF1]",
-                      "text-cyan/60 group-hover:text-cyan"
-                    )}
+"flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group min-w-0",
+"flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-cyan/20 text-[#ECEFF1] hover:border-cyan/60 hover:shadow-[0_0_25px_rgba(0,243,255,0.3)] hover:bg-white/[0.08] transition-all duration-300 group",
+                    "w-8 h-8 rounded-full bg-gradient-to-br from-cyan/20 to-red-600/10 flex items-center justify-center group-hover:from-cyan/30 group-hover:to-red-600/20 transition-all duration-300",
+                    "flex-1 text-start text-xs font-bold text-[#ECEFF1] truncate min-w-0",
+                    "text-cyan/60 group-hover:text-cyan"
+                  )}
                   </div>
                 </div>
               )}

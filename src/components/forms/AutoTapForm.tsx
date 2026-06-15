@@ -160,10 +160,18 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     setErrors({});
   };
 
+  const TIMEOUT_MS = 20000;
+
   const handleSubmit = async () => {
     if (!validateStep()) return;
     setSubmitting(true);
     showLoading("جاري إرسال الطلب...");
+
+    const safetyTimer = setTimeout(() => {
+      hideLoading();
+      setSubmitting(false);
+      showToast("تعذر الاتصال بالخادم، تأكد من اتصالك بالإنترنت", "error");
+    }, TIMEOUT_MS);
 
     const pricing = calcTotal(data.profileType, data.addressDetail);
     setOrderPricing({ totalPrice: pricing.total, shippingFee: pricing.shippingFee });
@@ -205,8 +213,10 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
 
         },
       }, pricing.total, locale);
+      clearTimeout(safetyTimer);
       showToast("تم إرسال الطلب بنجاح", "success");
     } catch {
+      clearTimeout(safetyTimer);
       showToast("فشل الإرسال، حاول مرة أخرى", "error");
     }
     hideLoading();
@@ -508,7 +518,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                       <div className="absolute inset-0 flex items-center justify-center bg-matte-dark/90 rounded-xl z-10">
                         <div className="flex flex-col items-center gap-2">
                           <div className="w-10 h-10 border-3 border-nardo border-t-transparent rounded-full animate-spin" />
-                          <span className="text-xs text-slate-body/70">{t("uploading")}</span>
+                          <span className="text-xs text-slate-body/70">برجاء الانتظار، جاري رفع الصورة...</span>
                         </div>
                       </div>
                     )}
@@ -656,7 +666,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
 
       <div className="flex justify-between mt-6">
         {step > 0 ? (
-          <PrimaryButton type="button" onClick={handleBack}>
+          <PrimaryButton type="button" onClick={handleBack} disabled={uploading}>
             <ChevronLeft className="w-4 h-4" />
             {t("back")}
           </PrimaryButton>
@@ -664,7 +674,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           <div />
         )}
         {step < STEPS.length - 1 ? (
-          <PrimaryButton type="button" onClick={handleNext}>
+          <PrimaryButton type="button" onClick={handleNext} disabled={uploading}>
             {t("next")}
             <ChevronRight className="w-4 h-4" />
           </PrimaryButton>
@@ -672,7 +682,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           <PrimaryButton
             type="button"
             loading={submitting}
-            disabled={submitting}
+            disabled={submitting || uploading}
             onClick={handleSubmit}
           >
             {submitting ? t("submitting") : t("submit")}

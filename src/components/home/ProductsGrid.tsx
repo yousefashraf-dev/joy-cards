@@ -10,16 +10,16 @@ export default function ProductsGrid() {
 
   const products = [
     {
-      key: "digitalCards",
-      href: "/digital-cards",
-      gradient: "bg-gradient-to-br from-nardo/20 via-nardo/5 to-transparent",
-      icon: <CreditCard className="w-7 h-7 text-nardo" />,
-    },
-    {
       key: "autoTap",
       href: "/auto-tap",
       gradient: "bg-gradient-to-br from-neon-green/20 via-neon-green/5 to-transparent",
       icon: <Car className="w-7 h-7 text-neon-green" />,
+    },
+    {
+      key: "digitalCards",
+      href: "/digital-cards",
+      gradient: "bg-gradient-to-br from-nardo/20 via-nardo/5 to-transparent",
+      icon: <CreditCard className="w-7 h-7 text-nardo" />,
     },
     {
       key: "businessTap",

@@ -70,6 +70,7 @@ export async function submitOrder(
     profileId = docRef.id;
   } catch (error) {
     console.error("Firestore profile creation error:", error);
+    throw error;
   }
 
   // 2. Generate dynamic profile link for GAS payload
@@ -111,11 +112,15 @@ export async function submitOrder(
   // Using mode: "no-cors" to bypass CORS restrictions.
   // GAS receives the JSON body via e.postData.contents regardless of content-type.
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     await fetch(GAS_URL, {
       method: "POST",
       mode: "no-cors",
       body: JSON.stringify(gasPayload),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     console.log("GAS request sent successfully (opaque response, cannot read body)");
   } catch (error) {
     console.error("==========================================");

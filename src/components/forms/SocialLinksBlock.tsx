@@ -38,8 +38,11 @@ export default function SocialLinksBlock({ values, onChange, errors }: SocialLin
               </label>
               <input
                 type="text"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
                 value={values[platform.id] || ""}
-                onChange={(e) => onChange(platform.id, e.target.value)}
+                onChange={(e) => onChange(platform.id, platform.id === "whatsapp" || platform.id === "phoneSocial" ? e.target.value : e.target.value.toLowerCase())}
                 onBlur={() => {
                   const formatted = formatSocialLink(
                     values[platform.id] || "",
@@ -49,9 +52,14 @@ export default function SocialLinksBlock({ values, onChange, errors }: SocialLin
                     onChange(platform.id, formatted);
                   }
                 }}
-                placeholder={t(`fields.${platform.id}`)}
+                placeholder={platform.id === "whatsapp" ? "01012345678" : t(`fields.${platform.id}`)}
                 className="w-full px-4 py-2.5 rounded-lg glass bg-dark-card border border-white/10 text-slate-light text-sm placeholder:text-slate-muted/40 focus:outline-none focus:border-nardo/50 focus:ring-1 focus:ring-nardo/20 transition-all duration-200"
               />
+              <p className="text-xs text-slate-body/60 mt-1">
+                {platform.id === "whatsapp" || platform.id === "phoneSocial"
+                  ? t("whatsappHelper")
+                  : t("socialHelperText")}
+              </p>
               {errors[platform.id] && (
                 <p className="text-red-400 text-xs mt-1">{errors[platform.id]}</p>
               )}

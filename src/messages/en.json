@@ -207,7 +207,8 @@
         "energyLightning": "Energy Lightning",
         "energyLightningDesc": "Electric yellow-gold neon glow on dark charcoal base with bold impact typography"
       },
-      "socialHelperText": "Please add your profile links or usernames directly, the system will format and verify them.",
+      "socialHelperText": "You can type your username directly or paste your profile URL",
+      "whatsappHelper": "Please enter your WhatsApp phone number only, do not paste links",
       "uploadHelper": "Upload your logo or profile image (PNG, JPG)",
       "uploading": "Uploading...",
       "logoText": "You can add a logo image",

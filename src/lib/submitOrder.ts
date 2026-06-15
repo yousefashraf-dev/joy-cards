@@ -108,27 +108,29 @@ export async function submitOrder(
   console.log("Payload being sent:", JSON.stringify(gasPayload, null, 2));
   console.log("==========================================");
 
-  // 6. Send to Google Apps Script
+  // 6. Send to Google Apps Script (fire-and-forget — no await)
   // Using mode: "no-cors" to bypass CORS restrictions.
   // GAS receives the JSON body via e.postData.contents regardless of content-type.
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
-    await fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify(gasPayload),
-      signal: controller.signal,
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  fetch(GAS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(gasPayload),
+    signal: controller.signal,
+  })
+    .then(() => {
+      clearTimeout(timeoutId);
+      console.log("GAS request sent successfully (opaque response, cannot read body)");
+    })
+    .catch((error) => {
+      clearTimeout(timeoutId);
+      console.error("==========================================");
+      console.error("GAS FETCH FAILED - Order may not have been saved to sheet!");
+      console.error("Error:", error);
+      console.error("GAS URL:", GAS_URL);
+      console.error("==========================================");
     });
-    clearTimeout(timeoutId);
-    console.log("GAS request sent successfully (opaque response, cannot read body)");
-  } catch (error) {
-    console.error("==========================================");
-    console.error("GAS FETCH FAILED - Order may not have been saved to sheet!");
-    console.error("Error:", error);
-    console.error("GAS URL:", GAS_URL);
-    console.error("==========================================");
-  }
 
   return {
     success: true,

@@ -149,11 +149,11 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
 
   const avatarCircle = (ringClass: string) => (
     <div className="flex justify-center mb-4">
-      <div className={`w-20 h-20 rounded-full flex items-center justify-center overflow-hidden ${ringClass}`}>
+      <div className={`w-24 h-24 rounded-full flex items-center justify-center overflow-hidden ${ringClass}`}>
         {data.logo ? (
-          <Image src={data.logo} alt="Logo" width={80} height={80} className="w-full h-full object-cover rounded-full" unoptimized />
+          <Image src={data.logo} alt="Logo" width={96} height={96} className="w-full h-full object-cover rounded-full" unoptimized />
         ) : (
-          <span className={`text-xl font-bold ${ringClass.includes("cyan") ? "text-cyan" : ringClass.includes("red") ? "text-red-500" : ringClass.includes("nardo") ? "text-nardo/50" : ringClass.includes("silver") ? "text-silver/60" : "text-white/60"} drop-shadow-[0_0_6px_rgba(0,243,255,0.5)]`}>
+          <span className={`text-2xl font-bold ${ringClass.includes("cyan") ? "text-cyan" : ringClass.includes("red") ? "text-red-500" : ringClass.includes("nardo") ? "text-nardo/50" : ringClass.includes("silver") ? "text-silver/60" : "text-white/60"} drop-shadow-[0_0_6px_rgba(0,243,255,0.5)]`}>
             {data.customerName ? data.customerName.charAt(0).toUpperCase() : "?"}
           </span>
         )}
@@ -166,7 +166,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
 
   return (
     <div dir="ltr">
-      <div className="float-card bg-white/[0.03] border border-white/10 p-5">
+      <div className="float-card bg-white/[0.03] border border-white/10 p-6">
         <p className="text-xs text-slate-muted/60 text-center mb-4">
           {t("helper.previewGuide")}
         </p>
@@ -186,7 +186,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
             <motion.div
               key={themeId}
               initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 1, scale: 1.03 }}
               transition={{ duration: 0.3 }}
             >
               {/* Theme 1: Cyber Cyan Drift */}
@@ -199,7 +199,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                   />
                   <div className="relative z-10">
                     {avatarCircle("ring-2 ring-cyan/60 shadow-[0_0_20px_rgba(0,243,255,0.25)]")}
-                    <h3 className="text-lg font-black text-white mb-5 uppercase tracking-[0.15em] drop-shadow-[0_0_8px_rgba(0,243,255,0.3)]"
+                    <h3 className="text-xl font-black text-white mb-5 uppercase tracking-[0.15em] drop-shadow-[0_0_8px_rgba(0,243,255,0.3)]"
                       style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
                     >
                       {data.displayName || data.customerName || "YOUR NAME"}
@@ -221,7 +221,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               {themeId === "neon-red-track" && (
                 <div className="rounded-2xl p-6 text-center border border-red-500/40 bg-gradient-to-b from-[#1A0000] to-[#0D0000] shadow-[0_0_30px_rgba(255,49,49,0.2)]">
                   {avatarCircle("ring-2 ring-red-500/60 shadow-[0_0_25px_rgba(255,49,49,0.35)]")}
-                  <h3 className="text-lg font-black text-white mb-5 uppercase tracking-[0.15em] drop-shadow-[0_0_8px_rgba(255,49,49,0.3)]"
+                  <h3 className="text-xl font-black text-white mb-5 uppercase tracking-[0.15em] drop-shadow-[0_0_8px_rgba(255,49,49,0.3)]"
                     style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
                   >
                     {data.displayName || data.customerName || "YOUR NAME"}
@@ -269,7 +269,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                 <div className="rounded-2xl p-6 text-center border border-silver/20 bg-gradient-to-b from-[#1A1A1A] to-[#222222] shadow-[0_0_30px_rgba(192,192,192,0.06)]">
                   <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-silver/30 to-transparent mx-auto mb-5" />
                   {avatarCircle("border-2 border-silver/25 shadow-[0_0_18px_rgba(192,192,192,0.1)]")}
-                  <h3 className="text-lg mb-5 tracking-wide text-slate-light"
+                  <h3 className="text-xl mb-5 tracking-wide text-slate-light"
                     style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontWeight: 600 }}
                   >
                     {data.displayName || data.customerName || "Your Name"}
@@ -295,7 +295,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                 >
                   <div className="rounded-2xl p-6 text-center bg-gradient-to-br from-[#0D001A] via-[#0D001A] to-[#001A1A] backdrop-blur-2xl">
                     {avatarCircle("ring-2 ring-purple-500/40 shadow-[0_0_25px_rgba(124,58,237,0.2)]")}
-                    <h3 className="text-lg font-extralight text-white mb-5 tracking-[0.15em] uppercase drop-shadow-[0_0_6px_rgba(0,243,255,0.15)]">
+                    <h3 className="text-xl font-extralight text-white mb-5 tracking-[0.15em] uppercase drop-shadow-[0_0_6px_rgba(0,243,255,0.15)]">
                       {data.displayName || data.customerName || "your name"}
                     </h3>
                     {renderLinks(
@@ -318,7 +318,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                     GOTAP.EG TERMINAL
                   </p>
                   {avatarCircle("ring-2 ring-cyan/60 shadow-[0_0_25px_rgba(0,243,255,0.3)]")}
-                  <h3 className="text-lg font-bold text-white mb-5 tracking-wide">
+                  <h3 className="text-xl font-bold text-white mb-5 tracking-wide">
                     {data.displayName || data.customerName || "USER"}
                   </h3>
                   {renderLinks(

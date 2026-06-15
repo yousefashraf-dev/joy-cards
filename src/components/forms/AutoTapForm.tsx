@@ -34,12 +34,9 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const locale = useLocale();
 
   const [step, setStep] = useState(0);
-  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -164,8 +161,12 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
+    if (uploading) {
+      showToast("برجاء الانتظار حتى اكتمال رفع الصورة", "error");
+      return;
+    }
     setSubmitting(true);
-    showLoading("جاري إرسال الطلب...");
+    showLoading("جاري تأكيد الطلب وحفظ البيانات...");
 
     const safetyTimer = setTimeout(() => {
       hideLoading();
@@ -274,7 +275,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     errors[key] && <p className="text-red-400 text-xs mt-1">{errors[key]}</p>;
 
   return (
-    <div ref={formRef}>
+    <div>
       {renderStepIndicator()}
 
       <motion.div
@@ -309,6 +310,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               </label>
               <input
                 type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={data.phone}
                 onChange={(e) => handleFieldChange("phone", e.target.value)}
                 className={inputClass("phone")}
@@ -345,17 +348,17 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               <motion.button
                 type="button"
                 onClick={() => handleFieldChange("profileType", "single")}
-                className={`p-4 rounded-xl border text-left transition-all duration-300 ${
+                className={`p-4 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
                   data.profileType === "single"
-                    ? "border-nardo bg-nardo/15 shadow-[0_0_20px_rgba(192,192,192,0.15)] ring-1 ring-nardo/30"
-                    : "border-white/20 bg-dark-card hover:border-white/40 hover:bg-dark-card/80"
+                    ? "border-2 border-cyan-500 bg-cyan-500/10 shadow-[0_0_25px_rgba(0,243,255,0.2)] ring-2 ring-cyan-500/30"
+                    : "border border-white/15 bg-dark-card/60 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(0,243,255,0.08)] hover:bg-dark-card/80"
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <span
                   className={`text-sm font-semibold ${
-                    data.profileType === "single" ? "text-nardo" : "text-slate-light"
+                    data.profileType === "single" ? "text-cyan-400" : "text-slate-light group-hover:text-white"
                   }`}
                 >
                   {pt("single")}
@@ -367,17 +370,17 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               <motion.button
                 type="button"
                 onClick={() => handleFieldChange("profileType", "multiple")}
-                className={`p-4 rounded-xl border text-left transition-all duration-300 ${
+                className={`p-4 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
                   data.profileType === "multiple"
-                    ? "border-nardo bg-nardo/15 shadow-[0_0_20px_rgba(192,192,192,0.15)] ring-1 ring-nardo/30"
-                    : "border-white/20 bg-dark-card hover:border-white/40 hover:bg-dark-card/80"
+                    ? "border-2 border-cyan-500 bg-cyan-500/10 shadow-[0_0_25px_rgba(0,243,255,0.2)] ring-2 ring-cyan-500/30"
+                    : "border border-white/15 bg-dark-card/60 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(0,243,255,0.08)] hover:bg-dark-card/80"
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <span
                   className={`text-sm font-semibold ${
-                    data.profileType === "multiple" ? "text-nardo" : "text-slate-light"
+                    data.profileType === "multiple" ? "text-cyan-400" : "text-slate-light group-hover:text-white"
                   }`}
                 >
                   {pt("multiple")}
@@ -433,9 +436,12 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                   </label>
                   <input
                     type="text"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
                     value={data.singlePlatformValue}
                     onChange={(e) =>
-                      handleFieldChange("singlePlatformValue", e.target.value)
+                      handleFieldChange("singlePlatformValue", e.target.value.toLowerCase())
                     }
                     placeholder={t("fields.singlePlatformValue")}
                     className={inputClass("singlePlatformValue")}
@@ -457,11 +463,19 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                       </label>
                       <input
                         type="text"
+                        autoCapitalize={platform.id === "whatsapp" || platform.id === "phoneSocial" ? "none" : "none"}
+                        autoCorrect={platform.id === "whatsapp" || platform.id === "phoneSocial" ? "off" : "off"}
+                        spellCheck="false"
                         value={data.socialLinks[platform.id] || ""}
-                        onChange={(e) => handleSocialLinkChange(platform.id, e.target.value)}
-                        placeholder={t(`fields.${platform.id}`)}
+                        onChange={(e) => handleSocialLinkChange(platform.id, platform.id === "whatsapp" || platform.id === "phoneSocial" ? e.target.value : e.target.value.toLowerCase())}
+                        placeholder={platform.id === "whatsapp" ? "01012345678" : t(`fields.${platform.id}`)}
                         className={inputClass(platform.id)}
                       />
+                      <p className="text-xs text-slate-body/60 mt-1">
+                        {platform.id === "whatsapp" || platform.id === "phoneSocial"
+                          ? t("whatsappHelper")
+                          : t("socialHelperText")}
+                      </p>
                       {renderError(platform.id)}
                     </div>
                   ))}

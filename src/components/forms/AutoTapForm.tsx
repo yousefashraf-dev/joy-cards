@@ -531,7 +531,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                  accept="image/*"
                   onChange={handleLogoUpload}
                   className="hidden"
                 />

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Globe, MapPin, Briefcase, Mail, FileText, Palette } from "lucide-react";
+import { useToast } from "@/components/ui/ToastProvider";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FormData = Record<string, any>;
@@ -15,6 +16,7 @@ interface FormAProps {
 
 export default function FormA_DigitalCards({ data, onChange }: FormAProps) {
   const t = useTranslations("products.forms");
+  const { showToast } = useToast();
   const [pdfUploading, setPdfUploading] = useState(false);
   const pdfRef = useRef<HTMLInputElement>(null);
 
@@ -24,13 +26,23 @@ export default function FormA_DigitalCards({ data, onChange }: FormAProps) {
     if (file.type !== "application/pdf") return;
     setPdfUploading(true);
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const res = await fetch("/api/upload", { method: "POST", body: formData, signal: controller.signal });
+      clearTimeout(timeout);
       const result = await res.json();
-      if (result.url) onChange("pdfProfile", result.url);
+      if (!res.ok) {
+        showToast(t("uploadError"), "error");
+        return;
+      }
+      if (result.url) {
+        onChange("pdfProfile", result.url);
+        showToast(t("uploadSuccess"), "success");
+      }
     } catch {
-      // silent
+      showToast(t("uploadError"), "error");
     } finally {
       setPdfUploading(false);
     }

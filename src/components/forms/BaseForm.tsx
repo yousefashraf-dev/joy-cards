@@ -125,19 +125,19 @@ export default function BaseForm({ productType, specificFields, productSection, 
 
     if (productType === "digital-cards") {
       basePayload.digitalCardsFields = {
-        website: specificData.website || undefined,
-        googleMaps: specificData.googleMaps || undefined,
-        linkedin: specificData.linkedin || undefined,
-        email: specificData.email || undefined,
-        pdfProfile: specificData.pdfProfile || undefined,
+        website: specificData.website ? formatSocialLink(specificData.website, "website") : undefined,
+        googleMaps: specificData.googleMaps ? formatSocialLink(specificData.googleMaps, "googleMaps") : undefined,
+        linkedin: specificData.linkedin ? formatSocialLink(specificData.linkedin, "linkedin") : undefined,
+        email: specificData.email ? formatSocialLink(specificData.email, "email") : undefined,
+        pdfProfile: specificData.pdfProfile ? formatSocialLink(specificData.pdfProfile, "pdfProfile") : undefined,
       };
     } else if (productType === "business-tap") {
       basePayload.businessTapFields = {
         establishmentName: specificData.establishmentName,
         quantity: parseInt(specificData.quantity) || 1,
-        menuLink: specificData.menuLink || undefined,
-        googleReviews: specificData.googleReviews || undefined,
-        onlineOrdering: specificData.onlineOrdering || undefined,
+        menuLink: specificData.menuLink ? formatSocialLink(specificData.menuLink, "menuLink") : undefined,
+        googleReviews: specificData.googleReviews ? formatSocialLink(specificData.googleReviews, "googleReviews") : undefined,
+        onlineOrdering: specificData.onlineOrdering ? formatSocialLink(specificData.onlineOrdering, "onlineOrdering") : undefined,
       };
     }
 

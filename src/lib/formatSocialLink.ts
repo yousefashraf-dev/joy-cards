@@ -8,10 +8,15 @@ export type Platform =
   | "linkedin"
   | "website"
   | "maps"
+  | "googleMaps"
   | "email"
   | "menu"
+  | "menuLink"
   | "reviews"
-  | "ordering";
+  | "googleReviews"
+  | "ordering"
+  | "onlineOrdering"
+  | "pdfProfile";
 
 const PLATFORM_CONFIG: Record<Platform, { prefix?: string; transform?: (input: string) => string }> = {
   instagram: { prefix: "https://instagram.com/" },
@@ -23,10 +28,15 @@ const PLATFORM_CONFIG: Record<Platform, { prefix?: string; transform?: (input: s
   linkedin: { prefix: "https://linkedin.com/company/" },
   website: { prefix: "https://", transform: (input) => input.replace(/^https?:\/\//, "") },
   maps: { prefix: "" },
+  googleMaps: { prefix: "" },
   email: { prefix: "mailto:" },
   menu: { prefix: "https://", transform: (input) => input.replace(/^https?:\/\//, "") },
+  menuLink: { prefix: "https://", transform: (input) => input.replace(/^https?:\/\//, "") },
   reviews: { prefix: "" },
+  googleReviews: { prefix: "" },
   ordering: { prefix: "https://", transform: (input) => input.replace(/^https?:\/\//, "") },
+  onlineOrdering: { prefix: "https://", transform: (input) => input.replace(/^https?:\/\//, "") },
+  pdfProfile: { prefix: "" },
 };
 
 export function formatSocialLink(input: string, platform: Platform): string {

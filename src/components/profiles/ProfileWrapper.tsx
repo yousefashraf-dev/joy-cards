@@ -43,6 +43,19 @@ const AUTO_TAP_THEMES = new Set([
   "liquid-aurora",
 ]);
 
+function ensureUrl(url: string, isEmail = false): string {
+  if (!url) return url;
+  if (isEmail && url.includes("@")) {
+    if (!url.startsWith("mailto:")) return `mailto:${url}`;
+    return url;
+  }
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("mailto:") || url.startsWith("tel:")) {
+    return url;
+  }
+  if (url.includes("@")) return `mailto:${url}`;
+  return `https://${url}`;
+}
+
 function buildButtons(profile: Profile): ProfileButton[] {
   const buttons: ProfileButton[] = [];
   const l = profile.links || {};
@@ -56,18 +69,18 @@ function buildButtons(profile: Profile): ProfileButton[] {
 
   const dc = profile.digitalCardsFields;
   if (dc) {
-    if (dc.website)    buttons.push({ icon: "Globe", url: dc.website, label: "Website" });
-    if (dc.googleMaps) buttons.push({ icon: "MapPin", url: dc.googleMaps, label: "Location" });
-    if (dc.linkedin)   buttons.push({ icon: "Linkedin", url: dc.linkedin, label: "LinkedIn" });
-    if (dc.email)      buttons.push({ icon: "Mail", url: dc.email, label: "Email" });
-    if (dc.pdfProfile) buttons.push({ icon: "FileText", url: dc.pdfProfile, label: "Company Profile" });
+    if (dc.website)    buttons.push({ icon: "Globe", url: ensureUrl(dc.website), label: "Website" });
+    if (dc.googleMaps) buttons.push({ icon: "MapPin", url: ensureUrl(dc.googleMaps), label: "Location" });
+    if (dc.linkedin)   buttons.push({ icon: "Linkedin", url: ensureUrl(dc.linkedin), label: "LinkedIn" });
+    if (dc.email)      buttons.push({ icon: "Mail", url: ensureUrl(dc.email, true), label: "Email" });
+    if (dc.pdfProfile) buttons.push({ icon: "FileText", url: ensureUrl(dc.pdfProfile), label: "Company Profile" });
   }
 
   const bt = profile.businessTapFields;
   if (bt) {
-    if (bt.menuLink)         buttons.push({ icon: "Utensils", url: bt.menuLink, label: "Digital Menu" });
-    if (bt.googleReviews)    buttons.push({ icon: "Star", url: bt.googleReviews, label: "Google Reviews" });
-    if (bt.onlineOrdering)   buttons.push({ icon: "ShoppingCart", url: bt.onlineOrdering, label: "Order Online" });
+    if (bt.menuLink)         buttons.push({ icon: "Utensils", url: ensureUrl(bt.menuLink), label: "Digital Menu" });
+    if (bt.googleReviews)    buttons.push({ icon: "Star", url: ensureUrl(bt.googleReviews), label: "Google Reviews" });
+    if (bt.onlineOrdering)   buttons.push({ icon: "ShoppingCart", url: ensureUrl(bt.onlineOrdering), label: "Order Online" });
   }
 
   return buttons;

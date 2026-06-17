@@ -24,24 +24,45 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
     if (!file) return;
 
     setUploading(true);
-    showLoading("جاري رفع الصورة...");
+    showLoading(t("uploading"));
     try {
       const formData = new FormData();
       formData.append("file", file);
 
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+
       const res = await fetch("/api/upload", {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
 
+      clearTimeout(timeout);
+
       const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 400) {
+          const msg = data.error?.includes("large")
+            ? t("uploadErrorSize")
+            : t("uploadErrorType");
+          showToast(msg, "error");
+        } else {
+          showToast(t("uploadError"), "error");
+        }
+        return;
+      }
       if (data.url) {
         onChange(data.url);
-        showToast("تم رفع الصورة بنجاح", "success");
+        showToast(t("uploadSuccess"), "success");
       }
     } catch (err) {
       console.error("Upload failed:", err);
-      showToast("فشل رفع الصورة، حاول مرة أخرى", "error");
+      if (err instanceof DOMException && err.name === "AbortError") {
+        showToast(t("uploadError"), "error");
+      } else {
+        showToast(t("uploadError"), "error");
+      }
     } finally {
       hideLoading();
       setUploading(false);
@@ -83,7 +104,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
         >
            <Upload className={`w-6 h-6 ${uploading ? "text-nardo animate-pulse" : "text-slate-muted"}`} />
           <span className="text-sm text-slate-muted">
-            {uploading ? "Uploading..." : t("uploadHelper")}
+            {uploading ? t("uploading") : t("uploadHelper")}
           </span>
         </button>
       )}
@@ -91,7 +112,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/png,image/jpeg,image/jpg"
+        accept="image/*"
         onChange={handleFile}
         className="hidden"
       />

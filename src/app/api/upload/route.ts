@@ -29,17 +29,23 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const resourceType = file.type === "application/pdf" ? "raw" : "image";
+    const isPdf = file.type === "application/pdf";
+    const resourceType = isPdf ? "raw" : "image";
+
+    const uploadOptions: Record<string, unknown> = {
+      resource_type: resourceType,
+      folder: "gotap",
+      quality: "auto:good",
+    };
+
+    if (!isPdf) {
+      uploadOptions.fetch_format = "webp";
+      uploadOptions.format = "webp";
+    }
 
     const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          resource_type: resourceType,
-          folder: "gotap",
-          quality: "auto:good",
-          fetch_format: "webp",
-          format: "webp",
-        },
+        uploadOptions,
         (error, result) => {
           if (error) reject(error);
           else resolve(result as { secure_url: string });

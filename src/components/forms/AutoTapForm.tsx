@@ -73,47 +73,36 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     [data.socialLinks, onChange, clearError]
   );
 
-  const convertToWebP = (file: File, quality = 0.8): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const imgEl = document.createElement("img");
-      imgEl.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = imgEl.width;
-        canvas.height = imgEl.height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) { reject(new Error("Canvas 2D context unavailable")); return; }
-        ctx.drawImage(imgEl, 0, 0);
-        canvas.toBlob(
-          (blob) => {
-            if (blob) resolve(blob);
-            else reject(new Error("WebP conversion failed"));
-          },
-          "image/webp",
-          quality
-        );
-      };
-      imgEl.onerror = () => reject(new Error("Image load failed"));
-      imgEl.src = URL.createObjectURL(file);
-    });
-  };
-
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    showLoading(t("uploading"));
     try {
-      const webpBlob = await convertToWebP(file, 0.8);
       const formData = new FormData();
-      formData.append("file", webpBlob, "logo.webp");
+      formData.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const resData = await res.json();
+      if (!res.ok) {
+        if (res.status === 400) {
+          const msg = resData.error?.includes("large")
+            ? t("uploadErrorSize")
+            : t("uploadErrorType");
+          showToast(msg, "error");
+        } else {
+          showToast(t("uploadError"), "error");
+        }
+        return;
+      }
       if (resData.url) {
         onChange("logo", resData.url);
+        showToast(t("uploadSuccess"), "success");
       }
     } catch (err) {
       console.error("Upload failed:", err);
-      showToast("فشل رفع الصورة، حاول مرة أخرى", "error");
+      showToast(t("uploadError"), "error");
     } finally {
+      hideLoading();
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }

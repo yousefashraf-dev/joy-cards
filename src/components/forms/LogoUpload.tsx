@@ -106,7 +106,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*" capture="environment"
+        accept="image/*"
         onChange={handleFile}
         className="hidden"
       />

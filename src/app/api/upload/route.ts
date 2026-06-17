@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -21,15 +23,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
     }
 
+    let detectedType = file.type;
+    if (!detectedType || detectedType === "application/octet-stream") {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (ext === 'heic' || ext === 'heif') detectedType = 'image/heic';
+      else if (ext === 'png') detectedType = 'image/png';
+      else if (ext === 'jpg' || ext === 'jpeg') detectedType = 'image/jpeg';
+      else if (ext === 'webp') detectedType = 'image/webp';
+      else if (ext === 'pdf') detectedType = 'application/pdf';
+    }
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/heic", "image/heif", "application/pdf"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+    if (!allowedTypes.includes(detectedType)) {
+      return NextResponse.json({ error: "نوع الملف غير مدعوم. استخدم PNG, JPEG, أو WebP" }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const isPdf = file.type === "application/pdf";
+    const isPdf = detectedType === "application/pdf";
     const resourceType = isPdf ? "raw" : "image";
 
     const uploadOptions: Record<string, unknown> = {

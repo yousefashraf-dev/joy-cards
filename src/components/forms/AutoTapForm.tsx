@@ -17,6 +17,7 @@ import SuccessModal from "./SuccessModal";
 import AutoTapPreview from "./AutoTapPreview";
 import { useLoading } from "@/components/ui/LoadingProvider";
 import { useToast } from "@/components/ui/ToastProvider";
+import { compressImage } from "@/lib/compressImage";
 
 const STEPS = ["shipping", "social", "design", "sizing"] as const;
 
@@ -79,8 +80,9 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     setUploading(true);
     showLoading(t("uploading"));
     try {
+      const compressed = await compressImage(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressed, "logo.webp");
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const resData = await res.json();
       if (!res.ok) {

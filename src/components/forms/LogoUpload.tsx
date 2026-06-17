@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Upload, X, ImageIcon } from "lucide-react";
 import { useLoading } from "@/components/ui/LoadingProvider";
 import { useToast } from "@/components/ui/ToastProvider";
+import { compressImage } from "@/lib/compressImage";
 
 interface LogoUploadProps {
   value: string;
@@ -26,8 +27,9 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
     setUploading(true);
     showLoading(t("uploading"));
     try {
+      const compressed = await compressImage(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressed, "logo.webp");
 
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 60000);

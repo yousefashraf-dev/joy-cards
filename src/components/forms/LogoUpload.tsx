@@ -42,14 +42,9 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
 
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 400) {
-          const msg = data.error?.includes("large")
-            ? t("uploadErrorSize")
-            : t("uploadErrorType");
-          showToast(msg, "error");
-        } else {
-          showToast(t("uploadError"), "error");
-        }
+        console.error("Upload server error:", res.status, data);
+        const serverMsg = data?.error || t("uploadError");
+        showToast(serverMsg, "error");
         return;
       }
       if (data.url) {
@@ -57,12 +52,11 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
         showToast(t("uploadSuccess"), "success");
       }
     } catch (err) {
+      const msg = err instanceof DOMException && err.name === "AbortError"
+        ? "تعذر الاتصال بالخادم، تأكد من اتصالك بالإنترنت"
+        : err instanceof Error ? err.message : t("uploadError");
       console.error("Upload failed:", err);
-      if (err instanceof DOMException && err.name === "AbortError") {
-        showToast(t("uploadError"), "error");
-      } else {
-        showToast(t("uploadError"), "error");
-      }
+      showToast(msg, "error");
     } finally {
       hideLoading();
       setUploading(false);
@@ -112,7 +106,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/*" capture="environment"
         onChange={handleFile}
         className="hidden"
       />

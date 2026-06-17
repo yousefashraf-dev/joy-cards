@@ -84,23 +84,21 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const resData = await res.json();
       if (!res.ok) {
-        if (res.status === 400) {
-          const msg = resData.error?.includes("large")
-            ? t("uploadErrorSize")
-            : t("uploadErrorType");
-          showToast(msg, "error");
-        } else {
-          showToast(t("uploadError"), "error");
-        }
+        console.error("Upload server error:", res.status, resData);
+        showToast(resData?.error || t("uploadError"), "error");
         return;
       }
       if (resData.url) {
         onChange("logo", resData.url);
         showToast(t("uploadSuccess"), "success");
+      } else {
+        console.error("Upload OK but no URL:", resData);
+        showToast(t("uploadError"), "error");
       }
     } catch (err) {
+      const msg = err instanceof Error ? err.message : t("uploadError");
       console.error("Upload failed:", err);
-      showToast(t("uploadError"), "error");
+      showToast(msg, "error");
     } finally {
       hideLoading();
       setUploading(false);

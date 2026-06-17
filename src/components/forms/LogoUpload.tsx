@@ -29,7 +29,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
     try {
       const compressed = await compressImage(file);
       const formData = new FormData();
-      formData.append("file", compressed, "logo.webp");
+      formData.append("file", compressed);
 
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 60000);

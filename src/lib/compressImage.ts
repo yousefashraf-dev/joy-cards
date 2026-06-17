@@ -8,7 +8,7 @@ export interface CompressOptions {
 export async function compressImage(
   file: File,
   options: CompressOptions = {}
-): Promise<Blob> {
+): Promise<File> {
   const { maxWidth = 1024, maxHeight = 1024, quality = 0.7, maxSizeMB = 1 } = options;
 
   const img = await createImage(file);
@@ -24,26 +24,28 @@ export async function compressImage(
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(img, 0, 0, width, height);
 
-  let blob = await canvasToBlob(canvas, quality);
-  if (blob.size > maxSizeMB * 1024 * 1024) {
-    blob = await canvasToBlob(canvas, quality * 0.7);
-  }
+  const blob = await canvasToBlob(canvas, quality);
+  const finalBlob = blob.size > maxSizeMB * 1024 * 1024
+    ? await canvasToBlob(canvas, quality * 0.6)
+    : blob;
 
-  return blob;
+  const name = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+  return new File([finalBlob], name, { type: "image/webp" });
 }
 
 function createImage(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
-      URL.revokeObjectURL(img.src);
+      URL.revokeObjectURL(url);
       resolve(img);
     };
     img.onerror = () => {
-      URL.revokeObjectURL(img.src);
+      URL.revokeObjectURL(url);
       reject(new Error("Failed to load image"));
     };
-    img.src = URL.createObjectURL(file);
+    img.src = url;
   });
 }
 
@@ -57,15 +59,15 @@ function calculateDimensions(
   let height = origHeight;
 
   if (width > maxWidth) {
-    height = (height * maxWidth) / width;
+    height = Math.round((height * maxWidth) / width);
     width = maxWidth;
   }
   if (height > maxHeight) {
-    width = (width * maxHeight) / height;
+    width = Math.round((width * maxHeight) / height);
     height = maxHeight;
   }
 
-  return { width: Math.round(width), height: Math.round(height) };
+  return { width, height };
 }
 
 function canvasToBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
@@ -73,7 +75,7 @@ function canvasToBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob>
     canvas.toBlob(
       (blob) => {
         if (blob) resolve(blob);
-        else reject(new Error("Canvas toBlob failed"));
+        else reject(new Error("Canvas toBlob returned null"));
       },
       "image/webp",
       quality

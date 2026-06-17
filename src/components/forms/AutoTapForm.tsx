@@ -82,7 +82,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     try {
       const compressed = await compressImage(file);
       const formData = new FormData();
-      formData.append("file", compressed, "logo.webp");
+      formData.append("file", compressed);
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const resData = await res.json();
       if (!res.ok) {

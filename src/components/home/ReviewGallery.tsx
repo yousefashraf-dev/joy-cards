@@ -20,11 +20,11 @@ export default function ReviewGallery() {
           title="ثقة عملائنا هي رأس مالنا 🌟"
           subtitle="لقطات حقيقية من رسائل زبائننا وتقييماتهم على واتساب وتيك توك"
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex md:grid flex-nowrap md:grid-cols-2 lg:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory scrollbar-none gap-4 pb-4 md:pb-0">
           {reviews.map((src, i) => (
             <motion.div
               key={src}
-              className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl overflow-hidden backdrop-blur-sm shadow-2xl hover:scale-[1.02] transition-transform duration-300"
+              className="min-w-[280px] sm:min-w-[320px] snap-center bg-zinc-900/40 border border-zinc-800/80 rounded-2xl overflow-hidden backdrop-blur-sm shadow-2xl hover:scale-[1.02] transition-transform duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}

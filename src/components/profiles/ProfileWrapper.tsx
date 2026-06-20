@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import type { Profile, ProfileButton, ThemeArchetype } from "@/lib/types";
 import { formatSocialLink } from "@/lib/formatSocialLink";
 import ClassicLuxuryProfile from "./ClassicLuxuryProfile";
@@ -58,7 +58,7 @@ interface ProfileWrapperProps {
   profile: Profile;
 }
 
-function buildButtons(profile: Profile, pl: (key: string) => string): ProfileButton[] {
+function buildButtons(profile: Profile, pl: (key: string) => string, locale: string): ProfileButton[] {
   const buttons: ProfileButton[] = [];
   const l = profile.links || {};
 
@@ -75,7 +75,7 @@ function buildButtons(profile: Profile, pl: (key: string) => string): ProfileBut
   if (l.tiktok)       buttons.push({ icon: "TikTok", url: formatSocialLink(l.tiktok, "tiktok"), label: "TikTok" });
   if (l.snapchat)     buttons.push({ icon: "Snapchat", url: formatSocialLink(l.snapchat, "snapchat"), label: "Snapchat" });
   if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: formatSocialLink(l.whatsapp, "whatsapp"), label: "WhatsApp" });
-  if (l.phoneSocial)  buttons.push({ icon: "Phone", url: formatSocialLink(l.phoneSocial, "phoneSocial"), label: pl("call") });
+  if (l.phoneSocial)  buttons.push({ icon: "Phone", url: formatSocialLink(l.phoneSocial, "phoneSocial"), label: locale === "en" ? "Call" : "اتصل بنا" });
 
   const dc = profile.digitalCardsFields;
   if (dc) {
@@ -98,7 +98,8 @@ function buildButtons(profile: Profile, pl: (key: string) => string): ProfileBut
 
 export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
   const pl = useTranslations("products.profile.labels");
-  const buttons = buildButtons(profile, pl);
+  const locale = useLocale();
+  const buttons = buildButtons(profile, pl, locale);
   const archetype = getArchetype(profile.theme);
 
   const displayName = profile.displayName?.trim()

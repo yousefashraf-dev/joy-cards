@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { Profile, ProfileButton, ThemeArchetype } from "@/lib/types";
+import { formatSocialLink } from "@/lib/formatSocialLink";
 import ClassicLuxuryProfile from "./ClassicLuxuryProfile";
 import SportyCarbonProfile from "./SportyCarbonProfile";
 import MinimalistCleanProfile from "./MinimalistCleanProfile";
@@ -36,14 +37,6 @@ const iconMap: Record<string, React.ElementType> = {
   ShoppingCart,
 };
 
-const AUTO_TAP_THEMES = new Set([
-  "cyber-cyan-drift",
-  "neon-red-track",
-  "auto-nardo-stealth",
-  "classic-royal-silver",
-  "liquid-aurora",
-]);
-
 function ensureUrl(url: string, isEmail = false): string {
   if (!url) return url;
   if (isEmail && url.includes("@")) {
@@ -69,12 +62,20 @@ function buildButtons(profile: Profile, pl: (key: string) => string): ProfileBut
   const buttons: ProfileButton[] = [];
   const l = profile.links || {};
 
-  if (l.instagram)    buttons.push({ icon: "Instagram", url: l.instagram, label: "Instagram" });
-  if (l.facebook)     buttons.push({ icon: "Facebook", url: l.facebook, label: "Facebook" });
-  if (l.tiktok)       buttons.push({ icon: "TikTok", url: l.tiktok, label: "TikTok" });
-  if (l.snapchat)     buttons.push({ icon: "Snapchat", url: l.snapchat, label: "Snapchat" });
-  if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: l.whatsapp, label: "WhatsApp" });
-  if (l.phoneSocial)  buttons.push({ icon: "Phone", url: l.phoneSocial, label: pl("call") });
+  if (l.instagram)    buttons.push({ icon: "Instagram", url: formatSocialLink(l.instagram, "instagram"), label: "Instagram" });
+  if (l.facebook) {
+    let fbUrl = l.facebook.trim();
+    if (/^https?:\/\/([a-z0-9-]+\.)?(facebook\.com|fb\.watch)\//i.test(fbUrl)) {
+      fbUrl = fbUrl.replace(/\?.*$/, "");
+    } else {
+      fbUrl = `https://www.facebook.com/${fbUrl.replace(/^https?:\/\//, "").replace(/^www\./, "")}`;
+    }
+    buttons.push({ icon: "Facebook", url: fbUrl, label: "Facebook" });
+  }
+  if (l.tiktok)       buttons.push({ icon: "TikTok", url: formatSocialLink(l.tiktok, "tiktok"), label: "TikTok" });
+  if (l.snapchat)     buttons.push({ icon: "Snapchat", url: formatSocialLink(l.snapchat, "snapchat"), label: "Snapchat" });
+  if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: formatSocialLink(l.whatsapp, "whatsapp"), label: "WhatsApp" });
+  if (l.phoneSocial)  buttons.push({ icon: "Phone", url: formatSocialLink(l.phoneSocial, "phoneSocial"), label: pl("call") });
 
   const dc = profile.digitalCardsFields;
   if (dc) {

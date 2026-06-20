@@ -14,10 +14,10 @@ export default function LiveStatsCounter() {
           transition={{ duration: 0.6 }}
         >
           <p className="text-3xl md:text-4xl font-bold text-slate-light mb-2">
-            +60 أوردر ناجح 🚀
+            +240 أوردر ناجح 🚀
           </p>
           <p className="text-slate-muted text-sm md:text-base">
-            أكثر من 60 سيارة وكافيه يثقون في GoTap في مصر حتى الآن!
+            أكثر من 240 سيارة وكافيه يثقون في GoTap في مصر حتى الآن!
           </p>
         </motion.div>
       </div>

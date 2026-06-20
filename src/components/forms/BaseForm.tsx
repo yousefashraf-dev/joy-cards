@@ -31,6 +31,7 @@ interface BaseFormProps {
 export default function BaseForm({ productType, specificFields, productSection, hideThemeSelector }: BaseFormProps) {
   const t = useTranslations("products.forms");
   const e = useTranslations("products.errors");
+  const tm = useTranslations("messages");
   const locale = useLocale();
 
   const [customerName, setCustomerName] = useState("");
@@ -101,7 +102,7 @@ export default function BaseForm({ productType, specificFields, productSection, 
     if (!validate()) return;
 
     setSubmitting(true);
-    showLoading("جاري إرسال الطلب...");
+    showLoading(tm("sending"));
 
     const formattedSocials: Record<string, string> = {};
     for (const [key, val] of Object.entries(socialLinks)) {
@@ -143,9 +144,9 @@ export default function BaseForm({ productType, specificFields, productSection, 
 
     try {
       await submitOrder(basePayload as OrderPayload, undefined, locale);
-      showToast("تم إرسال الطلب بنجاح", "success");
+      showToast(tm("sent"), "success");
     } catch {
-      showToast("فشل الإرسال، حاول مرة أخرى", "error");
+      showToast(tm("failed"), "error");
     }
     hideLoading();
     setSubmitting(false);
@@ -163,7 +164,7 @@ export default function BaseForm({ productType, specificFields, productSection, 
     <div>
       <label className="block text-sm text-slate-muted mb-1.5">
         {label}
-        {!required && <span className="text-xs text-slate-muted/50 ms-1">(Optional)</span>}
+        {!required && <span className="text-xs text-slate-muted/50 ms-1">({t("fields.optional")})</span>}
       </label>
       <input
         type={type}
@@ -172,6 +173,7 @@ export default function BaseForm({ productType, specificFields, productSection, 
           onChange(e.target.value);
           clearError(key);
         }}
+        lang={["customerName","displayName","governorate","city","street"].includes(key) ? "ar" : undefined}
         className={`w-full px-4 py-2.5 rounded-lg glass bg-dark-card border text-sm text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-nardo/50 focus:ring-1 focus:ring-nardo/20 transition-all duration-200 ${
           errors[key] ? "border-red-400" : "border-white/10"
         }`}
@@ -199,12 +201,12 @@ export default function BaseForm({ productType, specificFields, productSection, 
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="glass bg-dark-card/50 border border-white/5 rounded-2xl p-6 lg:p-8 space-y-5">
                 <h3 className="text-lg font-semibold text-nardo mb-4">{t("section.personal")}</h3>
-                {renderField(t("fields.customerName"), customerName, setCustomerName, "customerName")}
+                {renderField(locale === "en" ? "الاسم الثلاثي بالعربي" : t("fields.customerName"), customerName, setCustomerName, "customerName")}
                 {renderField(t("fields.displayName"), displayName, setDisplayName, "displayName", false)}
                 {renderField(t("fields.phone"), phone, setPhone, "phone", true, "tel")}
                 {renderField(t("fields.governorate"), governorate, setGovernorate, "governorate")}
                 {renderField(t("fields.city"), city, setCity, "city")}
-                {renderField(t("fields.street"), street, setStreet, "street")}
+                {renderField(locale === "en" ? "الشارع / تفاصيل العنوان" : t("fields.street"), street, setStreet, "street")}
               </div>
 
               {!hideThemeSelector && (

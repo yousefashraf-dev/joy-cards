@@ -99,6 +99,7 @@ export async function submitOrder(
     "جاهز للشحن": false,
     "الإجمالي": totalPrice,
     "رابط الملف الشخصي": profileLink,
+    "يوزر انستجرام": data.socialLinks?.instagram || "",
     totalPrice: totalPrice,
     profileLink: profileLink,
   };

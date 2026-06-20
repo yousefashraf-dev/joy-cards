@@ -30,6 +30,7 @@ interface AutoTapFormProps {
 export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTapFormProps) {
   const t = useTranslations("products.forms");
   const e = useTranslations("products.errors");
+  const tm = useTranslations("messages");
   const st = useTranslations("products.steps");
   const pt = useTranslations("products.forms.profileType");
   const locale = useLocale();
@@ -151,16 +152,16 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const handleSubmit = async () => {
     if (!validateStep()) return;
     if (uploading) {
-      showToast("برجاء الانتظار حتى اكتمال رفع الصورة", "error");
+      showToast(tm("waitUpload"), "error");
       return;
     }
     setSubmitting(true);
-    showLoading("جاري تأكيد الطلب وحفظ البيانات...");
+    showLoading(tm("sending"));
 
     const safetyTimer = setTimeout(() => {
       hideLoading();
       setSubmitting(false);
-      showToast("تعذر الاتصال بالخادم، تأكد من اتصالك بالإنترنت", "error");
+      showToast(tm("networkError"), "error");
     }, TIMEOUT_MS);
 
     const pricing = calcTotal(data.profileType, data.addressDetail);
@@ -204,7 +205,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         },
       }, pricing.total, locale);
       clearTimeout(safetyTimer);
-      showToast("تم إرسال الطلب بنجاح", "success");
+      showToast(tm("sent"), "success");
       hideLoading();
       setSubmitting(false);
       setShowSuccess(true);
@@ -212,7 +213,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       clearTimeout(safetyTimer);
       hideLoading();
       setSubmitting(false);
-      showToast("فشل الإرسال، حاول مرة أخرى", "error");
+      showToast(tm("failed"), "error");
     }
   };
 
@@ -284,12 +285,13 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             <p className="text-xs text-slate-body/70 mb-4">{t("helper.shippingInfo")}</p>
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
-                {t("fields.customerName")}
+                {locale === "en" ? "الاسم الثلاثي بالعربي" : t("fields.customerName")}
               </label>
               <input
                 type="text"
                 value={data.customerName}
                 onChange={(e) => handleFieldChange("customerName", e.target.value)}
+                lang="ar"
                 className={inputClass("customerName")}
               />
               <p className="text-xs text-slate-body/70 mt-1">{t("helper.customerName")}</p>
@@ -312,13 +314,14 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             </div>
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
-                {t("fields.addressDetail")}
+                {locale === "en" ? "العنوان بالتفصيل" : t("fields.addressDetail")}
               </label>
               <input
                 type="text"
                 value={data.addressDetail}
                 onChange={(e) => handleFieldChange("addressDetail", e.target.value)}
                 placeholder={t("placeholders.addressDetail")}
+                lang="ar"
                 className={inputClass("addressDetail")}
               />
               <p className="text-xs text-slate-body/70 mt-1">{t("helper.addressDetail")}</p>
@@ -383,19 +386,20 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             </div>
 
             <p className="text-xs text-slate-body leading-relaxed bg-white/[0.06] border border-white/20 rounded-xl p-3">
-              💡 (150 ج.م شامل التصميم والطباعة للمستخدم الواحد / 200 ج.م للمجموعة + مصاريف الشحن: 50 ج.م للقاهرة والمحافظات، و70 ج.م للصعيد والمدن الساحلية)
+              {t("pricingInfo")}
             </p>
 
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.displayName")}
-                <span className="text-xs text-slate-body/60 ms-1">(Optional)</span>
+                <span className="text-xs text-slate-body/60 ms-1">({t("fields.optional")})</span>
               </label>
               <input
                 type="text"
                 value={data.displayName}
                 onChange={(e) => handleFieldChange("displayName", e.target.value)}
                 placeholder={t("fields.displayNameHelper")}
+                lang="ar"
                 className={inputClass("displayName")}
               />
               <p className="text-xs text-slate-body/70 mt-1">{t("fields.displayNameHelper")}</p>
@@ -524,7 +528,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                       <div className="absolute inset-0 flex items-center justify-center bg-matte-dark/90 rounded-xl z-20">
                         <div className="flex flex-col items-center gap-2">
                           <div className="w-10 h-10 border-3 border-nardo border-t-transparent rounded-full animate-spin" />
-                          <span className="text-xs text-slate-body/70">برجاء الانتظار، جاري رفع الصورة...</span>
+                          <span className="text-xs text-slate-body/70">{t("uploadingWait")}</span>
                         </div>
                       </div>
                     )}
@@ -656,6 +660,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 onChange={(e) => handleFieldChange("orderNotes", e.target.value)}
                 placeholder={t("placeholders.orderNotes")}
                 rows={3}
+                lang="ar"
                 className={inputClass("orderNotes")}
               />
             </div>

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { ProfileButton } from "@/lib/types";
+import { useTranslations } from "next-intl";
 
 interface ThemeProps {
   name: string;
@@ -11,6 +12,8 @@ interface ThemeProps {
 }
 
 export default function SportyCarbonProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+  const t = useTranslations("products.profile");
+
   return (
     <div className="min-h-screen carbon-fiber flex flex-col items-center justify-center p-6">
       <div className="absolute inset-0 bg-gradient-to-b from-neon-green/5 via-transparent to-transparent pointer-events-none" />
@@ -96,7 +99,7 @@ export default function SportyCarbonProfile({ name, logo, buttons, iconMap }: Th
           )}
 
           {buttons.length === 0 && (
-            <p className="text-slate-muted/60 text-sm">No links available</p>
+            <p className="text-slate-muted/60 text-sm">{t("noLinksAvailable")}</p>
           )}
 
           <motion.p
@@ -105,7 +108,7 @@ export default function SportyCarbonProfile({ name, logo, buttons, iconMap }: Th
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            Powered by GoTap
+            {t("poweredBy")}
           </motion.p>
         </div>
       </motion.div>

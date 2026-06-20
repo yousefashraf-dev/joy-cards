@@ -2,26 +2,29 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-
-const benefits = [
-  {
-    icon: "💰",
-    title: "توفير بنسبة 100%",
-    desc: "انسى مصاريف طباعة المنيو الورقي اللي بيتبهدل كل شوية.",
-  },
-  {
-    icon: "⚡️",
-    title: "تعديل لحظي ومرن",
-    desc: "حدّث أسعارك، وجباتك، وقائمتك المتاحة في ثانية واحدة وبشكل مباشر من لوحة تحكمك المتكاملة.",
-  },
-  {
-    icon: "🌟",
-    title: "تجربة مودرن فاخرة",
-    desc: "أبهر عملائك بتقنية تليق بمكانك وسرعة ترفع نسبة المبيعات.",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export default function CafeShowcaseSection() {
+  const t = useTranslations("cafeShowcase");
+
+  const benefits = [
+    {
+      icon: "💰",
+      title: t("benefit1Title"),
+      desc: t("benefit1Desc"),
+    },
+    {
+      icon: "⚡️",
+      title: t("benefit2Title"),
+      desc: t("benefit2Desc"),
+    },
+    {
+      icon: "🌟",
+      title: t("benefit3Title"),
+      desc: t("benefit3Desc"),
+    },
+  ];
+
   return (
     <section className="py-20 lg:py-28 bg-matte-dark/50">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,12 +52,11 @@ export default function CafeShowcaseSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <h3 className="text-3xl md:text-4xl font-bold text-slate-light leading-tight">
-            ارفع برستيج كافيهك ووفر تكاليف الطباعة ☕️✨
+            {t("title")}
           </h3>
 
           <p className="text-slate-muted text-base md:text-lg leading-relaxed">
-            مع استيكرات GoTap NFC، زبائنك يقدروا يعرضوا المنيو بالكامل بلمسة
-            واحدة من موبايلهم بدون أي انتظار.
+            {t("desc")}
           </p>
 
           <ul className="space-y-4 pt-2">

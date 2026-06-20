@@ -25,7 +25,8 @@ export default function FormC_BusinessTap({ data, onChange, errors }: FormCProps
           type="text"
           value={data.establishmentName || ""}
           onChange={(e) => onChange("establishmentName", e.target.value)}
-          placeholder="e.g. Cafe Roma"
+          placeholder={t("placeholders.establishmentName")}
+          lang="ar"
           className={`w-full px-4 py-2.5 rounded-lg glass bg-dark-card border text-sm text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-nardo/50 focus:ring-1 focus:ring-nardo/20 transition-all duration-200 ${
             errors.establishmentName ? "border-red-400" : "border-white/10"
           }`}
@@ -53,21 +54,21 @@ export default function FormC_BusinessTap({ data, onChange, errors }: FormCProps
         <h4 className="text-sm font-semibold text-nardo/80 mb-4">{t("section.premium")}</h4>
         <div className="space-y-4">
           {[
-            { key: "menuLink", icon: Utensils, placeholder: "https://menu.example.com" },
-            { key: "googleReviews", icon: Star, placeholder: "https://g.page/r/..." },
-            { key: "onlineOrdering", icon: ShoppingCart, placeholder: "https://order.example.com" },
-          ].map(({ key, icon: Icon, placeholder }) => (
+            { key: "menuLink", icon: Utensils, placeholderKey: "menuLink" },
+            { key: "googleReviews", icon: Star, placeholderKey: "googleReviewsLink" },
+            { key: "onlineOrdering", icon: ShoppingCart, placeholderKey: "onlineOrdering" },
+          ].map(({ key, icon: Icon, placeholderKey }) => (
             <div key={key}>
               <label className="flex items-center gap-2 text-sm text-slate-muted mb-1.5">
                 <Icon className="w-4 h-4" />
                 <span>{t(`fields.${key}`)}</span>
-                <span className="text-xs text-slate-muted/50">(Optional)</span>
+                <span className="text-xs text-slate-muted/50">({t("fields.optional")})</span>
               </label>
               <input
                 type="text"
                 value={data[key] || ""}
                 onChange={(e) => onChange(key, e.target.value)}
-                placeholder={placeholder}
+                placeholder={t(`placeholders.${placeholderKey}`)}
                 className="w-full px-4 py-2.5 rounded-lg glass bg-dark-card border border-white/10 text-sm text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-nardo/50 focus:ring-1 focus:ring-nardo/20 transition-all duration-200"
               />
             </div>

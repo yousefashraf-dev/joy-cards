@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { ProfileButton } from "@/lib/types";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface ThemeProps {
   name: string;
@@ -12,6 +13,8 @@ interface ThemeProps {
 }
 
 export default function CyberCyanDriftProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+  const t = useTranslations("products.profile");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0D1A1A] to-[#001A1A] flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <div
@@ -102,7 +105,7 @@ export default function CyberCyanDriftProfile({ name, logo, buttons, iconMap }: 
           )}
 
           {buttons.length === 0 && (
-            <p className="text-slate-muted/50 text-xs">No links available</p>
+            <p className="text-slate-muted/50 text-xs">{t("noLinksAvailable")}</p>
           )}
 
           <motion.p
@@ -112,7 +115,7 @@ export default function CyberCyanDriftProfile({ name, logo, buttons, iconMap }: 
             transition={{ delay: 0.8 }}
           >
             <Link href="/" className="hover:text-cyan/60 transition-colors">
-              Powered by Go Tap
+              {t("poweredBy")}
             </Link>
           </motion.p>
         </div>

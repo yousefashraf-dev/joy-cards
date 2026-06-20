@@ -25,6 +25,7 @@ interface AutoTapPreviewProps {
 
 export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewProps) {
   const t = useTranslations("products.forms");
+  const tp = useTranslations("products.profile");
 
   const autoTapThemes = PRODUCT_THEMES["auto-tap"];
   const currentIndex = useMemo(
@@ -63,7 +64,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
     if (effectiveLinks.length === 0) {
       return (
         <p className="text-xs text-slate-muted/50 text-center">
-          No links added yet
+          {t("preview.noLinksAdded")}
         </p>
       );
     }
@@ -177,7 +178,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
             onClick={goPrev}
             disabled={currentIndex === 0}
             className={arrowBtn}
-            aria-label="Previous theme"
+            aria-label={t("preview.previousTheme")}
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -380,7 +381,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
             onClick={goNext}
             disabled={currentIndex === autoTapThemes.length - 1}
             className={arrowBtn}
-            aria-label="Next theme"
+            aria-label={t("preview.nextTheme")}
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -388,17 +389,17 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
 
         {/* Theme Dots */}
         <div className="flex items-center justify-center gap-2 mt-4">
-          {autoTapThemes.map((t, i) => (
+          {autoTapThemes.map((th, i) => (
             <button
-              key={t}
+              key={th}
               type="button"
-              onClick={() => onThemeChange(t)}
+              onClick={() => onThemeChange(th)}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 i === currentIndex
                   ? "bg-nardo w-5"
                   : "bg-white/20 hover:bg-white/40"
               }`}
-              aria-label={`Theme ${i + 1}`}
+              aria-label={t("preview.themeDot", { number: String(i + 1) })}
             />
           ))}
         </div>
@@ -410,7 +411,7 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
           href="/"
           className="text-[10px] text-slate-muted/40 hover:text-cyan/60 transition-colors duration-200"
         >
-          Powered by Go Tap
+          {tp("poweredBy")}
         </Link>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { ProfileButton } from "@/lib/types";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface ThemeProps {
   name: string;
@@ -12,6 +13,8 @@ interface ThemeProps {
 }
 
 export default function NeonRedTrackProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+  const t = useTranslations("products.profile");
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1A0000] to-[#0D0000] flex flex-col items-center justify-center p-6">
       <motion.div
@@ -96,7 +99,7 @@ export default function NeonRedTrackProfile({ name, logo, buttons, iconMap }: Th
           )}
 
           {buttons.length === 0 && (
-            <p className="text-slate-muted/50 text-xs">No links available</p>
+            <p className="text-slate-muted/50 text-xs">{t("noLinksAvailable")}</p>
           )}
 
           <motion.p
@@ -106,7 +109,7 @@ export default function NeonRedTrackProfile({ name, logo, buttons, iconMap }: Th
             transition={{ delay: 0.8 }}
           >
             <Link href="/" className="hover:text-red-500/60 transition-colors">
-              Powered by Go Tap
+              {t("poweredBy")}
             </Link>
           </motion.p>
         </div>

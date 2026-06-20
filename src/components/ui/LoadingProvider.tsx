@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 interface LoadingContextType {
   isLoading: boolean;
@@ -23,11 +24,12 @@ export function useLoading() {
 export default function LoadingProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const tm = useTranslations("messages");
 
   const showLoading = useCallback((msg?: string) => {
-    setMessage(msg || "الرجاء الانتظار...");
+    setMessage(msg || tm("loading"));
     setIsLoading(true);
-  }, []);
+  }, [tm]);
 
   const hideLoading = useCallback(() => {
     setIsLoading(false);

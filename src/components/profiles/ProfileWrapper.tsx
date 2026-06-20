@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Profile, ProfileButton, ThemeArchetype } from "@/lib/types";
 import ClassicLuxuryProfile from "./ClassicLuxuryProfile";
 import SportyCarbonProfile from "./SportyCarbonProfile";
@@ -56,36 +57,6 @@ function ensureUrl(url: string, isEmail = false): string {
   return `https://${url}`;
 }
 
-function buildButtons(profile: Profile): ProfileButton[] {
-  const buttons: ProfileButton[] = [];
-  const l = profile.links || {};
-
-  if (l.instagram)    buttons.push({ icon: "Instagram", url: l.instagram, label: "Instagram" });
-  if (l.facebook)     buttons.push({ icon: "Facebook", url: l.facebook, label: "Facebook" });
-  if (l.tiktok)       buttons.push({ icon: "TikTok", url: l.tiktok, label: "TikTok" });
-  if (l.snapchat)     buttons.push({ icon: "Snapchat", url: l.snapchat, label: "Snapchat" });
-  if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: l.whatsapp, label: "WhatsApp" });
-  if (l.phoneSocial)  buttons.push({ icon: "Phone", url: l.phoneSocial, label: "Call" });
-
-  const dc = profile.digitalCardsFields;
-  if (dc) {
-    if (dc.website)    buttons.push({ icon: "Globe", url: ensureUrl(dc.website), label: "Website" });
-    if (dc.googleMaps) buttons.push({ icon: "MapPin", url: ensureUrl(dc.googleMaps), label: "Location" });
-    if (dc.linkedin)   buttons.push({ icon: "Linkedin", url: ensureUrl(dc.linkedin), label: "LinkedIn" });
-    if (dc.email)      buttons.push({ icon: "Mail", url: ensureUrl(dc.email, true), label: "Email" });
-    if (dc.pdfProfile) buttons.push({ icon: "FileText", url: ensureUrl(dc.pdfProfile), label: "Company Profile" });
-  }
-
-  const bt = profile.businessTapFields;
-  if (bt) {
-    if (bt.menuLink)         buttons.push({ icon: "Utensils", url: ensureUrl(bt.menuLink), label: "Digital Menu" });
-    if (bt.googleReviews)    buttons.push({ icon: "Star", url: ensureUrl(bt.googleReviews), label: "Google Reviews" });
-    if (bt.onlineOrdering)   buttons.push({ icon: "ShoppingCart", url: ensureUrl(bt.onlineOrdering), label: "Order Online" });
-  }
-
-  return buttons;
-}
-
 function getArchetype(theme: string): ThemeArchetype {
   return THEME_ARCHETYPE[theme] || "dark-premium";
 }
@@ -94,8 +65,39 @@ interface ProfileWrapperProps {
   profile: Profile;
 }
 
+function buildButtons(profile: Profile, pl: (key: string) => string): ProfileButton[] {
+  const buttons: ProfileButton[] = [];
+  const l = profile.links || {};
+
+  if (l.instagram)    buttons.push({ icon: "Instagram", url: l.instagram, label: "Instagram" });
+  if (l.facebook)     buttons.push({ icon: "Facebook", url: l.facebook, label: "Facebook" });
+  if (l.tiktok)       buttons.push({ icon: "TikTok", url: l.tiktok, label: "TikTok" });
+  if (l.snapchat)     buttons.push({ icon: "Snapchat", url: l.snapchat, label: "Snapchat" });
+  if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: l.whatsapp, label: "WhatsApp" });
+  if (l.phoneSocial)  buttons.push({ icon: "Phone", url: l.phoneSocial, label: pl("call") });
+
+  const dc = profile.digitalCardsFields;
+  if (dc) {
+    if (dc.website)    buttons.push({ icon: "Globe", url: ensureUrl(dc.website), label: pl("website") });
+    if (dc.googleMaps) buttons.push({ icon: "MapPin", url: ensureUrl(dc.googleMaps), label: pl("location") });
+    if (dc.linkedin)   buttons.push({ icon: "Linkedin", url: ensureUrl(dc.linkedin), label: pl("linkedin") });
+    if (dc.email)      buttons.push({ icon: "Mail", url: ensureUrl(dc.email, true), label: pl("email") });
+    if (dc.pdfProfile) buttons.push({ icon: "FileText", url: ensureUrl(dc.pdfProfile), label: pl("companyProfile") });
+  }
+
+  const bt = profile.businessTapFields;
+  if (bt) {
+    if (bt.menuLink)         buttons.push({ icon: "Utensils", url: ensureUrl(bt.menuLink), label: pl("digitalMenu") });
+    if (bt.googleReviews)    buttons.push({ icon: "Star", url: ensureUrl(bt.googleReviews), label: pl("googleReviews") });
+    if (bt.onlineOrdering)   buttons.push({ icon: "ShoppingCart", url: ensureUrl(bt.onlineOrdering), label: pl("orderOnline") });
+  }
+
+  return buttons;
+}
+
 export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
-  const buttons = buildButtons(profile);
+  const pl = useTranslations("products.profile.labels");
+  const buttons = buildButtons(profile, pl);
   const archetype = getArchetype(profile.theme);
 
   const displayName = profile.displayName?.trim()

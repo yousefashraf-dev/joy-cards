@@ -19,12 +19,23 @@
     "digitalCards": "Digital Card",
     "autoTap": "Auto Tap",
     "businessTap": "Business & Menu",
-    "language": "العربية"
+    "language": "العربية",
+    "toggleLanguage": "Toggle language",
+    "toggleMenu": "Toggle menu"
   },
   "hero": {
     "headline": "Your Digital Identity, One Tap Away",
     "subheadline": "Replace paper with premium NFC technology. Share your world with a single tap — business cards, car profiles, restaurant menus, and more.",
     "cta": "Explore Products"
+  },
+  "liveStatsCounter": {
+    "stats": "+240 Successful Orders 🚀",
+    "subtitle": "Over 240 cars and cafes trust GoTap in Egypt!"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "backHome": "Back to Home"
   },
   "howItWorks": {
     "title": "How It Works",
@@ -230,10 +241,27 @@
         "shippingInfo": "This data is required for the shipping company",
         "themeHeader": "This is the design that will display your data, choose one:"
       },
+      "pricingInfo": "💡 (150 EGP includes design & printing for single user / 200 EGP for group + shipping: 50 EGP for Cairo & Governorates, 70 EGP for Upper Egypt & Coastal Cities)",
+      "uploadingWait": "Please wait, uploading image...",
+      "preview": {
+        "noLinksAdded": "No links added yet",
+        "poweredBy": "Powered by Go Tap",
+        "previousTheme": "Previous theme",
+        "nextTheme": "Next theme",
+        "themeDot": "Theme {number}"
+      },
       "placeholders": {
         "addressDetail": "City, district, street, building number",
         "orderNotes": "Any extra comments or custom requests (optional)",
-        "logoWidthCm": "Enter width in centimeters"
+        "logoWidthCm": "Enter width in centimeters",
+        "website": "https://example.com",
+        "googleMaps": "https://maps.app.goo.gl/...",
+        "linkedin": "username or full URL",
+        "email": "email@example.com",
+        "establishmentName": "e.g. Cafe Roma",
+        "menuLink": "https://menu.example.com",
+        "googleReviewsLink": "https://g.page/r/...",
+        "onlineOrdering": "https://order.example.com"
       }
     },
     "success": {
@@ -241,6 +269,7 @@
       "description": "Please transfer the order amount via InstaPay or Vodafone Cash to: 01095976766, then click the button below to send the transfer screenshot via WhatsApp to start instant production.",
       "whatsappBtn": "Send via WhatsApp",
       "whatsappMessage": "New order from GoTap\nProduct: {product}\nName: {name}\nPhone: {phone}\nTotal: {total} EGP (incl. shipping {shipping} EGP)\n- Please confirm payment to start instant production",
+      "totalLine": "\nTotal: {total} {currency} (includes service, custom design + shipping {shipping} {currency})",
       "total": {
         "base": "Service & Design",
         "shipping": "Shipping",
@@ -256,11 +285,57 @@
       "selectPlatform": "Please select a platform"
     },
     "profile": {
-      "poweredBy": "Powered by GoTap"
+      "poweredBy": "Powered by GoTap",
+      "noLinksAvailable": "No links available",
+      "labels": {
+        "call": "Call",
+        "website": "Website",
+        "location": "Location",
+        "linkedin": "LinkedIn",
+        "email": "Email",
+        "companyProfile": "Company Profile",
+        "digitalMenu": "Digital Menu",
+        "googleReviews": "Google Reviews",
+        "orderOnline": "Order Online"
+      }
     },
     "footer": {
       "rights": "All rights reserved.",
       "tagline": "Premium NFC Technology Solutions"
     }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": "Does the sticker need charging or a battery?",
+    "a1": "No, the sticker works entirely with wireless power generated from phone contact (NFC) for life without any charging.",
+    "q2": "Does it work on all phones?",
+    "a2": "It works on all modern iPhone and Android devices that support NFC with a simple tap.",
+    "q3": "If I change my data or menu prices, does the sticker break?",
+    "a3": "Not at all! The sticker continues to work efficiently for life without needing replacement. If you change prices or data, you can request an update through our support, and we will remotely update your link immediately."
+  },
+  "cafeShowcase": {
+    "title": "Elevate your café & save printing costs ☕️✨",
+    "desc": "With GoTap NFC stickers, your customers can view the entire menu with a single tap from their phones without any waiting.",
+    "benefit1Title": "100% Cost Saving",
+    "benefit1Desc": "Forget paper menu printing costs that get ruined every time.",
+    "benefit2Title": "Instant & Flexible Updates",
+    "benefit2Desc": "Update your prices, items, and available menu instantly from your integrated dashboard.",
+    "benefit3Title": "Modern Premium Experience",
+    "benefit3Desc": "Impress your customers with premium technology that increases sales."
+  },
+  "reviewGallery": {
+    "title": "Our clients' trust is our greatest asset 🌟",
+    "subtitle": "Real screenshots from our customers' messages and reviews on WhatsApp and TikTok"
+  },
+  "messages": {
+    "waitUpload": "Please wait for the upload to complete",
+    "sending": "Sending your order...",
+    "sent": "Order submitted successfully!",
+    "failed": "Submission failed, please try again",
+    "networkError": "Unable to reach the server, check your internet connection",
+    "loading": "Please wait..."
+  },
+  "currency": {
+    "egp": "EGP"
   }
 }

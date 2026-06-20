@@ -21,21 +21,23 @@ interface SuccessModalProps {
   shippingFee?: number;
 }
 
-const PRODUCT_LABELS: Record<string, string> = {
-  "auto-tap": "Auto Tap",
-  "digital-cards": "Digital Card",
-  "business-tap": "Business Tap",
-};
-
 export default function SuccessModal({ isOpen, onClose, onWhatsappClick, orderDetails, totalPrice, shippingFee }: SuccessModalProps) {
   const t = useTranslations("products.success");
+  const tp = useTranslations("products");
+  const tc = useTranslations("currency");
+
+  const PRODUCT_KEY: Record<string, string> = {
+    "auto-tap": "autoTap",
+    "digital-cards": "digitalCards",
+    "business-tap": "businessTap",
+  };
 
   const productLabel = orderDetails
-    ? (PRODUCT_LABELS[orderDetails.productType] || orderDetails.productType)
+    ? tp(`${PRODUCT_KEY[orderDetails.productType] || orderDetails.productType}.title`)
     : "";
 
   const totalLine = totalPrice
-    ? `\nإجمالي الحساب: ${totalPrice} جنيه (يشمل الخدمة والتصميم المخصص + مصاريف الشحن ${shippingFee} جنيه)`
+    ? t("totalLine", { total: totalPrice, currency: tc("egp"), shipping: shippingFee ?? 0 })
     : "";
 
   const whatsappText = t("whatsappMessage", {
@@ -91,15 +93,15 @@ export default function SuccessModal({ isOpen, onClose, onWhatsappClick, orderDe
               <div className="mb-6 p-4 rounded-xl bg-cyan/[0.04] border border-cyan/20">
                 <div className="flex justify-between items-center text-sm mb-2">
                   <span className="text-slate-muted">{t("total.base")}</span>
-                  <span className="text-slate-light font-medium">{totalPrice - shippingFee} ج.م</span>
+                  <span className="text-slate-light font-medium">{totalPrice - shippingFee} {tc("egp")}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm mb-2">
                   <span className="text-slate-muted">{t("total.shipping")}</span>
-                  <span className="text-slate-light font-medium">{shippingFee} ج.م</span>
+                  <span className="text-slate-light font-medium">{shippingFee} {tc("egp")}</span>
                 </div>
                 <div className="border-t border-cyan/20 my-2 pt-2 flex justify-between items-center">
                   <span className="text-cyan font-bold">{t("total.total")}</span>
-                  <span className="text-cyan font-bold text-lg">{totalPrice} ج.م</span>
+                  <span className="text-cyan font-bold text-lg">{totalPrice} {tc("egp")}</span>
                 </div>
               </div>
             )}

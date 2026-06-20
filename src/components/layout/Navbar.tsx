@@ -58,7 +58,7 @@ export default function Navbar() {
               <button
                 onClick={toggleLocale}
                 className="w-10 h-10 rounded-full glass bg-dark-card/80 border border-white/10 flex items-center justify-center gap-1 text-xs font-bold text-slate-muted hover:text-nardo hover:border-nardo/50 transition-all duration-200"
-                aria-label="Toggle language"
+                aria-label={t("toggleLanguage")}
               >
                 <Globe className="w-3.5 h-3.5" />
                 <span>{locale === "en" ? "AR" : "EN"}</span>
@@ -69,7 +69,7 @@ export default function Navbar() {
             <button
               onClick={toggleLocale}
               className="w-9 h-9 rounded-full glass bg-dark-card/80 border border-white/10 flex items-center justify-center gap-0.5 text-[10px] font-bold text-slate-muted hover:text-nardo hover:border-nardo/50 transition-all duration-200"
-              aria-label="Toggle language"
+              aria-label={t("toggleLanguage")}
             >
               <Globe className="w-3.5 h-3.5" />
               <span>{locale === "en" ? "AR" : "EN"}</span>
@@ -77,7 +77,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-slate-light p-2"
-              aria-label="Toggle menu"
+              aria-label={t("toggleMenu")}
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

@@ -83,11 +83,11 @@ export default function FormA_DigitalCards({ data, onChange }: FormAProps) {
 
         <div className="space-y-4">
           {[
-            { key: "website", icon: Globe, placeholder: "https://example.com" },
-            { key: "googleMaps", icon: MapPin, placeholder: "https://maps.app.goo.gl/..." },
-            { key: "linkedin", icon: Briefcase, placeholder: "company-name or full URL" },
-            { key: "email", icon: Mail, placeholder: "email@example.com", type: "email" },
-          ].map(({ key, icon: Icon, placeholder, type }) => (
+            { key: "website", icon: Globe, placeholderKey: "website" },
+            { key: "googleMaps", icon: MapPin, placeholderKey: "googleMaps" },
+            { key: "linkedin", icon: Briefcase, placeholderKey: "linkedin" },
+            { key: "email", icon: Mail, placeholderKey: "email", type: "email" },
+          ].map(({ key, icon: Icon, placeholderKey, type }) => (
             <div key={key}>
               <label className="flex items-center gap-2 text-sm text-slate-muted mb-1.5">
                 <Icon className="w-4 h-4" />
@@ -98,7 +98,7 @@ export default function FormA_DigitalCards({ data, onChange }: FormAProps) {
                 type={type || "text"}
                 value={data[key] || ""}
                 onChange={(e) => onChange(key, e.target.value)}
-                placeholder={placeholder}
+                placeholder={t(`placeholders.${placeholderKey}`)}
                 className="w-full px-4 py-2.5 rounded-lg glass bg-dark-card border border-white/10 text-sm text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-nardo/50 focus:ring-1 focus:ring-nardo/20 transition-all duration-200"
               />
             </div>
@@ -108,7 +108,7 @@ export default function FormA_DigitalCards({ data, onChange }: FormAProps) {
             <label className="flex items-center gap-2 text-sm text-slate-muted mb-1.5">
               <FileText className="w-4 h-4" />
               <span>{t("fields.pdfProfile")}</span>
-              <span className="text-xs text-slate-muted/50">(Optional)</span>
+              <span className="text-xs text-slate-muted/50">({t("fields.optional")})</span>
             </label>
             {data.pdfProfile ? (
               <div className="flex items-center gap-3 p-3 rounded-lg bg-dark-card border border-white/10">

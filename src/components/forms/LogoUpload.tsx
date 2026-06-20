@@ -15,6 +15,7 @@ interface LogoUploadProps {
 
 export default function LogoUpload({ value, onChange, error }: LogoUploadProps) {
   const t = useTranslations("products.forms");
+  const tm = useTranslations("messages");
   const [uploading, setUploading] = useState(false);
   const { showLoading, hideLoading } = useLoading();
   const { showToast } = useToast();
@@ -54,7 +55,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
       }
     } catch (err) {
       const msg = err instanceof DOMException && err.name === "AbortError"
-        ? "تعذر الاتصال بالخادم، تأكد من اتصالك بالإنترنت"
+        ? tm("networkError")
         : err instanceof Error ? err.message : t("uploadError");
       console.error("Upload failed:", err);
       showToast(msg, "error");
@@ -70,7 +71,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
       <label className="flex items-center gap-2 text-sm text-slate-muted mb-1.5">
         <ImageIcon className="w-4 h-4" />
         <span>{t("fields.logo")}</span>
-        <span className="text-xs text-slate-muted/50">(Optional)</span>
+        <span className="text-xs text-slate-muted/50">({t("fields.optional")})</span>
       </label>
       <p className="text-xs text-slate-muted/60 mb-2">{t("uploadHelper")}</p>
 

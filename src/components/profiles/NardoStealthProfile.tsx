@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { ProfileButton } from "@/lib/types";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface ThemeProps {
   name: string;
@@ -12,6 +13,8 @@ interface ThemeProps {
 }
 
 export default function NardoStealthProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+  const t = useTranslations("products.profile");
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1A1A1A] via-[#1A1A1A] to-[#0D0D0D] flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute top-0 end-0 w-32 h-32 bg-nardo/[0.03] rounded-full -me-16 -mt-16" />
@@ -98,7 +101,7 @@ export default function NardoStealthProfile({ name, logo, buttons, iconMap }: Th
           )}
 
           {buttons.length === 0 && (
-            <p className="text-slate-muted/50 text-xs">No links available</p>
+            <p className="text-slate-muted/50 text-xs">{t("noLinksAvailable")}</p>
           )}
 
           <motion.p
@@ -108,7 +111,7 @@ export default function NardoStealthProfile({ name, logo, buttons, iconMap }: Th
             transition={{ delay: 0.8 }}
           >
             <Link href="/" className="hover:text-nardo/60 transition-colors">
-              Powered by Go Tap
+              {t("poweredBy")}
             </Link>
           </motion.p>
         </div>

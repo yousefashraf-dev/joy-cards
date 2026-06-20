@@ -34,7 +34,7 @@ export default function SocialLinksBlock({ values, onChange, errors }: SocialLin
               <label className="flex items-center gap-2 text-sm text-slate-muted mb-1.5">
                 <Icon className="w-4 h-4" />
                 <span>{t(`fields.${platform.id}`)}</span>
-                <span className="text-xs text-slate-muted/50">(Optional)</span>
+                <span className="text-xs text-slate-muted/50">({t("fields.optional")})</span>
               </label>
               <input
                 type="text"

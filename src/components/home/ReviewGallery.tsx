@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 const reviews = [
@@ -13,12 +14,14 @@ const reviews = [
 ];
 
 export default function ReviewGallery() {
+  const t = useTranslations("reviewGallery");
+
   return (
     <section className="py-20 lg:py-28">
       <div className="max-w-5xl mx-auto px-4">
         <SectionHeading
-          title="ثقة عملائنا هي رأس مالنا 🌟"
-          subtitle="لقطات حقيقية من رسائل زبائننا وتقييماتهم على واتساب وتيك توك"
+          title={t("title")}
+          subtitle={t("subtitle")}
         />
         <div className="flex md:grid flex-nowrap md:grid-cols-2 lg:grid-cols-3 overflow-x-auto md:overflow-visible snap-x snap-mandatory scrollbar-none gap-4 pb-4 md:pb-0">
           {reviews.map((src, i) => (

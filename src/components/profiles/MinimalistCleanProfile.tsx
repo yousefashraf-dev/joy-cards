@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import type { ProfileButton } from "@/lib/types";
 
 interface ThemeProps {
@@ -11,6 +12,7 @@ interface ThemeProps {
 }
 
 export default function MinimalistCleanProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+  const t = useTranslations("products.profile");
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center p-6">
       <motion.div
@@ -94,7 +96,7 @@ export default function MinimalistCleanProfile({ name, logo, buttons, iconMap }:
           )}
 
           {buttons.length === 0 && (
-            <p className="text-slate-400 text-sm">No links available</p>
+            <p className="text-slate-400 text-sm">{t("noLinksAvailable")}</p>
           )}
 
           <motion.p
@@ -103,7 +105,7 @@ export default function MinimalistCleanProfile({ name, logo, buttons, iconMap }:
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            Powered by GoTap
+            {t("poweredBy")}
           </motion.p>
         </div>
       </motion.div>

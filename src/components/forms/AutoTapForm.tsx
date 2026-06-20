@@ -44,7 +44,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderPricing, setOrderPricing] = useState<{ totalPrice: number; shippingFee: number } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const { showLoading, hideLoading } = useLoading();
   const { showToast } = useToast();
@@ -104,7 +103,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     } finally {
       hideLoading();
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      e.target.value = "";
     }
   };
 
@@ -504,13 +503,14 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                     </button>
                   </div>
                 ) : (
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading}
-                      className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 disabled:opacity-50"
-                    >
+                  <div className="relative overflow-hidden">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2">
                       <Upload
                         className={`w-6 h-6 ${
                           uploading ? "text-nardo animate-pulse" : "text-slate-body"
@@ -519,9 +519,9 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                       <span className="text-sm text-slate-body">
                         {uploading ? t("uploading") : t("uploadHelper")}
                       </span>
-                    </button>
+                    </div>
                     {uploading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-matte-dark/90 rounded-xl z-10">
+                      <div className="absolute inset-0 flex items-center justify-center bg-matte-dark/90 rounded-xl z-20">
                         <div className="flex flex-col items-center gap-2">
                           <div className="w-10 h-10 border-3 border-nardo border-t-transparent rounded-full animate-spin" />
                           <span className="text-xs text-slate-body/70">برجاء الانتظار، جاري رفع الصورة...</span>
@@ -530,13 +530,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                     )}
                   </div>
                 )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleLogoUpload}
-                  className="hidden"
-                />
               </div>
           </div>
         )}

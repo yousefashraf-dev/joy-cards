@@ -2,6 +2,7 @@
 
 import HeroSection from "@/components/home/HeroSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
+import CafeShowcaseSection from "@/components/home/CafeShowcaseSection";
 import ProductsGrid from "@/components/home/ProductsGrid";
 
 export default function HomePage() {
@@ -9,6 +10,7 @@ export default function HomePage() {
     <>
       <HeroSection />
       <HowItWorksSection />
+      <CafeShowcaseSection />
       <ProductsGrid />
     </>
   );

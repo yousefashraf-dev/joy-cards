@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoTap Dashboard V16</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>body{font-family:'Cairo',sans-serif;background:#f1f5f9}</style>
+</head>
+<body class="p-4 md:p-8 text-right">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border gap-3">
+      <h1 class="text-xl font-bold text-slate-800">🚀 GoTap Dashboard V16</h1>
+      <div class="flex gap-2 w-full md:w-auto">
+        <button onclick="openAddModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold">➕ أوردر جديد</button>
+        <button onclick="loadOrders()" class="bg-slate-100 px-4 py-2.5 rounded-xl text-sm font-semibold">🔄 تحديث</button>
+      </div>
+    </div>
+
+    <div id="ordersContainer" class="space-y-3">
+      <div class="text-center py-12 text-slate-400 bg-white rounded-2xl">جار التحميل...</div>
+    </div>
+  </div>
+
+  <div id="orderModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+      <div class="p-4 border-b flex justify-between items-center sticky top-0 bg-white z-10">
+        <h3 id="modalTitle" class="font-bold">➕ إضافة أوردر</h3>
+        <button onclick="closeModal()" class="text-slate-400 text-xl">✕</button>
+      </div>
+      <form id="orderForm" onsubmit="submitForm(event)" class="p-5 space-y-3">
+        <input type="hidden" id="editRowNum">
+        <div id="fieldsContainer" class="space-y-3"></div>
+        <div class="pt-4 flex gap-2">
+          <button type="submit" id="submitBtn" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold">💾 حفظ</button>
+          <button type="button" onclick="closeModal()" class="w-1/3 bg-slate-100 py-3 rounded-xl text-sm">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    var FIELDS = [
+      "اسم العميل","رقم التليفون","العنوان بالتفصيل",
+      "يوزر انستجرام","يوزر تيك توك","يوزر فيسبوك","يوزر سناب شات",
+      "رقم الواتساب","الاسم على اللوجو","عرض اللوجو (سم)","ملاحظات",
+      "رابط الملف الشخصي"
+    ];
+
+    var COPY_FIELDS = [
+      "اسم العميل","رقم التليفون","العنوان بالتفصيل","يوزر انستجرام"
+    ];
+
+    function cleanInstagram(str) {
+      return str.replace(/^https?:\/\/(www\.)?(instagram\.com|instagr\.am)\/?/i,'').replace(/\/$/,'');
+    }
+
+    function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    var allOrders = [];
+
+    function loadOrders() {
+      document.getElementById('ordersContainer').innerHTML = '<div class="text-center py-12 text-slate-400">جار التحميل...</div>';
+      google.script.run.withSuccessHandler(function(raw){
+        allOrders = JSON.parse(raw);
+        renderOrders();
+      }).getOrders();
+    }
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(function(){
+        btn.innerHTML = '✓ تم النسخ';
+        var original = btn.className;
+        btn.className = btn.className.replace(/bg-[\w-]+/,'bg-emerald-100').replace(/text-[\w-]+/,'text-emerald-600');
+        setTimeout(function(){
+          btn.innerHTML = '📋 نسخ';
+          btn.className = original;
+        }, 1000);
+      });
+    }
+
+    function renderOrders() {
+      var c = document.getElementById('ordersContainer');
+      if (!allOrders.length) {
+        c.innerHTML = '<div class="text-center py-12 text-slate-400 bg-white rounded-2xl">لا توجد طلبات</div>';
+        return;
+      }
+      c.innerHTML = '';
+      allOrders.forEach(function(order){
+        var card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl shadow-sm border overflow-hidden';
+
+        var body = '';
+        FIELDS.forEach(function(f){
+          var val = order[f];
+          if (val === undefined || val === null || val.toString().trim() === '') return;
+          var raw = val.toString().trim();
+          var display = escapeHtml(raw);
+
+          if (f === 'يوزر انستجرام') {
+            display = escapeHtml(cleanInstagram(raw));
+          }
+
+          var copyBtn = '';
+          if (COPY_FIELDS.indexOf(f) !== -1) {
+            var copyTextVal = f === 'يوزر انستجرام' ? cleanInstagram(raw) : raw;
+            copyBtn = '<button onclick="copyText(\''+escapeHtml(copyTextVal)+'\',this)" class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-bold hover:bg-emerald-100 ml-2">📋 نسخ</button>';
+          }
+
+          if (f === 'رابط الملف الشخصي') {
+            display = '<div class="flex gap-2">' +
+              '<a href="'+escapeHtml(raw)+'" target="_blank" class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-100">🔗 فتح</a>' +
+              '<button onclick="copyText(\''+escapeHtml(raw)+'\',this)" class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-100">📋 نسخ</button></div>';
+          }
+
+          body += '<div class="flex justify-between items-center gap-3 px-4 py-2.5 border-b border-slate-50 text-xs">' +
+            '<span class="text-slate-400 font-medium shrink-0">'+escapeHtml(f)+':</span>' +
+            '<span class="text-slate-700 font-semibold text-left flex items-center">'+copyBtn+display+'</span></div>';
+        });
+
+        var isPaid = order['تم الدفع'] === true || order['تم الدفع'] === 'true' || order['تم الدفع'] === 'تم الدفع';
+        var isShipped = order['جاهز للشحن'] === true || order['جاهز للشحن'] === 'true' || order['جاهز للشحن'] === 'تم الشحن';
+
+        card.innerHTML =
+          '<div class="flex justify-between items-center px-4 py-3 bg-slate-50/80 border-b">' +
+          '<span class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold">#'+(order.rowNum||'')+'</span>' +
+          '<div class="flex gap-1.5 flex-wrap">' +
+          '<button onclick="editOrder('+order.rowNum+')" class="bg-blue-50 text-blue-600 px-2.5 py-1.5 rounded-xl text-xs font-bold border">✏️</button>' +
+          '<button onclick="deleteOrder('+order.rowNum+')" class="bg-rose-50 text-rose-600 px-2.5 py-1.5 rounded-xl text-xs font-bold border">🗑️</button>' +
+          '<button onclick="toggleStatus('+order.rowNum+',\'الدفع\','+isPaid+')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold '+(isPaid?'bg-amber-500 text-white':'bg-white border')+'">'+(isPaid?'🔄 إلغاء دفع':'💰 تم الدفع')+'</button>' +
+          '<button onclick="toggleStatus('+order.rowNum+',\'للشحن\','+isShipped+')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold '+(isShipped?'bg-emerald-600 text-white':'bg-white border')+'">'+(isShipped?'🔄 إرجاع':'📦 تم الشحن')+'</button>' +
+          '</div></div>' +
+          '<div>'+body+'</div>';
+        c.appendChild(card);
+      });
+    }
+
+    function openAddModal() {
+      document.getElementById('editRowNum').value = '';
+      document.getElementById('modalTitle').textContent = '➕ إضافة أوردر جديد';
+      document.getElementById('orderModal').classList.remove('hidden');
+      buildFields();
+    }
+
+    function editOrder(rowNum) {
+      document.getElementById('editRowNum').value = rowNum;
+      document.getElementById('modalTitle').textContent = '✏️ تعديل الأوردر #'+rowNum;
+      document.getElementById('orderModal').classList.remove('hidden');
+      buildFields();
+      var order = allOrders.find(function(o){ return o.rowNum === rowNum; });
+      if (order) {
+        FIELDS.forEach(function(f){
+          var inp = document.getElementById('f_'+f);
+          if (inp) inp.value = order[f] || '';
+        });
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('orderModal').classList.add('hidden');
+    }
+
+    function buildFields() {
+      var container = document.getElementById('fieldsContainer');
+      container.innerHTML = '';
+      FIELDS.forEach(function(f){
+        var div = document.createElement('div');
+        div.className = 'flex flex-col';
+        div.innerHTML = '<label class="block text-xs font-bold text-slate-600 mb-1">'+escapeHtml(f)+'</label>' +
+          '<input type="text" id="f_'+escapeHtml(f)+'" name="'+escapeHtml(f)+'" class="w-full bg-slate-50 border rounded-xl px-3 py-2 text-xs text-right">';
+        container.appendChild(div);
+      });
+    }
+
+    function submitForm(e) {
+      e.preventDefault();
+      var rowNum = document.getElementById('editRowNum').value;
+      var data = {};
+      FIELDS.forEach(function(f){
+        var inp = document.getElementById('f_'+f);
+        data[f] = inp ? inp.value.trim() : '';
+      });
+      data['يوزر انستجرام'] = cleanInstagram(data['يوزر انستجرام']);
+
+      if (rowNum) {
+        google.script.run.withSuccessHandler(function(){ closeModal(); loadOrders(); }).updateExistingOrder(parseInt(rowNum), data);
+      } else {
+        google.script.run.withSuccessHandler(function(){ closeModal(); loadOrders(); }).addNewOrder(data);
+      }
+    }
+
+    function toggleStatus(rowNum, key, current) {
+      google.script.run.withSuccessHandler(loadOrders).updateOrderColumnStatus(rowNum, key, !current);
+    }
+
+    function deleteOrder(rowNum) {
+      if (confirm('حذف الأوردر #'+rowNum+'?')) {
+        google.script.run.withSuccessHandler(loadOrders).deleteOrder(rowNum);
+      }
+    }
+
+    window.loadOrders = loadOrders;
+    window.openAddModal = openAddModal;
+    window.closeModal = closeModal;
+    window.editOrder = editOrder;
+    window.submitForm = submitForm;
+    window.toggleStatus = toggleStatus;
+    window.deleteOrder = deleteOrder;
+    window.copyText = copyText;
+
+    document.addEventListener('DOMContentLoaded', loadOrders);
+  </script>
+</body>
+</html>

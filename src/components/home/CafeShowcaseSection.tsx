@@ -33,7 +33,7 @@ export default function CafeShowcaseSection() {
           transition={{ duration: 0.6 }}
         >
           <Image
-            src="/cafe-nfc-preview.png"
+            src="/caffe.png"
             alt="GoTap NFC sticker on a marble table next to a smartphone displaying a digital menu"
             width={600}
             height={500}

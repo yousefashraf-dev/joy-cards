@@ -155,6 +155,8 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
   if (profile.theme === "liquid-aurora") return <LiquidAuroraProfile {...sharedProps} />;
   if (profile.theme === "terminal-dark-glow") return <TerminalDarkGlowProfile {...sharedProps} />;
   if (profile.theme === "energy-lightning") return <EnergyLightningProfile {...sharedProps} />;
+  if (profile.theme === "spiderman") return <NeonRedTrackProfile {...sharedProps} />;
+  if (profile.theme === "batman") return <NardoStealthProfile {...sharedProps} />;
 
   // Non-Auto-Tap themes: use archetype-based rendering
   switch (archetype) {

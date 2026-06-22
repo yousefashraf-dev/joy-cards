@@ -14,7 +14,9 @@ export type Theme =
   | "classic-royal-silver"
   | "liquid-aurora"
   | "terminal-dark-glow"
-  | "energy-lightning";
+  | "energy-lightning"
+  | "spiderman"
+  | "batman";
 
 export type ThemeArchetype = "dark-premium" | "neon-sporty" | "glass-clean";
 

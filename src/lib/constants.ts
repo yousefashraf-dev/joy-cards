@@ -67,10 +67,12 @@ export const ALL_THEMES: ThemeConfig[] = [
   { id: "liquid-aurora", icon: "Flame", gradient: "from-[#0D001A] to-[#001A1A]", border: "border-cyan", labelKey: "forms.themeOptions.liquidAurora", descKey: "forms.themeOptions.liquidAuroraDesc" },
   { id: "terminal-dark-glow", icon: "Terminal", gradient: "from-[#0A0A0F] to-[#0F172A]", border: "border-cyan", labelKey: "forms.themeOptions.terminalDarkGlow", descKey: "forms.themeOptions.terminalDarkGlowDesc" },
   { id: "energy-lightning", icon: "Zap", gradient: "from-[#0F0A00] to-[#1A0F00]", border: "border-yellow-500", labelKey: "forms.themeOptions.energyLightning", descKey: "forms.themeOptions.energyLightningDesc" },
+  { id: "spiderman", icon: "Flame", gradient: "from-red-700 via-slate-900 to-blue-900", border: "border-red-500", labelKey: "forms.themeOptions.spiderman", descKey: "forms.themeOptions.spidermanDesc" },
+  { id: "batman", icon: "Shield", gradient: "from-neutral-950 to-black", border: "border-yellow-400", labelKey: "forms.themeOptions.batman", descKey: "forms.themeOptions.batmanDesc" },
 ];
 
 export const PRODUCT_THEMES: Record<ProductType, Theme[]> = {
-  "auto-tap": ["energy-lightning", "neon-red-track", "cyber-cyan-drift", "auto-nardo-stealth", "classic-royal-silver", "liquid-aurora", "terminal-dark-glow"],
+  "auto-tap": ["batman", "spiderman", "energy-lightning", "neon-red-track", "cyber-cyan-drift", "auto-nardo-stealth", "classic-royal-silver", "liquid-aurora", "terminal-dark-glow"],
   "business-tap": ["modern-bistro", "luxury-lounge", "cyber-cafe"],
   "digital-cards": ["classic-executive", "minimal-glass", "midnight-slate"],
 };
@@ -95,4 +97,6 @@ export const THEME_ARCHETYPE: Record<string, ThemeArchetype> = {
   "liquid-aurora": "neon-sporty",
   "terminal-dark-glow": "dark-premium",
   "energy-lightning": "neon-sporty",
+  "spiderman": "neon-sporty",
+  "batman": "dark-premium",
 };

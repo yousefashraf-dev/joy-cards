@@ -216,7 +216,11 @@
         "terminalDarkGlow": "Terminal Dark Glow",
         "terminalDarkGlowDesc": "Deep slate terminal-style with cyan neon glassmorphism",
         "energyLightning": "Energy Lightning",
-        "energyLightningDesc": "Electric yellow-gold neon glow on dark charcoal base with bold impact typography"
+        "energyLightningDesc": "Electric yellow-gold neon glow on dark charcoal base with bold impact typography",
+        "spiderman": "Spider-Man",
+        "spidermanDesc": "Red & blue web-slinger theme with comic-style energy",
+        "batman": "Batman",
+        "batmanDesc": "Dark knight premium theme with yellow bat-signal accent"
       },
       "socialHelperText": "You can type your username directly or paste your profile URL",
       "whatsappHelper": "Please enter your WhatsApp phone number only, do not paste links",

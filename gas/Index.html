@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم GoTap الاحترافية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; } </style>
+</head>
+<body class="p-4 md:p-8 text-right">
+
+  <div class="max-w-4xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">🚀 لوحة تحكم GoTap المتكاملة</h1>
+        <p class="text-xs text-slate-500 mt-1">إضافة | تعديل آمن | مسح أوردرات | رفع صور اللوجوهات</p>
+      </div>
+
+      <div class="flex gap-2 w-full md:w-auto">
+        <button onclick="openAddOrderModal()" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2">
+          ➕ إضافة أوردر جديد
+        </button>
+        <button onclick="loadOrders()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-3 rounded-xl text-sm font-semibold transition-all">
+          🔄 تحديث الشاشة
+        </button>
+      </div>
+    </div>
+
+    <div class="flex border-b border-slate-200 mb-6 gap-2">
+      <button id="tabCurrent" onclick="switchTab('current')" class="px-4 py-2.5 text-sm font-bold rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white">
+        ⏳ تحت التنفيذ (<span id="countCurrent">0</span>)
+      </button>
+      <button id="tabCompleted" onclick="switchTab('completed')" class="px-4 py-2.5 text-sm font-semibold rounded-t-xl text-slate-500">
+        💰 تم دفعها (<span id="countCompleted">0</span>)
+      </button>
+      <button id="tabShipped" onclick="switchTab('shipped')" class="px-4 py-2.5 text-sm font-semibold rounded-t-xl text-slate-500">
+        📦 تمت بنجاح (<span id="countShipped">0</span>)
+      </button>
+    </div>
+
+    <div id="ordersContainer" class="space-y-4">
+      <div class="text-center py-12 text-slate-400 bg-white rounded-2xl border">جاري سحب البيانات... ✨</div>
+    </div>
+  </div>
+
+  <div id="orderModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="p-5 border-b flex justify-between items-center bg-slate-50">
+        <h3 id="modalTitle" class="text-base font-bold text-slate-800">➕ إضافة أوردر جديد</h3>
+        <button onclick="closeOrderModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+      <form id="orderForm" onsubmit="submitOrderForm(event)" class="p-6 space-y-4 overflow-y-auto flex-1">
+
+        <input type="hidden" id="editRowNum" value="">
+
+        <div id="dynamicFieldsContainer" class="space-y-3"></div>
+
+        <div id="imageUploadSection" class="flex flex-col gap-1.5 pt-2 border-t border-dashed">
+          <label class="text-xs font-bold text-purple-700 flex items-center gap-1">🖼️ إرفاق صورة اللوجو للعميل (اختياري):</label>
+          <input type="file" id="logoFile" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer">
+        </div>
+
+        <div class="pt-4 border-t flex gap-2">
+          <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition-all shadow-md">
+            💾 حفظ الأوردر فوري بالشيت
+          </button>
+          <button type="button" onclick="closeOrderModal()" class="w-1/3 bg-slate-100 text-slate-600 py-3 rounded-xl text-sm">
+            إلغاء
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    var allOrders = [];
+    var currentTab = 'current';
+
+    var strictOrder = [
+      'اسم العميل',
+      'رقم التليفون',
+      'العنوان بالتفصيل',
+      'يوزر تيك توك',
+      'يوزر فيسبوك',
+      'يوزر سناب شات',
+      'رقم الواتساب',
+      'الاسم على اللوجو',
+      'عرض اللوجو (سم)',
+      'ملاحظات',
+      'رابط الملف الشخصي'
+    ];
+
+    var COPY_FIELDS = ['اسم العميل','رقم التليفون','العنوان بالتفصيل'];
+
+    function cleanInstagram(rawUrl) {
+      if (!rawUrl) return "";
+      var str = String(rawUrl).trim();
+      if (str.indexOf('?') !== -1) str = str.split('?')[0];
+      str = str.replace(/\/+$/, "");
+      str = str.replace(/^https?:\/\/(www\.)?(instagram\.com|instagr\.am)\//i, "");
+      str = str.replace(/^\/+/, "");
+      return str;
+    }
+
+    function copySvg() {
+      return '<svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>';
+    }
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(function() {
+        btn.innerHTML = '<span class="text-emerald-600 font-bold text-xs">✓ تم النسخ</span>';
+        setTimeout(function() { btn.innerHTML = copySvg(); }, 1000);
+      }).catch(function() {
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        btn.innerHTML = '<span class="text-emerald-600 font-bold text-xs">✓ تم النسخ</span>';
+        setTimeout(function() { btn.innerHTML = copySvg(); }, 1000);
+      });
+    }
+
+    function escapeAttr(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/`/g, '&#96;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    }
+
+    function loadOrders() {
+      var container = document.getElementById('ordersContainer');
+      if (!container) return;
+      container.innerHTML = '<div class="text-center py-12 text-slate-400 bg-white rounded-2xl border">🔄 جاري مزامنة وسحب البيانات الحية...</div>';
+      google.script.run.withSuccessHandler(processOrders).getOrders();
+    }
+
+    function processOrders(orders) {
+      allOrders = orders || [];
+      renderOrders();
+      generateFormFields();
+    }
+
+    function generateFormFields() {
+      var container = document.getElementById('dynamicFieldsContainer');
+      if (container.children.length > 0) return;
+      container.innerHTML = '';
+      for (var fi = 0; fi < strictOrder.length; fi++) {
+        var field = strictOrder[fi];
+        var div = document.createElement('div');
+        div.className = 'flex flex-col gap-1';
+        div.innerHTML =
+          '<label class="text-xs font-bold text-slate-600">' + escapeHtml(field) + '</label>' +
+          '<input type="text" name="' + escapeAttr(field) + '" id="field_' + escapeAttr(field) + '" placeholder="أدخل ' + escapeAttr(field) + '..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500 focus:bg-white transition-all text-right">';
+        container.appendChild(div);
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(function() {
+        showToast('✅ تم نسخ الرابط!');
+      }).catch(function() {
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('✅ تم نسخ الرابط!');
+      });
+    }
+
+    function showToast(msg) {
+      var existing = document.getElementById('customToast');
+      if (existing) existing.remove();
+      var toast = document.createElement('div');
+      toast.id = 'customToast';
+      toast.className = 'fixed bottom-6 start-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl text-sm font-bold z-[999] animate-bounce';
+      toast.style.animation = 'fadeInOut 2s ease';
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      setTimeout(function() { toast.remove(); }, 2000);
+    }
+
+    var toastStyle = document.createElement('style');
+    toastStyle.textContent = '@keyframes fadeInOut { 0% { opacity:0; transform:translateY(20px) } 15% { opacity:1; transform:translateY(0) } 85% { opacity:1; transform:translateY(0) } 100% { opacity:0; transform:translateY(-20px) } }';
+    document.head.appendChild(toastStyle);
+
+    function openAddOrderModal() {
+      document.getElementById('editRowNum').value = "";
+      document.getElementById('modalTitle').innerText = "➕ إضافة أوردر جديد";
+      document.getElementById('imageUploadSection').classList.remove('hidden');
+      document.getElementById('submitBtn').innerText = "💾 حفظ الأوردر فوري بالشيت";
+      document.getElementById('orderModal').classList.remove('hidden');
+      generateFormFields();
+    }
+
+    function openEditOrderModal(rowNum) {
+      var order = null;
+      for (var oi = 0; oi < allOrders.length; oi++) {
+        if (allOrders[oi].rowNum === rowNum) {
+          order = allOrders[oi];
+          break;
+        }
+      }
+      if (!order) return;
+
+      document.getElementById('editRowNum').value = rowNum;
+      document.getElementById('modalTitle').innerText = "✏️ تعديل بيانات الأوردر";
+      document.getElementById('imageUploadSection').classList.add('hidden');
+      document.getElementById('submitBtn').innerText = "🔄 تحديث التعديلات بالشيت";
+      document.getElementById('orderModal').classList.remove('hidden');
+      generateFormFields();
+
+      for (var fi = 0; fi < strictOrder.length; fi++) {
+        var field = strictOrder[fi];
+        var input = document.getElementById('field_' + field);
+        if (input) {
+          input.value = order[field] || "";
+        }
+      }
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.add('hidden');
+      document.getElementById('orderForm').reset();
+    }
+
+    function submitOrderForm(e) {
+      e.preventDefault();
+      var form = document.getElementById('orderForm');
+      var rowNum = document.getElementById('editRowNum').value;
+      var orderObject = {};
+
+      for (var fi = 0; fi < strictOrder.length; fi++) {
+        var field = strictOrder[fi];
+        var input = form.querySelector('[name="' + field.replace(/"/g, '') + '"]');
+        orderObject[field] = input ? input.value.trim() : "";
+      }
+
+      var submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+
+      if (rowNum) {
+        submitBtn.innerText = "⏳ جاري حفظ التعديل...";
+        google.script.run.withSuccessHandler(function(response) {
+          handleBackendResponse(response);
+        }).updateExistingOrder(parseInt(rowNum), orderObject);
+      } else {
+        submitBtn.innerText = "⏳ جاري رفع اللوجو وحفظ الأوردر...";
+        var fileInput = document.getElementById('logoFile');
+        var file = fileInput.files[0];
+
+        if (file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var bytes = e.target.result.split(',')[1];
+            var imageBlobData = { bytes: bytes, mimeType: file.type };
+            google.script.run.withSuccessHandler(function(response) {
+              handleBackendResponse(response);
+            }).addNewOrderWithImage(orderObject, imageBlobData);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          google.script.run.withSuccessHandler(function(response) {
+            handleBackendResponse(response);
+          }).addNewOrderWithImage(orderObject, null);
+        }
+      }
+    }
+
+    function deleteOrderConfirm(rowNum, customerName) {
+      if (confirm('⚠️ هل أنت متأكد تماماً من حذف أوردر العميل (' + customerName + ') نهائياً من الجوجل شيت؟')) {
+        var container = document.getElementById('ordersContainer');
+        container.innerHTML = '<div class="text-center py-12 text-rose-500 bg-white rounded-2xl border">⏳ جاري حذف الأوردر بأمان من الشيت...</div>';
+        google.script.run.withSuccessHandler(loadOrders).deleteOrder(rowNum);
+      }
+    }
+
+    function handleBackendResponse(response) {
+      var submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = false;
+      if (response === "نجاح") {
+        closeOrderModal();
+        loadOrders();
+      } else {
+        alert(response);
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      var tabs = {
+        current: document.getElementById('tabCurrent'),
+        completed: document.getElementById('tabCompleted'),
+        shipped: document.getElementById('tabShipped')
+      };
+
+      var tabKeys = ['current', 'completed', 'shipped'];
+      for (var ti = 0; ti < tabKeys.length; ti++) {
+        tabs[tabKeys[ti]].className = "px-4 py-2.5 text-sm font-semibold rounded-t-xl text-slate-500 hover:text-indigo-600 transition-all";
+      }
+
+      if (tab === 'current') tabs.current.className = "px-4 py-2.5 text-sm font-bold rounded-t-xl border-b-2 border-indigo-600 text-indigo-600 bg-white";
+      if (tab === 'completed') tabs.completed.className = "px-4 py-2.5 text-sm font-bold rounded-t-xl border-b-2 border-amber-500 text-amber-600 bg-white";
+      if (tab === 'shipped') tabs.shipped.className = "px-4 py-2.5 text-sm font-bold rounded-t-xl border-b-2 border-emerald-600 text-emerald-600 bg-white";
+
+      renderOrders();
+    }
+
+    function getStatus(order, keyword) {
+      var keys = Object.keys(order);
+      var targetKey = null;
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf(keyword) !== -1) {
+          targetKey = keys[i];
+          break;
+        }
+      }
+      if (!targetKey) return false;
+      var val = order[targetKey];
+      return (val === true || val === 'true' || val === 'تم الدفع' || val === 'تم التصميم');
+    }
+
+    function renderOrders() {
+      var container = document.getElementById('ordersContainer');
+      var listCurrent = [];
+      var listCompleted = [];
+      var listShipped = [];
+
+      for (var oi = 0; oi < allOrders.length; oi++) {
+        var order = allOrders[oi];
+        var isPaid = getStatus(order, 'الدفع');
+        var isShipped = getStatus(order, 'للشحن') || getStatus(order, 'التصميم');
+        if (isShipped) listShipped.push(order);
+        else if (isPaid) listCompleted.push(order);
+        else listCurrent.push(order);
+      }
+
+      document.getElementById('countCurrent').innerText = listCurrent.length;
+      document.getElementById('countCompleted').innerText = listCompleted.length;
+      document.getElementById('countShipped').innerText = listShipped.length;
+
+      var activeOrders = (currentTab === 'current') ? listCurrent : (currentTab === 'completed' ? listCompleted : listShipped);
+
+      if (!activeOrders || activeOrders.length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-slate-400 bg-white rounded-2xl border">💤 لا توجد طلبات في هذا القسم.</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      for (var ai = 0; ai < activeOrders.length; ai++) {
+        var order = activeOrders[ai];
+        var rowNum = order.rowNum;
+        var customerName = order['اسم العميل'] || '';
+
+        var keysList = Object.keys(order);
+        var idKey = null;
+        for (var ki = 0; ki < keysList.length; ki++) {
+          if (keysList[ki].indexOf('مسلسل') !== -1 || keysList[ki].toLowerCase().indexOf('id') !== -1) {
+            idKey = keysList[ki];
+            break;
+          }
+        }
+        var orderIdDisplay = (idKey && order[idKey]) ? order[idKey] : "جاري الترقيم..";
+
+        var isPaid = getStatus(order, 'الدفع');
+        var isShipped = getStatus(order, 'للشحن') || getStatus(order, 'التصميم');
+
+        var card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+
+        var detailsHtml = '';
+
+        for (var si = 0; si < strictOrder.length; si++) {
+          var key = strictOrder[si];
+          var realKey = null;
+          for (var rki = 0; rki < keysList.length; rki++) {
+            if (keysList[rki].trim().indexOf(key.trim()) !== -1 || key.trim().indexOf(keysList[rki].trim()) !== -1) {
+              realKey = keysList[rki];
+              break;
+            }
+          }
+          if (!realKey) continue;
+
+          var rawVal = order[realKey];
+          if (rawVal === undefined || rawVal === null || rawVal.toString().trim() === "") continue;
+
+          var displayVal;
+
+          if (key === 'رابط الملف الشخصي' && rawVal) {
+            var cleanUrl = rawVal.toString().trim();
+            displayVal = '<div class="flex items-center gap-2 flex-wrap">' +
+              '<a href="' + escapeAttr(cleanUrl) + '" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:underline font-bold bg-indigo-50 px-2.5 py-1.5 rounded-lg text-xs transition-all hover:bg-indigo-100">🔗 فتح الرابط</a>' +
+              '<button onclick="event.stopPropagation(); copyToClipboard(\'' + escapeAttr(cleanUrl) + '\')" class="inline-flex items-center gap-1 text-emerald-600 font-bold bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg text-xs border border-emerald-200 transition-all cursor-pointer">📋 نسخ الرابط</button>' +
+              '</div>';
+          } else if (typeof rawVal === 'string' && (rawVal.indexOf('http://') !== -1 || rawVal.indexOf('https://') !== -1)) {
+            var urlMatch = rawVal.match(/https?:\/\/[^\s]+/);
+            if (urlMatch) {
+              displayVal = rawVal.replace(urlMatch[0], '<a href="' + escapeAttr(urlMatch[0]) + '" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 hover:underline font-bold bg-indigo-50 px-2.5 py-1 rounded-lg text-xs">🔗 فتح الرابط المرفق</a>');
+            } else {
+              displayVal = escapeHtml(rawVal);
+            }
+          } else {
+            displayVal = escapeHtml(rawVal);
+          }
+
+          var copyBtn = '';
+          if (COPY_FIELDS.indexOf(key) !== -1) {
+            var copyTextVal = rawVal.toString().trim();
+            copyBtn = '<button onclick="event.stopPropagation(); copyText(\'' + escapeAttr(copyTextVal) + '\',this)" class="inline-flex items-center justify-center w-7 h-7 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-all flex-shrink-0 ml-1" title="نسخ">' + copySvg() + '</button>';
+          }
+
+          detailsHtml += '<div class="p-3 border-b border-slate-50 flex justify-between items-start gap-2 md:gap-4 text-xs">' +
+            '<span class="text-slate-400 font-medium shrink-0">' + escapeHtml(key) + ':</span>' +
+            '<span class="text-slate-700 font-semibold text-left max-w-md break-words flex items-center gap-1">' + displayVal + copyBtn + '</span>' +
+            '</div>';
+
+          // ===== حقن Instagram مباشرة تحت العنوان (دائم الظهور) =====
+          if (key === 'العنوان بالتفصيل') {
+            var instaRaw = order['يوزر انستجرام'] || order['يوزر إنستجرام'] || '';
+            var cleanInsta = "";
+            if (instaRaw) {
+              var rawStr = String(instaRaw).trim();
+              if (rawStr.indexOf('http') === 0 || rawStr.indexOf('www') === 0) {
+                cleanInsta = rawStr.split('/').pop().split('?')[0];
+              } else {
+                cleanInsta = rawStr;
+              }
+            }
+            var displayInsta = cleanInsta || 'لم يتم إدخاله من الموقع';
+            var escapedDisplayInsta = escapeHtml(displayInsta);
+            var instaId = 'insta-text-' + order.rowNum;
+            var instaCopyBtn = '';
+            if (cleanInsta) {
+              instaCopyBtn = '<button onclick="event.stopPropagation(); copyText(document.getElementById(\'' + instaId + '\').innerText, this)" class="inline-flex items-center justify-center w-7 h-7 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-all flex-shrink-0 ml-1" title="نسخ">' + copySvg() + '</button>';
+            }
+            detailsHtml += '<div class="p-3 border-b border-slate-50 flex justify-between items-start gap-2 md:gap-4 text-xs">' +
+              '<span class="text-slate-400 font-medium shrink-0">حساب إنستجرام:</span>' +
+              '<span class="text-slate-700 font-semibold text-left max-w-md break-all flex items-center gap-1"><span id="' + instaId + '">' + escapedDisplayInsta + '</span>' + instaCopyBtn + '</span>' +
+              '</div>';
+          }
+        }
+
+        card.innerHTML =
+          '<div class="bg-slate-50/80 px-4 py-3 border-b border-slate-100 flex justify-between items-center flex-wrap gap-2">' +
+          '<div class="flex items-center gap-2">' +
+          '<span class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold">🔢 أوردر رقم: ' + escapeHtml(orderIdDisplay) + '</span>' +
+          '<span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-1 rounded-lg">سطر: ' + rowNum + '</span>' +
+          '</div>' +
+          '<div class="flex items-center gap-1.5 flex-wrap">' +
+          '<button onclick="openEditOrderModal(' + rowNum + ')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2 rounded-xl text-xs font-bold transition-all border border-blue-100" title="تعديل البيانات">✏️ تعديل</button>' +
+          '<button onclick="deleteOrderConfirm(' + rowNum + ', \'' + escapeAttr(customerName) + '\')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl text-xs font-bold transition-all border border-rose-100" title="حذف الأوردر">🗑️ مسح</button>' +
+          '<div class="h-5 w-[1px] bg-slate-200 mx-1"></div>' +
+          '<button onclick="toggleField(' + rowNum + ', \'الدفع\', ' + isPaid + ')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ' + (isPaid ? 'bg-amber-500 text-white' : 'bg-white text-slate-600 border') + '">' +
+          (isPaid ? '🔄 إلغاء دفع' : '💰 تم الدفع') +
+          '</button>' +
+          '<button onclick="toggleField(' + rowNum + ', \'للشحن\', ' + isShipped + ')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all ' + (isShipped ? 'bg-emerald-600 text-white' : 'bg-white text-indigo-600 border border-indigo-100') + '">' +
+          (isShipped ? '🔄 إرجاع' : '📦 تم الشحن') +
+          '</button>' +
+          '</div>' +
+          '</div>' +
+          '<div class="divide-y divide-slate-50 bg-white">' + detailsHtml + '</div>';
+        container.appendChild(card);
+      }
+    }
+
+    function toggleField(rowNum, keyName, currentBool) {
+      var newStatus = !currentBool;
+      google.script.run.withSuccessHandler(loadOrders).updateOrderColumnStatus(rowNum, keyName, newStatus);
+    }
+
+    window.loadOrders = loadOrders;
+    window.openAddOrderModal = openAddOrderModal;
+    window.closeOrderModal = closeOrderModal;
+    window.deleteOrderConfirm = deleteOrderConfirm;
+    window.toggleField = toggleField;
+    window.openEditOrderModal = openEditOrderModal;
+    window.submitOrderForm = submitOrderForm;
+    window.switchTab = switchTab;
+    window.copyToClipboard = copyToClipboard;
+    window.copyText = copyText;
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadOrders);
+    } else {
+      loadOrders();
+    }
+  </script>
+</body>
+</html>

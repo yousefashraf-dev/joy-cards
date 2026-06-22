@@ -36,10 +36,6 @@ yarn-error.log*
 # firebase admin service account (sensitive key)
 gotap-95a12-firebase-adminsdk-fbsvc-fc78d18130.json
 
-# internal docs (not for production)
-LAST_SAVE.md
-new.gas
-gas/
 
 # vercel
 .vercel

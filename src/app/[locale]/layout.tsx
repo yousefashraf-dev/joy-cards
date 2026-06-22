@@ -1,6 +1,6 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { Inter, Noto_Kufi_Arabic } from "next/font/google";
+import { Inter, Noto_Kufi_Arabic, Dancing_Script } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 
@@ -13,6 +13,12 @@ const inter = Inter({
 const notoKufi = Noto_Kufi_Arabic({
   subsets: ["arabic"],
   variable: "--font-noto-kufi",
+  display: "swap",
+});
+
+const dancingScript = Dancing_Script({
+  subsets: ["latin"],
+  variable: "--font-signature",
   display: "swap",
 });
 
@@ -48,7 +54,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`${inter.variable} ${notoKufi.variable} h-full antialiased`}
+      className={`${inter.variable} ${notoKufi.variable} ${dancingScript.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-matte-black text-slate-light font-sans" suppressHydrationWarning>

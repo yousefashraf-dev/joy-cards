@@ -13,6 +13,8 @@ import ClassicRoyalSilverProfile from "./ClassicRoyalSilverProfile";
 import LiquidAuroraProfile from "./LiquidAuroraProfile";
 import TerminalDarkGlowProfile from "./TerminalDarkGlowProfile";
 import EnergyLightningProfile from "./EnergyLightningProfile";
+import BatmanProfile from "./BatmanProfile";
+import SpidermanProfile from "./SpidermanProfile";
 import { CldImage } from "next-cloudinary";
 import { THEME_ARCHETYPE } from "@/lib/constants";
 import {
@@ -155,8 +157,8 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
   if (profile.theme === "liquid-aurora") return <LiquidAuroraProfile {...sharedProps} />;
   if (profile.theme === "terminal-dark-glow") return <TerminalDarkGlowProfile {...sharedProps} />;
   if (profile.theme === "energy-lightning") return <EnergyLightningProfile {...sharedProps} />;
-  if (profile.theme === "spiderman") return <NeonRedTrackProfile {...sharedProps} />;
-  if (profile.theme === "batman") return <NardoStealthProfile {...sharedProps} />;
+  if (profile.theme === "spiderman") return <SpidermanProfile {...sharedProps} />;
+  if (profile.theme === "batman") return <BatmanProfile {...sharedProps} />;
 
   // Non-Auto-Tap themes: use archetype-based rendering
   switch (archetype) {

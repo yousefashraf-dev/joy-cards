@@ -76,30 +76,23 @@
     },
     "businessTap": {
       "title": "Restaurants & Cafes",
-      "desc": "Place your full menu on every table with one tap, create a custom sticker for easy Wi-Fi password access, or an InstaPay sticker for instant smart payments, and more tailored services for your comfort and your customers' convenience.",
+      "desc": "Transform your cafe or restaurant into a complete digital experience — interactive digital menu, instant reviews, smart Wi-Fi, and all your social channels in one single link.",
       "cta": "Order Now",
       "features": {
-        "digitalMenu": "Digital Menu",
-        "googleReviews": "Google Reviews",
-        "tapToOrder": "Tap to Order",
-        "businessProfile": "Business Profile",
-        "wifiAccess": "Wi-Fi Access",
-        "instaPay": "InstaPay Payment"
+        "digitalMenu": "Upload a PDF, showcase dish images, or link directly to your website. Your customers access everything with a single tap.",
+        "googleReviews": "Boost your Google Maps rating with one tap. Customers leave reviews and stars instantly — no searching or typing needed.",
+        "wifiAccess": "Offer instant, secure Wi-Fi connection without passwords. One tap and they're connected.",
+        "socialHub": "Bring together all your social media accounts — Snapchat, TikTok, Facebook, Instagram — and your website in one unified interface."
       },
       "badge": "NFC Restaurant Tags",
-      "marketing": "Place your full menu on every table with one tap, create a custom sticker that opens your Wi-Fi password directly, or an InstaPay sticker for instant payment transfers.",
+      "marketing": "Elevate your customer experience with GoTap — digital menu, instant reviews, smart Wi-Fi, and all your channels in one NFC link.",
       "whatsappMessage": "Hello GoTap! I want to order a business NFC tag.\n\nName: {name}\nPhone: {phone}\nEstablishment: {establishment}\nQuantity: {quantity}",
       "services": {
-        "digitalMenu": "Digital Menu",
-        "googleReviews": "Google Reviews",
-        "tapToOrder": "Tap to Order",
-        "businessProfile": "Business Profile",
-        "wifiAccess": "Wi-Fi Access",
-        "instaPay": "InstaPay Payment"
-      },
-      "customOrder": "For ordering or custom execution",
-      "contactUs": "Contact Us",
-      "servicesDesc": "Everything you need to modernize your establishment"
+        "digitalMenu": "Interactive Digital Menu",
+        "googleReviews": "Google Maps Reviews",
+        "wifiAccess": "Smart Wi-Fi",
+        "socialHub": "Unified Social Hub"
+      }
     },
     "pricing": {
       "title": "Auto Tap Sticker Pricing",
@@ -305,7 +298,27 @@
     },
     "footer": {
       "rights": "All rights reserved.",
-      "tagline": "Premium NFC Technology Solutions"
+      "tagline": "Premium NFC Technology Solutions",
+      "instagram": "Instagram",
+      "tiktok": "TikTok"
+    },
+    "cafe": {
+      "title": "Digital Menu & Smart WiFi",
+      "viewMenu": "View Our Menu",
+      "browseMenu": "Browse Digital Menu",
+      "viewOnMap": "Our Location",
+      "rateOnGoogle": "Rate us on Google",
+      "callDirect": "Call Now",
+      "messageWhatsapp": "Message us on WhatsApp",
+      "ourWebsite": "Our Website",
+      "connectWifi": "Connect to Wi-Fi",
+      "wifiModalTitle": "Wi-Fi Network",
+      "wifiNetwork": "Network Name",
+      "wifiPassword": "Password",
+      "copyPassword": "Copy Password",
+      "copied": "Copied!",
+      "poweredBy": "Powered by GoTap",
+      "socialTitle": "Follow us"
     }
   },
   "faq": {
@@ -341,5 +354,50 @@
   },
   "currency": {
     "egp": "EGP"
+  },
+  "admin": {
+    "loginTitle": "Admin Verification",
+    "loginPlaceholder": "Enter secret admin code",
+    "loginButton": "Verify",
+    "loginError": "Incorrect code. Try again.",
+    "dashboardTitle": "Admin Dashboard",
+    "addCafe": "Add New Cafe",
+    "editCafe": "Edit Cafe",
+    "deleteConfirm": "Are you sure you want to delete this cafe?",
+    "saveSuccess": "Cafe saved successfully!",
+    "deleteSuccess": "Cafe deleted successfully!",
+    "errorOccurred": "An error occurred. Please try again.",
+    "generatedLink": "Cafe Link",
+    "copyLink": "Copy Link",
+    "tableName": "Name",
+    "tableSlug": "Slug",
+    "tableCreated": "Created",
+    "tableActions": "Actions",
+    "form": {
+      "name": "Cafe / Restaurant Name",
+      "slug": "Slug (English, no spaces)",
+      "slugHelper": "Used in the URL: gotap.vercel.app/ar/cafe/{slug}",
+      "logo": "Upload Logo",
+      "menuFile": "Upload Menu (PDF or Images)",
+      "menuType": "Menu Type",
+      "menuTypePdf": "PDF File",
+      "menuTypeImages": "Images",
+      "menuTypeLink": "External Link",
+      "menuLink": "Menu URL (External Link)",
+      "phone": "Phone Number (Direct Call)",
+      "whatsapp": "WhatsApp Number",
+      "websiteUrl": "Website URL",
+      "facebook": "Facebook Link",
+      "instagram": "Instagram Link",
+      "tiktok": "TikTok Link",
+      "snapchatUrl": "Snapchat Link",
+      "googleMapsUrl": "Google Maps Location URL",
+      "googleReviewsUrl": "Google Reviews URL",
+      "wifiName": "Wi-Fi Network Name (SSID)",
+      "wifiPassword": "Wi-Fi Password",
+      "save": "Save Cafe",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    }
   }
 }

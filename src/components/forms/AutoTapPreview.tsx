@@ -223,22 +223,19 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                   {/* Batman logos repeated in background - 10 scattered logos */}
                   <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                     {batmanBgLogos.map((item, i) => (
-                      <Image
+                      <img
                         key={i}
                         src="/Batman-removebg-preview.png"
                         alt=""
-                        width={72}
-                        height={72}
                         className={`absolute opacity-30 ${item.size} ${item.rotate} filter brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg]`}
                         style={{ top: item.top, left: item.left }}
-                        unoptimized
                       />
                     ))}
                   </div>
                   <div className="relative z-10">
                     {avatarCircle("ring-2 ring-white/60 shadow-[0_0_20px_rgba(255,255,255,0.12)]")}
                     <div className="flex justify-center mb-3">
-                      <Image src="/Batman-removebg-preview.png" alt="Batman" width={64} height={64} className="w-16 h-16 object-contain filter brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg] drop-shadow-[0_0_8px_rgba(250,204,21,0.9)]" unoptimized />
+                      <img src="/Batman-removebg-preview.png" alt="Batman" className="w-16 h-16 object-contain filter brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg] drop-shadow-[0_0_8px_rgba(250,204,21,0.9)]" />
                     </div>
                     <h3 className="text-xl font-black text-white mb-5 uppercase tracking-[0.15em]"
                       style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
@@ -262,20 +259,17 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                 <div className="rounded-2xl p-6 text-center bg-gradient-to-br from-red-700 via-slate-900 to-blue-900 border border-red-500/30 shadow-[0_0_30px_rgba(220,38,38,0.2)] relative overflow-hidden">
                   {/* Spider web 1 (spider-removebg-preview) - 4 corners + Spider web 2 (spider_2-removebg-preview) - 11 scattered */}
                   <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                    <Image src="/spider-removebg-preview.png" alt="" width={112} height={112} className="absolute -top-8 -right-8 w-28 h-28 opacity-30 rotate-12" unoptimized />
-                    <Image src="/spider-removebg-preview.png" alt="" width={112} height={112} className="absolute -bottom-8 -left-8 w-28 h-28 opacity-30 -rotate-12" unoptimized />
-                    <Image src="/spider-removebg-preview.png" alt="" width={112} height={112} className="absolute -top-8 -left-8 w-28 h-28 opacity-30 -rotate-[30deg]" unoptimized />
-                    <Image src="/spider-removebg-preview.png" alt="" width={112} height={112} className="absolute -bottom-8 -right-8 w-28 h-28 opacity-30 rotate-[30deg]" unoptimized />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -top-8 -right-8 w-28 h-28 opacity-30 rotate-12" />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -bottom-8 -left-8 w-28 h-28 opacity-30 -rotate-12" />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -top-8 -left-8 w-28 h-28 opacity-30 -rotate-[30deg]" />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -bottom-8 -right-8 w-28 h-28 opacity-30 rotate-[30deg]" />
                     {spiderBgWebs.map((item, i) => (
-                      <Image
+                      <img
                         key={i}
                         src="/spider_2-removebg-preview.png"
                         alt=""
-                        width={128}
-                        height={128}
                         className={`absolute opacity-25 ${item.size} ${item.rotate}`}
                         style={{ top: item.top, left: item.left }}
-                        unoptimized
                       />
                     ))}
                   </div>

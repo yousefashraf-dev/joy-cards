@@ -7,6 +7,8 @@ export const WHATSAPP_ORDERS_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_ORDERS_NU
 
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
 export const WHATSAPP_ORDERS_LINK = `https://wa.me/${WHATSAPP_ORDERS_NUMBER}`;
+export const WHATSAPP_BUSINESS_MSG = `https://wa.me/${WHATSAPP_ORDERS_NUMBER}?text=${encodeURIComponent("السلام عليكم جو تابل، كنت محتاج أستفسر عن خدمة الكافيهات والمطاعم")}`;
+export const GAS_CAFE_URL = process.env.NEXT_PUBLIC_GAS_CAFE_URL || GAS_URL;
 
 export const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dliaxor9r";
 

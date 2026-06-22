@@ -20,7 +20,7 @@ const INITIAL_DATA: AutoTapFormData = {
   logo: "",
   logoWidthCm: "",
   displayName: "",
-  theme: "energy-lightning",
+  theme: "batman",
 };
 
 export default function AutoTapPage() {

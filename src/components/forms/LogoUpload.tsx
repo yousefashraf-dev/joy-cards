@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Upload, X, ImageIcon } from "lucide-react";
 import { useLoading } from "@/components/ui/LoadingProvider";
@@ -19,6 +19,7 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
   const [uploading, setUploading] = useState(false);
   const { showLoading, hideLoading } = useLoading();
   const { showToast } = useToast();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,19 +93,25 @@ export default function LogoUpload({ value, onChange, error }: LogoUploadProps) 
           </button>
         </div>
       ) : (
-        <div className="relative overflow-hidden">
+        <div
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            inputRef.current?.click();
+          }}
+          className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 glass bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 cursor-pointer"
+        >
           <input
+            ref={inputRef}
             type="file"
             accept="image/*"
             onChange={handleFile}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            className="hidden"
           />
-          <div className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 glass bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2">
-            <Upload className={`w-6 h-6 ${uploading ? "text-nardo animate-pulse" : "text-slate-muted"}`} />
-            <span className="text-sm text-slate-muted">
-              {uploading ? t("uploading") : t("uploadHelper")}
-            </span>
-          </div>
+          <Upload className={`w-6 h-6 ${uploading ? "text-nardo animate-pulse" : "text-slate-muted"}`} />
+          <span className="text-sm text-slate-muted">
+            {uploading ? t("uploading") : t("uploadHelper")}
+          </span>
         </div>
       )}
 

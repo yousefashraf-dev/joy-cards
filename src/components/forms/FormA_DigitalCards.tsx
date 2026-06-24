@@ -119,7 +119,10 @@ export default function FormA_DigitalCards({ data, onChange }: FormAProps) {
                 </button>
               </div>
             ) : (
-              <label className="flex items-center gap-3 p-4 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 cursor-pointer bg-dark-card/50 transition-all">
+              <label
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-3 p-4 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 cursor-pointer bg-dark-card/50 transition-all"
+              >
                 <FileText className="w-5 h-5 text-slate-muted" />
                 <span className="text-sm text-slate-muted">{pdfUploading ? t("uploading") : t("fields.pdfUpload")}</span>
                 <input ref={pdfRef} type="file" accept="application/pdf" onChange={handlePdfUpload} className="hidden" />

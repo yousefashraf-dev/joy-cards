@@ -37,6 +37,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
 
   const [step, setStep] = useState(0);
   const stepperRef = useRef<HTMLDivElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -507,14 +508,22 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                     </button>
                   </div>
                 ) : (
-                  <div className="relative overflow-hidden">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    />
-                    <div className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2">
+                  <div className="relative">
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        logoInputRef.current?.click();
+                      }}
+                      className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                      />
                       <Upload
                         className={`w-6 h-6 ${
                           uploading ? "text-nardo animate-pulse" : "text-slate-body"

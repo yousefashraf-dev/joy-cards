@@ -202,7 +202,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         {/* Logo Upload */}
         <div>
           <label className={labelClass}>{t("logo")}</label>
-          <label className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-white/20 bg-dark-card/50 cursor-pointer hover:border-neon-green/50 transition-colors duration-200">
+          <label
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-white/20 bg-dark-card/50 cursor-pointer hover:border-neon-green/50 transition-colors duration-200"
+          >
             <Upload className="w-5 h-5 text-slate-muted" />
             <span className="text-sm text-slate-muted">
               {logoFile ? logoFile.name : cafe?.logo ? t("logo") : "PNG, JPG"}
@@ -309,7 +312,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                 ))}
               </div>
             )}
-            <label className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-white/20 bg-dark-card/50 cursor-pointer hover:border-neon-green/50 transition-colors duration-200">
+            <label
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-white/20 bg-dark-card/50 cursor-pointer hover:border-neon-green/50 transition-colors duration-200"
+            >
               <Upload className="w-5 h-5 text-slate-muted" />
               <span className="text-sm text-slate-muted">
                 {menuFiles.length > 0
@@ -334,7 +340,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         ) : (
           <div>
             <label className={labelClass}>{t("menuFile")}</label>
-            <label className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-white/20 bg-dark-card/50 cursor-pointer hover:border-neon-green/50 transition-colors duration-200">
+            <label
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-white/20 bg-dark-card/50 cursor-pointer hover:border-neon-green/50 transition-colors duration-200"
+            >
               <Upload className="w-5 h-5 text-slate-muted" />
               <span className="text-sm text-slate-muted">
                 {menuFiles.length > 0
@@ -345,7 +354,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
               </span>
               <input
                 type="file"
-                accept=".pdf"
+                accept="application/pdf"
                 className="hidden"
                 onChange={(e) => {
                   const file = e.target.files?.[0] || null;

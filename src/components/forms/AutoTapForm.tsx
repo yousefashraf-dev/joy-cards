@@ -2,10 +2,10 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
-  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Ruler,
+  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Ruler, FileText,
 } from "lucide-react";
 import type { AutoTapFormData } from "@/lib/types";
 import { formatSocialLink, type Platform } from "@/lib/formatSocialLink";
@@ -33,7 +33,14 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const tm = useTranslations("messages");
   const st = useTranslations("products.steps");
   const pt = useTranslations("products.forms.profileType");
+  const tc = useTranslations("currency");
   const locale = useLocale();
+
+  const sizeImages: Record<string, string> = {
+    "6": "/2.jpeg",
+    "25": "/1.jpeg",
+    "35": "/3.jpeg",
+  };
 
   const [step, setStep] = useState(0);
   const stepperRef = useRef<HTMLDivElement>(null);
@@ -47,6 +54,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderPricing, setOrderPricing] = useState<{ totalPrice: number; shippingFee: number } | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [previewSize, setPreviewSize] = useState<string | null>(null);
   const { showLoading, hideLoading } = useLoading();
   const { showToast } = useToast();
 
@@ -129,10 +137,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     } else if (step === 2) {
       // Design selection step — no required validation (theme has default)
     } else if (step === 3) {
-      if (!data.logoWidthCm.trim()) {
+      if (!data.logoWidthCm) {
         newErrors.logoWidthCm = e("required");
-      } else if (isNaN(Number(data.logoWidthCm)) || Number(data.logoWidthCm) <= 0) {
-        newErrors.logoWidthCm = e("invalidNumber");
       }
     }
     setErrors(newErrors);
@@ -165,7 +171,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       showToast(tm("networkError"), "error");
     }, TIMEOUT_MS);
 
-    const pricing = calcTotal(data.profileType, data.addressDetail);
+    const pricing = calcTotal(data.addressDetail);
     setOrderPricing({ totalPrice: pricing.total, shippingFee: pricing.shippingFee });
 
     const formattedSocials: Record<string, string> = {};
@@ -197,7 +203,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         socialLinks: formattedSocials,
         autoTapFields: {
           profileType: data.profileType,
-          logoWidthCm: data.logoWidthCm.trim(),
+          logoWidthCm: data.logoWidthCm.trim() || "6",
           orderNotes: data.orderNotes.trim() || undefined,
           addressDetail: data.addressDetail.trim(),
           selectedPlatform: data.selectedPlatform || undefined,
@@ -280,10 +286,9 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         {/* Step 1: Shipping */}
         {step === 0 && (
           <div className="space-y-5 px-2 sm:px-3">
-            <h3 className="text-lg font-semibold text-nardo mb-1">
+            <h3 className="text-lg font-semibold text-nardo mb-4">
               {t("section.personal")}
             </h3>
-            <p className="text-xs text-slate-body/70 mb-4">{t("helper.shippingInfo")}</p>
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
                 {locale === "en" ? "الاسم الثلاثي بالعربي" : t("fields.customerName")}
@@ -295,7 +300,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 lang="ar"
                 className={inputClass("customerName")}
               />
-              <p className="text-xs text-slate-body/70 mt-1">{t("helper.customerName")}</p>
               {renderError("customerName")}
             </div>
             <div>
@@ -310,7 +314,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 onChange={(e) => handleFieldChange("phone", e.target.value)}
                 className={inputClass("phone")}
               />
-              <p className="text-xs text-slate-body/70 mt-1">{t("helper.phone")}</p>
               {renderError("phone")}
             </div>
             <div>
@@ -325,7 +328,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 lang="ar"
                 className={inputClass("addressDetail")}
               />
-              <p className="text-xs text-slate-body/70 mt-1">{t("helper.addressDetail")}</p>
               {renderError("addressDetail")}
             </div>
 
@@ -386,10 +388,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               </motion.button>
             </div>
 
-            <p className="text-xs text-slate-body leading-relaxed bg-white/[0.06] border border-white/20 rounded-xl p-3">
-              {t("pricingInfo")}
-            </p>
-
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.displayName")}
@@ -403,7 +401,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 lang="ar"
                 className={inputClass("displayName")}
               />
-              <p className="text-xs text-slate-body/70 mt-1">{t("fields.displayNameHelper")}</p>
             </div>
 
             {data.profileType === "single" ? (
@@ -488,7 +485,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                   <span>{t("fields.logo")}</span>
                   <span className="text-xs text-slate-body/60">({t("fields.optional")})</span>
                 </label>
-                <p className="text-xs text-slate-body/70 mb-2">{t("logoText")}</p>
                 {data.logo ? (
                   <div className="relative inline-block">
                     <Image
@@ -510,12 +506,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 ) : (
                   <div className="relative">
                     <div
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        logoInputRef.current?.click();
-                      }}
-                      className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 cursor-pointer"
+                      onClick={() => logoInputRef.current?.click()}
+                      className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 relative z-50 pointer-events-auto cursor-pointer"
                     >
                       <input
                         ref={logoInputRef}
@@ -530,7 +522,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                         }`}
                       />
                       <span className="text-sm text-slate-body">
-                        {uploading ? t("uploading") : t("uploadHelper")}
+                        {uploading ? t("uploading") : t("fields.logo")}
                       </span>
                     </div>
                     {uploading && (
@@ -553,125 +545,108 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             <h3 className="text-lg font-semibold text-nardo mb-4">
               {t("section.theme")}
             </h3>
-            <p className="text-xs text-slate-body/70 mb-2">
-              {t("helper.previewGuide")}
-            </p>
-            <p className="text-sm text-nardo font-medium mb-3">{t("helper.themeHeader")}</p>
             <AutoTapPreview
               data={data}
               onThemeChange={(theme) => handleFieldChange("theme", theme)}
+              onLogoChange={(url) => handleFieldChange("logo", url)}
             />
           </div>
         )}
 
-        {/* Step 4: Logo Sticker Sizing — Rear Side Window */}
+        {/* Step 4: Size Guide + Notes */}
         {step === 3 && (
           <div className="space-y-5">
-            <h3 className="text-lg font-semibold text-nardo mb-4">
-              {t("fields.logoWidthCm")}
+            <h3 className="text-lg font-semibold text-gradient-gold mb-4">
+              {t("section.size")}
             </h3>
 
-              <p className="text-xs text-slate-body/80 mb-2">
-                {t("fields.windowStandard", { size: "35" })}
+            {/* Size preview tabs (interactive guide only) */}
+            <div>
+              <p className="text-xs text-slate-muted/70 mb-3">
+                اضغط على المقاس لمشاهدة الصورة التوضيحية
               </p>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {(["6", "25", "35"] as const).map((size) => {
+                  const labels: Record<string, string> = { "6": "6", "25": "25", "35": "35" };
+                  return (
+                    <motion.button
+                      key={size}
+                      type="button"
+                      onClick={() => setPreviewSize(size)}
+                      className={`flex flex-col items-center gap-1 p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                        previewSize === size
+                          ? "border-gold bg-gold/10 text-gold shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                          : "border-white/10 bg-dark-card/50 text-slate-body hover:border-gold/40 hover:bg-gold/5"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="text-2xl font-bold">{labels[size]}</span>
+                      <span className="text-[10px] text-slate-muted">{t("sizeCm")}</span>
+                    </motion.button>
+                  );
+                })}
+              </div>
 
-            <div className="flex justify-center mb-6">
-              <svg
-                viewBox="0 0 200 140"
-                className="w-56 h-40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10 20 L60 5 L140 5 L190 20 L190 110 L140 130 L60 130 L10 110 Z"
-                  stroke="rgba(255,255,255,0.15)"
-                  strokeWidth="2"
-                  fill="rgba(255,255,255,0.03)"
-                />
-                <path
-                  d="M30 35 L65 20 L135 20 L170 35 L170 100 L135 115 L65 115 L30 100 Z"
-                  stroke="rgba(255,255,255,0.08)"
-                  strokeWidth="1"
-                  fill="none"
-                />
-                <line
-                  x1="35"
-                  y1="95"
-                  x2="165"
-                  y2="95"
-                  stroke="rgba(192,192,192,0.5)"
-                  strokeWidth="2"
-                  strokeDasharray="6 4"
-                />
-                <line
-                  x1="35"
-                  y1="89"
-                  x2="35"
-                  y2="101"
-                  stroke="rgba(192,192,192,0.5)"
-                  strokeWidth="2"
-                />
-                <line
-                  x1="165"
-                  y1="89"
-                  x2="165"
-                  y2="101"
-                  stroke="rgba(192,192,192,0.5)"
-                  strokeWidth="2"
-                />
-                <text
-                  x="100"
-                  y="120"
-                  textAnchor="middle"
-                  fill="rgba(192,192,192,0.4)"
-                  fontSize="11"
-                  fontFamily="sans-serif"
-                >
-                  {t("fields.windowDiagram")}
-                </text>
-                <text
-                  x="100"
-                  y="18"
-                  textAnchor="middle"
-                  fill="rgba(255,255,255,0.12)"
-                  fontSize="9"
-                  fontFamily="sans-serif"
-                >
-                  {t("fields.rearWindow")}
-                </text>
-              </svg>
+              {/* Image Preview */}
+              {previewSize && (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={previewSize}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="glass bg-dark-card/60 border border-gold/20 rounded-2xl overflow-hidden mb-3">
+                      <img
+                        src={sizeImages[previewSize]}
+                        alt={`Size ${previewSize}cm preview`}
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                    <p className="text-center text-sm text-gold mb-4 font-medium">
+                      {t("sizeExample", { size: previewSize })}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              )}
             </div>
 
+            {/* Manual size input */}
             <div>
               <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
                 <Ruler className="w-4 h-4" />
-                <span>{t("fields.logoWidthCm")}</span>
+                <span>المقاس المطلوب (بالسنتيمتر)</span>
               </label>
               <input
-                type="text"
+                type="number"
                 value={data.logoWidthCm}
                 onChange={(e) => handleFieldChange("logoWidthCm", e.target.value)}
-                placeholder={t("placeholders.logoWidthCm")}
-                className={inputClass("logoWidthCm")}
+                placeholder="مثال: 25"
+                className="w-full px-4 py-2.5 rounded-lg bg-dark-card/50 border border-white/10 text-sm text-slate-light placeholder-slate-muted/50 focus:outline-none focus:border-gold/50 transition-colors"
               />
-              <p className="text-xs text-slate-body/70 mt-1.5">
-                {t("helper.logoWidth")}
-              </p>
               {renderError("logoWidthCm")}
             </div>
+
+            {/* Order notes */}
             <div>
-              <label className="block text-sm text-slate-body mb-1.5">
-                {t("fields.orderNotes")}
-                <span className="text-xs text-slate-body/60 ms-1">(Optional)</span>
+              <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
+                <FileText className="w-4 h-4" />
+                <span>ملاحظات الطلب (اختياري)</span>
               </label>
               <textarea
                 value={data.orderNotes}
                 onChange={(e) => handleFieldChange("orderNotes", e.target.value)}
-                placeholder={t("placeholders.orderNotes")}
+                placeholder="أي ملاحظات أو تعليمات إضافية..."
                 rows={3}
-                lang="ar"
-                className={inputClass("orderNotes")}
+                className="w-full px-4 py-2.5 rounded-lg bg-dark-card/50 border border-white/10 text-sm text-slate-light placeholder-slate-muted/50 focus:outline-none focus:border-gold/50 transition-colors resize-none"
               />
+            </div>
+
+            {/* Unified price */}
+            <div className="text-center mt-6 p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-gold/30">
+              <span className="text-gradient-gold text-2xl font-bold">200 {tc("egp")} + {t("shippingLabel")}</span>
             </div>
           </div>
         )}

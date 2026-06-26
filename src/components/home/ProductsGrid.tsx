@@ -42,7 +42,7 @@ export default function ProductsGrid() {
               key={product.key}
               title={t(`${product.key}.title`)}
               description={t(`${product.key}.desc`)}
-              cta={t(`${product.key}.cta`)}
+              cta={t(`${product.key}.cta`) || "Order Now"}
               href={product.href}
               gradient={product.gradient}
               icon={product.icon}

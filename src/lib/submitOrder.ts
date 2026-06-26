@@ -31,7 +31,7 @@ function buildProductDetails(data: OrderPayload): string {
   details.push(`التصميم: ${data.theme}`);
   if (data.autoTapFields) {
     details.push(`نوع الحساب: ${data.autoTapFields.profileType === "single" ? "مستخدم واحد" : "متعدد المستخدمين"}`);
-    details.push(`عرض اللوجو: ${data.autoTapFields.logoWidthCm} سم`);
+    details.push(`المقاس: ${data.autoTapFields.logoWidthCm} سم`);
 
   } else if (data.digitalCardsFields) {
     if (data.digitalCardsFields.website) details.push(`الموقع: ${data.digitalCardsFields.website}`);

@@ -14,26 +14,26 @@ interface ThemeProps {
   iconMap: Record<string, React.ElementType>;
 }
 
-export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+export default function BatreqProfile({ name, logo, buttons, iconMap }: ThemeProps) {
   const t = useTranslations("products.profile");
 
   const bgItems = useMemo(() => generateScatter({
     count: 18,
-    sources: ["/Batman-removebg-preview.png"],
-    minSize: 40,
-    maxSize: 90,
+    sources: ["/batreq-removebg-preview.png"],
+    minSize: 50,
+    maxSize: 120,
     opacity: 0.1,
   }), []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-950 via-black to-neutral-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#1A1A1A] to-[#0D0D0D] flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {bgItems.map((item, i) => (
           <img
             key={i}
             src={item.src}
             alt=""
-            className="absolute object-contain pointer-events-none filter brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg]"
+            className="absolute object-contain pointer-events-none"
             style={{ top: item.top, left: item.left, ...item.style }}
           />
         ))}
@@ -45,21 +45,22 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="rounded-2xl p-6 text-center bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+        <div className="rounded-2xl p-6 text-center border border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.03)] bg-black/60 backdrop-blur-xl">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
           <motion.div
             className="flex justify-center mb-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
           >
-            <div className="ring-2 ring-yellow-400/60 rounded-full p-0.5 shadow-[0_0_25px_rgba(250,204,21,0.2)]">
+            <div className="ring-2 ring-white/40 rounded-full p-0.5 shadow-[0_0_25px_rgba(255,255,255,0.08)]">
               {logo}
             </div>
           </motion.div>
 
           <motion.h1
-            className="text-xl font-black text-white mb-5 uppercase tracking-[0.15em]"
-            style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
+            className="text-xl font-bold text-white mb-5 tracking-wide drop-shadow-[0_0_4px_rgba(255,255,255,0.1)]"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -77,18 +78,18 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
                     href={btn.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur border border-white/10 text-white/90 hover:border-yellow-400/50 hover:shadow-[0_0_20px_rgba(250,204,21,0.15)] hover:bg-white/[0.08] transition-all duration-300 group"
+                    className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 text-white/95 hover:border-white/40 hover:bg-white/[0.08] transition-all duration-300 group"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                     whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(250,204,21,0.2)" }}
+                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(255,255,255,0.1)" }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-yellow-400/20 transition-colors shrink-0">
-                      <Icon className="w-5 h-5 text-white/80 group-hover:text-yellow-400" />
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all shrink-0">
+                      <Icon className="w-5 h-5 text-white/90" />
                     </div>
-                    <span className="flex-1 text-center text-xs font-bold text-white/80 group-hover:text-white truncate">{btn.label}</span>
-                    <span className="text-white/30 group-hover:text-yellow-400 shrink-0">→</span>
+                    <span className="flex-1 text-center text-xs font-bold text-white/90 truncate">{btn.label}</span>
+                    <span className="text-white/30 group-hover:text-white/60 shrink-0">→</span>
                   </motion.a>
                 );
               })}
@@ -103,17 +104,17 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.04] backdrop-blur border border-white/10 text-white/90 hover:border-yellow-400/50 hover:shadow-[0_0_20px_rgba(250,204,21,0.15)] hover:bg-white/[0.08] transition-all duration-300 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 text-white/95 hover:border-white/40 hover:bg-white/[0.08] transition-all duration-300 group"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
                   whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(250,204,21,0.2)" }}
+                  whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(255,255,255,0.1)" }}
                 >
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-yellow-400/20 transition-colors">
-                    <Icon className="w-5 h-5 text-white/80 group-hover:text-yellow-400" />
+                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all">
+                    <Icon className="w-5 h-5 text-white/90" />
                   </div>
-                  <span className="text-center text-xs font-bold text-white/80 group-hover:text-white">{btn.label}</span>
+                  <span className="text-center text-xs font-bold text-white/90">{btn.label}</span>
                 </motion.a>
               );
             })}
@@ -130,7 +131,7 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            <Link href="/" className="hover:text-yellow-400/60 transition-colors">
+            <Link href="/" className="hover:text-white/60 transition-colors">
               {t("poweredBy")}
             </Link>
           </motion.p>

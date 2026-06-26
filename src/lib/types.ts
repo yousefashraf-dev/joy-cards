@@ -16,7 +16,12 @@ export type Theme =
   | "terminal-dark-glow"
   | "energy-lightning"
   | "spiderman"
-  | "batman";
+  | "batman"
+  | "energy-power"
+  | "game-of-thrones"
+  | "stitch"
+  | "batreq"
+  | "yellow-pokemon";
 
 export type ThemeArchetype = "dark-premium" | "neon-sporty" | "glass-clean";
 

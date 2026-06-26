@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import type { ProfileButton } from "@/lib/types";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 interface ThemeProps {
@@ -24,10 +23,6 @@ export default function TerminalDarkGlowProfile({ name, logo, buttons, iconMap }
         transition={{ duration: 0.5 }}
       >
         <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-[#0A0A0F] to-[#0F172A] border border-cyan/30 shadow-[0_0_30px_rgba(0,243,255,0.12)]">
-          <p className="font-mono text-[10px] text-white/30 tracking-[0.2em] mb-4">
-            GOTAP.EG TERMINAL
-          </p>
-
           <motion.div
             className="flex justify-center mb-4"
             initial={{ opacity: 0, y: -20 }}
@@ -106,16 +101,17 @@ export default function TerminalDarkGlowProfile({ name, logo, buttons, iconMap }
           )}
 
           <div className="mt-5 pt-4 border-t border-cyan/10">
-            <motion.p
-              className="text-[10px] text-cyan/50 font-mono tracking-widest"
+            <motion.a
+              href="https://gotap.eg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] text-cyan/50 font-mono tracking-widest hover:text-cyan transition-colors"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              <Link href="/" className="hover:text-cyan/80 transition-colors">
-                {t("poweredBy")}
-              </Link>
-            </motion.p>
+              GOTAP.EG
+            </motion.a>
           </div>
         </div>
       </motion.div>

@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Car, Droplets, Zap, Wind, Info } from "lucide-react";
+import { Car, Droplets, Zap, Wind } from "lucide-react";
 import type { AutoTapFormData } from "@/lib/types";
 import AutoTapForm from "@/components/forms/AutoTapForm";
 
@@ -26,6 +26,7 @@ const INITIAL_DATA: AutoTapFormData = {
 export default function AutoTapPage() {
   const t = useTranslations("products.autoTap");
   const p = useTranslations("products.pricing");
+  const tc = useTranslations("currency");
   const [formData, setFormData] = useState<AutoTapFormData>(INITIAL_DATA);
 
   const handleFieldChange = useCallback(
@@ -48,47 +49,19 @@ export default function AutoTapPage() {
 
   return (
     <>
-      {/* Pricing Disclaimer */}
-      <section className="pt-28 pb-4 lg:pt-36 lg:pb-6 bg-gradient-to-b from-neon-green/5 via-matte-black to-matte-black">
+      {/* Unified Pricing */}
+      <section className="pt-28 pb-4 lg:pt-36 lg:pb-6 bg-gradient-to-b from-gold/5 via-matte-black to-matte-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="glass bg-matte-card/60 border border-nardo/20 rounded-2xl p-5 lg:p-6"
+            className="glass bg-matte-card/60 border border-gold/20 rounded-2xl p-5 lg:p-6 text-center"
           >
-            <div className="flex items-center gap-2 mb-3">
-              <Info className="w-4 h-4 text-nardo" />
-              <h2 className="text-sm font-bold text-nardo uppercase tracking-wider">
-                {p("title")}
-              </h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-neon-green" />
-                  <p className="text-slate-light font-medium">{p("single")}</p>
-                </div>
-                <p className="text-xs text-slate-muted/70 ps-4">{p("singleDesign")}</p>
-                <p className="text-xs text-nardo/70 ps-4">+ {p("shippingCairo")}</p>
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-neon-green" />
-                  <p className="text-slate-light font-medium">{p("multiple")}</p>
-                </div>
-                <p className="text-xs text-slate-muted/70 ps-4">{p("multipleDesign")}</p>
-                <p className="text-xs text-nardo/70 ps-4">+ {p("shippingCairo")}</p>
-              </div>
-              <div className="flex items-center">
-                <p className="text-xs text-nardo/80 font-medium">{p("duration")}</p>
-              </div>
-            </div>
-            <p className="text-[10px] text-slate-muted/40 mt-2">{p("disclaimer")}</p>
-            <p className="text-[10px] text-white/30 mt-1">
-              <span className="text-nardo/60">★</span>{" "}
-              {t("windowNotice")}
-            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gradient-gold mb-2">
+              200 {tc("egp")} + {t("shippingLabel")}
+            </h2>
+            <p className="text-xs text-slate-muted/60">{p("duration")}</p>
           </motion.div>
         </div>
       </section>

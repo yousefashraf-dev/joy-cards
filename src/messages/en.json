@@ -17,8 +17,9 @@
   "nav": {
     "home": "Home",
     "digitalCards": "Digital Card",
-    "autoTap": "Auto Tap",
-    "businessTap": "Business & Menu",
+    "autoTap": "Car Tap",
+    "businessTap": "Restaurants & Cafes",
+    "shop": "Medals & Accessories Store",
     "language": "العربية",
     "toggleLanguage": "Toggle language",
     "toggleMenu": "Toggle menu"
@@ -26,7 +27,8 @@
   "hero": {
     "headline": "Your Digital Identity, One Tap Away",
     "subheadline": "Replace paper with premium NFC technology. Share your world with a single tap — business cards, car profiles, restaurant menus, and more.",
-    "cta": "Explore Products"
+    "cta": "Explore Products",
+    "tagline": "Your Digital Menu | Your Smart Card"
   },
   "liveStatsCounter": {
     "stats": "+240 Successful Orders 🚀",
@@ -123,7 +125,8 @@
         "logo": "Upload Logo",
         "social": "Social Media Links",
         "product": "Product Details",
-        "premium": "Premium Fields (Optional)"
+        "premium": "Premium Fields (Optional)",
+        "size": "Choose Sticker Size"
       },
       "fields": {
         "customerName": "Full Name (Arabic Full Name)",
@@ -213,7 +216,17 @@
         "spiderman": "Spider-Man",
         "spidermanDesc": "Red & blue web-slinger theme with comic-style energy",
         "batman": "Batman",
-        "batmanDesc": "Dark knight premium theme with yellow bat-signal accent"
+        "batmanDesc": "Dark knight premium theme with yellow bat-signal accent",
+        "energyPower": "Energy Power",
+        "energyPowerDesc": "Red Bull inspired — dark blue, metallic grey, fiery red",
+        "gameOfThrones": "Game of Thrones",
+        "gameOfThronesDesc": "Iron & steel — dark metallic with silver accents",
+        "stitch": "Stitch",
+        "stitchDesc": "Sky blue & indigo — playful and vibrant",
+        "batreq": "Batreq",
+        "batreqDesc": "Premium monochrome — royal black, crisp white, subtle grey",
+        "yellowPokemon": "Pokemon Yellow",
+        "yellowPokemonDesc": "Vibrant yellow & warm orange — bold and energetic"
       },
       "socialHelperText": "You can type your username directly or paste your profile URL",
       "whatsappHelper": "Please enter your WhatsApp phone number only, do not paste links",
@@ -223,22 +236,14 @@
       "uploadError": "Upload failed, please try again",
       "uploadErrorSize": "File too large (max 10MB)",
       "uploadErrorType": "File type not supported. Use PNG, JPEG, or WebP",
-      "logoText": "You can add a logo image",
       "submit": "Submit Order",
       "submitting": "Submitting...",
       "next": "Next",
       "back": "Back",
       "contactWhatsapp": "Contact us for pricing & order",
-      "helper": {
-        "logoWidth": "Example: 20, 25, 30, 35, or 40 cm",
-        "previewGuide": "Enter your data below and watch your design change here instantly ✨",
-        "customerName": "Full name for shipping and order confirmation",
-        "phone": "For delivery updates and order confirmation",
-        "addressDetail": "City, district, street, building number for shipping",
-        "shippingInfo": "This data is required for the shipping company",
-        "themeHeader": "This is the design that will display your data, choose one:"
-      },
-      "pricingInfo": "💡 (150 EGP includes design & printing for single user / 200 EGP for group + shipping: 50 EGP for Cairo & Governorates, 70 EGP for Upper Egypt & Coastal Cities)",
+      "sizeCm": "cm",
+      "sizeExample": "Illustrative example of {size}cm size on a car",
+      "shippingLabel": "Shipping fees",
       "uploadingWait": "Please wait, uploading image...",
       "preview": {
         "noLinksAdded": "No links added yet",
@@ -271,6 +276,19 @@
         "base": "Service & Design",
         "shipping": "Shipping",
         "total": "Total"
+      }
+    },
+    "autoTap": {
+      "title": "Car NFC Stickers",
+      "cta": "Order Now",
+      "desc": "Premium waterproof NFC sticker for your car. Tap to share your profile, social links, and more.",
+      "badge": "Car Series",
+      "shippingLabel": "Shipping fees",
+      "features": {
+        "waterproof": "Waterproof",
+        "instantConnect": "Instant Connect",
+        "weatherproof": "Weatherproof",
+        "carIdentity": "Car Identity"
       }
     },
     "errors": {
@@ -321,6 +339,20 @@
       "socialTitle": "Follow us"
     }
   },
+  "shop": {
+    "browseTitle": "Browse Our Products",
+    "browseSub": "Discover our premium NFC collection",
+    "browseAll": "Browse Full Store",
+    "specialOffer": "Special Offer",
+    "quantity": "Quantity",
+    "total": "Total",
+    "shipping": "Shipping fees",
+    "orderNow": "Order Now via WhatsApp",
+    "backHome": "Back to Home",
+    "shopTitle": "Our Store",
+    "shopSub": "All our products in one place",
+    "empty": "No products available yet"
+  },
   "faq": {
     "title": "Frequently Asked Questions",
     "q1": "Does the sticker need charging or a battery?",
@@ -361,8 +393,16 @@
     "loginButton": "Verify",
     "loginError": "Incorrect code. Try again.",
     "dashboardTitle": "Admin Dashboard",
+    "cafesTab": "Cafes & Digital Cards",
+    "productsTab": "Product Store",
     "addCafe": "Add New Cafe",
     "editCafe": "Edit Cafe",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "salePrice": "Sale Price",
+    "applyDiscount": "Apply Discount",
+    "removeDiscount": "Remove Discount",
+    "specialOffer": "Special Offer",
     "deleteConfirm": "Are you sure you want to delete this cafe?",
     "saveSuccess": "Cafe saved successfully!",
     "deleteSuccess": "Cafe deleted successfully!",
@@ -397,7 +437,14 @@
       "wifiPassword": "Wi-Fi Password",
       "save": "Save Cafe",
       "saving": "Saving...",
-      "cancel": "Cancel"
+        "cancel": "Cancel",
+        "productName": "Product Name",
+        "price": "Price (EGP)",
+        "category": "Category",
+        "description": "Description",
+        "images": "Product Images",
+        "save": "Save",
+        "saving": "Saving..."
+      }
     }
   }
-}

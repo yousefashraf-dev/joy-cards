@@ -15,9 +15,10 @@ export default function Navbar() {
 
   const links = [
     { href: "/", label: t("home") },
-    { href: "/auto-tap", label: t("autoTap") },
     { href: "/digital-cards", label: t("digitalCards") },
+    { href: "/auto-tap", label: t("autoTap") },
     { href: "/business-tap", label: t("businessTap") },
+    { href: "/shop", label: t("shop") },
   ];
 
   const isActive = (href: string) => {

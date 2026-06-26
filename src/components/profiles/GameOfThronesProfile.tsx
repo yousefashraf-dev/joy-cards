@@ -14,26 +14,26 @@ interface ThemeProps {
   iconMap: Record<string, React.ElementType>;
 }
 
-export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+export default function GameOfThronesProfile({ name, logo, buttons, iconMap }: ThemeProps) {
   const t = useTranslations("products.profile");
 
   const bgItems = useMemo(() => generateScatter({
     count: 18,
-    sources: ["/Batman-removebg-preview.png"],
-    minSize: 40,
-    maxSize: 90,
+    sources: ["/game of thronse.png", "/game of thronse2.png"],
+    minSize: 50,
+    maxSize: 130,
     opacity: 0.1,
   }), []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-950 via-black to-neutral-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#1C1C1C] via-[#2A2A2A] to-[#1A1A1A] flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {bgItems.map((item, i) => (
           <img
             key={i}
             src={item.src}
             alt=""
-            className="absolute object-contain pointer-events-none filter brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg]"
+            className="absolute object-contain pointer-events-none"
             style={{ top: item.top, left: item.left, ...item.style }}
           />
         ))}
@@ -45,21 +45,23 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="rounded-2xl p-6 text-center bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+        <div className="rounded-2xl p-6 text-center border border-[#B0B0B0]/20 shadow-[0_0_40px_rgba(192,192,192,0.08)] bg-black/50 backdrop-blur-md">
+          <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#C0C0C0]/30 to-transparent mx-auto mb-5" />
+
           <motion.div
             className="flex justify-center mb-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
           >
-            <div className="ring-2 ring-yellow-400/60 rounded-full p-0.5 shadow-[0_0_25px_rgba(250,204,21,0.2)]">
+            <div className="ring-2 ring-[#C0C0C0]/30 rounded-full p-0.5 shadow-[0_0_20px_rgba(192,192,192,0.12)]">
               {logo}
             </div>
           </motion.div>
 
           <motion.h1
-            className="text-xl font-black text-white mb-5 uppercase tracking-[0.15em]"
-            style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
+            className="text-xl font-bold text-[#F0F0F0] mb-5 tracking-widest uppercase drop-shadow-[0_0_4px_rgba(192,192,192,0.15)]"
+            style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -77,18 +79,18 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
                     href={btn.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur border border-white/10 text-white/90 hover:border-yellow-400/50 hover:shadow-[0_0_20px_rgba(250,204,21,0.15)] hover:bg-white/[0.08] transition-all duration-300 group"
+                    className="flex items-center justify-between gap-3 w-full p-3 rounded-lg bg-black/30 backdrop-blur border border-[#8a8a8a]/20 text-[#E8E8E8] hover:border-[#C0C0C0]/50 hover:shadow-[0_0_20px_rgba(192,192,192,0.15)] hover:bg-black/50 transition-all duration-300 group"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                     whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(250,204,21,0.2)" }}
+                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(192,192,192,0.2)" }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-yellow-400/20 transition-colors shrink-0">
-                      <Icon className="w-5 h-5 text-white/80 group-hover:text-yellow-400" />
+                    <div className="w-10 h-10 rounded-lg bg-[#8a8a8a]/20 flex items-center justify-center group-hover:bg-[#C0C0C0]/30 transition-all shrink-0">
+                      <Icon className="w-5 h-5 text-[#C0C0C0]" />
                     </div>
-                    <span className="flex-1 text-center text-xs font-bold text-white/80 group-hover:text-white truncate">{btn.label}</span>
-                    <span className="text-white/30 group-hover:text-yellow-400 shrink-0">→</span>
+                    <span className="flex-1 text-center text-xs font-bold text-[#E8E8E8]/90 truncate">{btn.label}</span>
+                    <span className="text-[#8a8a8a]/60 group-hover:text-[#C0C0C0] shrink-0">→</span>
                   </motion.a>
                 );
               })}
@@ -103,17 +105,17 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.04] backdrop-blur border border-white/10 text-white/90 hover:border-yellow-400/50 hover:shadow-[0_0_20px_rgba(250,204,21,0.15)] hover:bg-white/[0.08] transition-all duration-300 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-lg bg-black/30 backdrop-blur border border-[#8a8a8a]/20 text-[#E8E8E8] hover:border-[#C0C0C0]/50 hover:shadow-[0_0_20px_rgba(192,192,192,0.15)] hover:bg-black/50 transition-all duration-300 group"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
                   whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(250,204,21,0.2)" }}
+                  whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(192,192,192,0.2)" }}
                 >
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-yellow-400/20 transition-colors">
-                    <Icon className="w-5 h-5 text-white/80 group-hover:text-yellow-400" />
+                  <div className="w-10 h-10 rounded-lg bg-[#8a8a8a]/20 flex items-center justify-center group-hover:bg-[#C0C0C0]/30 transition-all">
+                    <Icon className="w-5 h-5 text-[#C0C0C0]" />
                   </div>
-                  <span className="text-center text-xs font-bold text-white/80 group-hover:text-white">{btn.label}</span>
+                  <span className="text-center text-xs font-bold text-[#E8E8E8]/90">{btn.label}</span>
                 </motion.a>
               );
             })}
@@ -121,16 +123,18 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
           )}
 
           {buttons.length === 0 && (
-            <p className="text-white/40 text-xs">{t("noLinksAvailable")}</p>
+            <p className="text-[#E8E8E8]/50 text-xs">{t("noLinksAvailable")}</p>
           )}
 
+          <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#C0C0C0]/30 to-transparent mx-auto mt-5" />
+
           <motion.p
-            className="mt-4 text-[10px] text-white/30"
+            className="mt-4 text-[10px] text-[#E8E8E8]/30"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            <Link href="/" className="hover:text-yellow-400/60 transition-colors">
+            <Link href="/" className="hover:text-[#C0C0C0]/60 transition-colors">
               {t("poweredBy")}
             </Link>
           </motion.p>

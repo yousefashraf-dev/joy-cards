@@ -6,6 +6,7 @@ import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2 } from "lucide
 import type { Cafe } from "@/lib/cafe-schema";
 import { addCafe, updateCafe, uploadCafeFile } from "@/lib/cafe-schema";
 import { compressImage } from "@/lib/compressImage";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface CafeFormProps {
   cafe?: Cafe | null;
@@ -16,6 +17,7 @@ interface CafeFormProps {
 export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const t = useTranslations("admin.form");
   const ta = useTranslations("admin");
+  const { showToast } = useToast();
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState(cafe?.name || "");
   const [slug, setSlug] = useState(cafe?.slug || "");
@@ -69,8 +71,12 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         const compressed = await compressImage(logoFile);
         const fd = new FormData();
         fd.append("file", compressed);
-        const res = await fetch("/api/upload", { method: "POST", body: fd });
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000);
+        const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
+        clearTimeout(timeout);
         const data = await res.json();
+        if (!res.ok || !data.url) throw new Error(data?.error || "Logo upload failed");
         logoUrl = data.url;
       }
 
@@ -81,8 +87,12 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
           const compressed = await compressImage(file);
           const fd = new FormData();
           fd.append("file", compressed);
-          const res = await fetch("/api/upload", { method: "POST", body: fd });
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 60000);
+          const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
+          clearTimeout(timeout);
           const data = await res.json();
+          if (!res.ok || !data.url) throw new Error(data?.error || "Menu image upload failed");
           uploaded.push(data.url);
         }
         finalMenuImages = [...finalMenuImages, ...uploaded];
@@ -140,7 +150,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
       onSuccess();
     } catch (error) {
       console.error("Cafe save error:", error);
-      alert(ta("errorOccurred"));
+      showToast(ta("errorOccurred"), "error");
     } finally {
       setSaving(false);
     }

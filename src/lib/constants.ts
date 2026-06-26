@@ -71,10 +71,15 @@ export const ALL_THEMES: ThemeConfig[] = [
   { id: "energy-lightning", icon: "Zap", gradient: "from-[#0F0A00] to-[#1A0F00]", border: "border-yellow-500", labelKey: "forms.themeOptions.energyLightning", descKey: "forms.themeOptions.energyLightningDesc" },
   { id: "spiderman", icon: "Flame", gradient: "from-red-700 via-slate-900 to-blue-900", border: "border-red-500", labelKey: "forms.themeOptions.spiderman", descKey: "forms.themeOptions.spidermanDesc" },
   { id: "batman", icon: "Shield", gradient: "from-neutral-950 to-black", border: "border-yellow-400", labelKey: "forms.themeOptions.batman", descKey: "forms.themeOptions.batmanDesc" },
+  { id: "energy-power", icon: "Zap", gradient: "from-[#0A1628] via-[#1B2A4A] to-[#2A1A1A]", border: "border-red-600/50", labelKey: "forms.themeOptions.energyPower", descKey: "forms.themeOptions.energyPowerDesc" },
+  { id: "game-of-thrones", icon: "Crown", gradient: "from-[#1C1C1C] via-[#2A2A2A] to-[#1A1A1A]", border: "border-[#B0B0B0]/30", labelKey: "forms.themeOptions.gameOfThrones", descKey: "forms.themeOptions.gameOfThronesDesc" },
+  { id: "stitch", icon: "Ghost", gradient: "from-[#0A1628] via-[#1A3A5C] to-[#0D2137]", border: "border-[#4A9BD9]/40", labelKey: "forms.themeOptions.stitch", descKey: "forms.themeOptions.stitchDesc" },
+  { id: "batreq", icon: "Ghost", gradient: "from-black via-[#1A1A1A] to-[#0D0D0D]", border: "border-[#E8E8E8]/30", labelKey: "forms.themeOptions.batreq", descKey: "forms.themeOptions.batreqDesc" },
+  { id: "yellow-pokemon", icon: "Zap", gradient: "from-[#FFD700] via-[#FFA500] to-[#FF8C00]", border: "border-[#2D2D2D]/40", labelKey: "forms.themeOptions.yellowPokemon", descKey: "forms.themeOptions.yellowPokemonDesc" },
 ];
 
 export const PRODUCT_THEMES: Record<ProductType, Theme[]> = {
-  "auto-tap": ["batman", "spiderman", "energy-lightning", "neon-red-track", "cyber-cyan-drift", "auto-nardo-stealth", "classic-royal-silver", "liquid-aurora", "terminal-dark-glow"],
+  "auto-tap": ["batman", "spiderman", "energy-power", "game-of-thrones", "stitch", "batreq", "yellow-pokemon", "cyber-cyan-drift", "terminal-dark-glow"],
   "business-tap": ["modern-bistro", "luxury-lounge", "cyber-cafe"],
   "digital-cards": ["classic-executive", "minimal-glass", "midnight-slate"],
 };
@@ -101,4 +106,9 @@ export const THEME_ARCHETYPE: Record<string, ThemeArchetype> = {
   "energy-lightning": "neon-sporty",
   "spiderman": "neon-sporty",
   "batman": "dark-premium",
+  "energy-power": "neon-sporty",
+  "game-of-thrones": "dark-premium",
+  "stitch": "glass-clean",
+  "batreq": "dark-premium",
+  "yellow-pokemon": "neon-sporty",
 };

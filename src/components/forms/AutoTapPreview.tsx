@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import type { Theme, AutoTapFormData } from "@/lib/types";
 import { PLATFORM_OPTIONS, PRODUCT_THEMES } from "@/lib/constants";
+import { compressImage } from "@/lib/compressImage";
+import { useToast } from "@/components/ui/ToastProvider";
+import { generateScatter } from "@/lib/scatterBackground";
 
 const iconMap: Record<string, React.ElementType> = {
   Instagram: Camera,
@@ -21,11 +23,39 @@ const iconMap: Record<string, React.ElementType> = {
 interface AutoTapPreviewProps {
   data: AutoTapFormData;
   onThemeChange: (theme: Theme) => void;
+  onLogoChange?: (url: string) => void;
 }
 
-export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewProps) {
+export default function AutoTapPreview({ data, onThemeChange, onLogoChange }: AutoTapPreviewProps) {
   const t = useTranslations("products.forms");
-  const tp = useTranslations("products.profile");
+  const { showToast } = useToast();
+  const [uploading, setUploading] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLogoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const compressed = await compressImage(file);
+      const fd = new FormData();
+      fd.append("file", compressed);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 60000);
+      const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
+      clearTimeout(timeout);
+      const resData = await res.json();
+      if (!res.ok || !resData.url) throw new Error(resData?.error || "Upload failed");
+      onLogoChange?.(resData.url);
+      showToast(t("uploadSuccess"), "success");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Upload failed";
+      showToast(msg, "error");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  }, [onLogoChange, showToast, t]);
 
   const autoTapThemes = PRODUCT_THEMES["auto-tap"];
   const currentIndex = useMemo(
@@ -60,32 +90,40 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
   const themeId = data.theme;
   const isSingle = data.profileType === "single";
 
-  const batmanBgLogos = useMemo(() => [
-    { top: '3%', left: '3%', size: 'w-10', rotate: '-rotate-12' },
-    { top: '2%', left: '75%', size: 'w-12', rotate: 'rotate-45' },
-    { top: '18%', left: '2%', size: 'w-14', rotate: 'rotate-[60deg]' },
-    { top: '15%', left: '78%', size: 'w-18', rotate: '-rotate-45' },
-    { top: '35%', left: '3%', size: 'w-12', rotate: 'rotate-[110deg]' },
-    { top: '32%', left: '80%', size: 'w-10', rotate: '-rotate-[30deg]' },
-    { top: '55%', left: '4%', size: 'w-18', rotate: 'rotate-[25deg]' },
-    { top: '52%', left: '76%', size: 'w-14', rotate: '-rotate-[70deg]' },
-    { top: '73%', left: '10%', size: 'w-12', rotate: '-rotate-[80deg]' },
-    { top: '70%', left: '72%', size: 'w-10', rotate: 'rotate-[15deg]' },
-  ], []);
+  const batmanBgLogos = useMemo(() => generateScatter({
+    count: 18, sources: ["/Batman-removebg-preview.png"],
+    minSize: 40, maxSize: 80, opacity: 0.12,
+  }), []);
 
-  const spiderBgWebs = useMemo(() => [
-    { top: '4%', left: '4%', size: 'w-20', rotate: '-rotate-12' },
-    { top: '3%', left: '72%', size: 'w-24', rotate: 'rotate-45' },
-    { top: '20%', left: '3%', size: 'w-16', rotate: 'rotate-[60deg]' },
-    { top: '18%', left: '74%', size: 'w-28', rotate: '-rotate-45' },
-    { top: '38%', left: '5%', size: 'w-24', rotate: 'rotate-[110deg]' },
-    { top: '35%', left: '70%', size: 'w-20', rotate: '-rotate-[30deg]' },
-    { top: '55%', left: '4%', size: 'w-32', rotate: 'rotate-[25deg]' },
-    { top: '52%', left: '68%', size: 'w-28', rotate: '-rotate-[70deg]' },
-    { top: '70%', left: '8%', size: 'w-16', rotate: '-rotate-[80deg]' },
-    { top: '68%', left: '72%', size: 'w-24', rotate: 'rotate-[15deg]' },
-    { top: '82%', left: '35%', size: 'w-20', rotate: '-rotate-[55deg]' },
-  ], []);
+  const spiderBgWebs = useMemo(() => generateScatter({
+    count: 18, sources: ["/spider_2-removebg-preview.png"],
+    minSize: 50, maxSize: 100, opacity: 0.1,
+  }), []);
+
+  const energyPowerBgLogos = useMemo(() => generateScatter({
+    count: 18, sources: ["/red_pull-removebg-preview.png", "/can_red_pull-removebg-preview.png"],
+    minSize: 45, maxSize: 85, opacity: 0.1,
+  }), []);
+
+  const gotBgLogos = useMemo(() => generateScatter({
+    count: 18, sources: ["/game of thronse.png", "/game of thronse2.png"],
+    minSize: 40, maxSize: 80, opacity: 0.1,
+  }), []);
+
+  const stitchBgLogos = useMemo(() => generateScatter({
+    count: 18, sources: ["/stitch-removebg-preview.png"],
+    minSize: 40, maxSize: 80, opacity: 0.08,
+  }), []);
+
+  const batreqBgLogos = useMemo(() => generateScatter({
+    count: 18, sources: ["/batreq-removebg-preview.png"],
+    minSize: 40, maxSize: 80, opacity: 0.1,
+  }), []);
+
+  const pokemonBgLogos = useMemo(() => generateScatter({
+    count: 18, sources: ["/yellow_-removebg-preview.png"],
+    minSize: 40, maxSize: 80, opacity: 0.1,
+  }), []);
 
   const renderLinks = (singleClass: string, multipleClass: string, linkClass: string, iconClass: string, textClass: string, arrowClass: string) => {
     if (effectiveLinks.length === 0) {
@@ -177,15 +215,36 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
 
   const avatarCircle = (ringClass: string) => (
     <div className="flex justify-center mb-4">
-      <div className={`w-24 h-24 rounded-full flex items-center justify-center overflow-hidden ${ringClass}`}>
-        {data.logo ? (
+      <div
+        className={`w-24 h-24 rounded-full flex items-center justify-center overflow-hidden cursor-pointer transition-all relative z-50 pointer-events-auto ${ringClass}`}
+        onClick={() => logoInputRef.current?.click()}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }}
+      >
+        {uploading ? (
+          <div className="flex flex-col items-center justify-center gap-1">
+            <svg className="animate-spin w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <span className="text-[10px] text-white/70">{t("uploading")}</span>
+          </div>
+        ) : data.logo ? (
           <Image src={data.logo} alt="Logo" width={96} height={96} className="w-full h-full object-cover rounded-full" unoptimized />
         ) : (
-          <span className={`text-2xl font-bold ${ringClass.includes("cyan") ? "text-cyan" : ringClass.includes("red") ? "text-red-500" : ringClass.includes("nardo") ? "text-nardo/50" : ringClass.includes("silver") ? "text-silver/60" : "text-white/60"} drop-shadow-[0_0_6px_rgba(0,243,255,0.5)]`}>
+          <span className="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
             {data.customerName ? data.customerName.charAt(0).toUpperCase() : "?"}
           </span>
         )}
       </div>
+      <input
+        ref={logoInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleLogoUpload}
+        className="hidden"
+      />
     </div>
   );
 
@@ -195,10 +254,6 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
   return (
     <div dir="ltr">
       <div className="float-card bg-white/[0.03] border border-white/10 p-6">
-        <p className="text-xs text-slate-muted/60 text-center mb-4">
-          {t("helper.previewGuide")}
-        </p>
-
         <div className="relative flex items-center max-sm:justify-center">
           <button
             type="button"
@@ -220,23 +275,19 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               {/* Theme 1: Batman */}
               {themeId === "batman" && (
                 <div className="rounded-2xl p-6 text-center bg-neutral-950 border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] relative overflow-hidden">
-                  {/* Batman logos repeated in background - 10 scattered logos */}
                   <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                     {batmanBgLogos.map((item, i) => (
                       <img
                         key={i}
-                        src="/Batman-removebg-preview.png"
+                        src={item.src}
                         alt=""
-                        className={`absolute opacity-30 ${item.size} ${item.rotate} filter brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg]`}
-                        style={{ top: item.top, left: item.left }}
+                        className="absolute object-contain pointer-events-none brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg]"
+                        style={{ top: item.top, left: item.left, ...item.style }}
                       />
                     ))}
                   </div>
                   <div className="relative z-10">
                     {avatarCircle("ring-2 ring-white/60 shadow-[0_0_20px_rgba(255,255,255,0.12)]")}
-                    <div className="flex justify-center mb-3">
-                      <img src="/Batman-removebg-preview.png" alt="Batman" className="w-16 h-16 object-contain filter brightness-0 invert-[0.85] sepia-[1] saturate-[5000%] hue-rotate-[15deg] drop-shadow-[0_0_8px_rgba(250,204,21,0.9)]" />
-                    </div>
                     <h3 className="text-xl font-black text-white mb-5 uppercase tracking-[0.15em]"
                       style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
                     >
@@ -266,10 +317,10 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                     {spiderBgWebs.map((item, i) => (
                       <img
                         key={i}
-                        src="/spider_2-removebg-preview.png"
+                        src={item.src}
                         alt=""
-                        className={`absolute opacity-25 ${item.size} ${item.rotate}`}
-                        style={{ top: item.top, left: item.left }}
+                        className="absolute object-contain pointer-events-none"
+                        style={{ top: item.top, left: item.left, ...item.style }}
                       />
                     ))}
                   </div>
@@ -455,9 +506,6 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
               {/* Theme 9: Terminal Dark Glow */}
               {themeId === "terminal-dark-glow" && (
                 <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-[#0A0A0F] to-[#0F172A] border border-cyan/20 shadow-[0_0_30px_rgba(0,243,255,0.12)]">
-                  <p className="font-mono text-[10px] text-white/30 tracking-[0.2em] mb-4">
-                    GOTAP.EG TERMINAL
-                  </p>
                   {avatarCircle("ring-2 ring-cyan/60 shadow-[0_0_25px_rgba(0,243,255,0.3)]")}
                   <h3 className="text-xl font-bold text-white mb-5 tracking-wide">
                     {data.displayName || data.customerName || "USER"}
@@ -472,7 +520,173 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
                     "text-cyan/60 group-hover:text-cyan"
                   )}
                   <div className="mt-4 pt-3 border-t border-cyan/10">
-                    <p className="text-[10px] text-cyan/50 font-mono tracking-widest">POWERED BY GOTAP.EG</p>
+                    <a href="https://gotap.eg" target="_blank" rel="noopener noreferrer" className="text-[10px] text-cyan/50 font-mono tracking-widest hover:text-cyan transition-colors">
+                      GOTAP.EG
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Theme 10: Energy Power (Red Bull) */}
+              {themeId === "energy-power" && (
+                <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-[#0A1628] via-[#1B2A4A] to-[#2A1A1A] border border-red-600/40 shadow-[0_0_40px_rgba(220,38,38,0.15)] relative overflow-hidden">
+                  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {energyPowerBgLogos.map((item, i) => (
+                      <img
+                        key={i}
+                        src={item.src}
+                        alt=""
+                        className="absolute object-contain pointer-events-none"
+                        style={{ top: item.top, left: item.left, ...item.style }}
+                      />
+                    ))}
+                  </div>
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
+                  <div className="relative z-10">
+                    {avatarCircle("ring-2 ring-red-500/60 shadow-[0_0_30px_rgba(220,38,38,0.3)]")}
+                    <h3 className="text-xl font-black text-white mb-5 uppercase tracking-[0.15em] drop-shadow-[0_0_8px_rgba(220,38,38,0.3)]"
+                      style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
+                    >
+                      {data.displayName || data.customerName || "ENERGY"}
+                    </h3>
+                    {renderLinks(
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-[#1A1A2E]/60 backdrop-blur-md border border-red-600/30 text-[#E8E8E8] hover:border-red-500 hover:shadow-[0_0_25px_rgba(220,38,38,0.3)] hover:bg-red-500/10 transition-all duration-300 group",
+                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-[#1A1A2E]/60 backdrop-blur-md border border-red-600/30 text-[#E8E8E8] hover:border-red-500 hover:shadow-[0_0_25px_rgba(220,38,38,0.3)] hover:bg-red-500/10 transition-all duration-300 group min-w-0",
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-[#1A1A2E]/60 backdrop-blur-md border border-red-600/30 text-[#E8E8E8] hover:border-red-500 hover:shadow-[0_0_25px_rgba(220,38,38,0.3)] hover:bg-red-500/10 transition-all duration-300 group",
+                      "w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center group-hover:bg-red-500/30 transition-colors",
+                      "flex-1 text-start text-xs font-bold text-white/80 truncate min-w-0",
+                      "text-red-400/60 group-hover:text-red-400"
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Theme 11: Game of Thrones */}
+              {themeId === "game-of-thrones" && (
+                <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-[#1C1C1C] via-[#2A2A2A] to-[#1A1A1A] border border-[#B0B0B0]/20 shadow-[0_0_30px_rgba(192,192,192,0.06)] relative overflow-hidden">
+                  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {gotBgLogos.map((item, i) => (
+                      <img
+                        key={i}
+                        src={item.src}
+                        alt=""
+                        className="absolute object-contain pointer-events-none"
+                        style={{ top: item.top, left: item.left, ...item.style }}
+                      />
+                    ))}
+                  </div>
+                  <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#C0C0C0]/30 to-transparent mx-auto mb-5" />
+                  <div className="relative z-10">
+                    {avatarCircle("ring-2 ring-[#C0C0C0]/30 shadow-[0_0_20px_rgba(192,192,192,0.1)]")}
+                    <h3 className="text-xl font-bold text-[#F0F0F0] mb-5 tracking-widest uppercase"
+                      style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}
+                    >
+                      {data.displayName || data.customerName || "KINGDOM"}
+                    </h3>
+                    {renderLinks(
+                      "flex items-center gap-3 w-full p-3 rounded-lg bg-black/30 backdrop-blur border border-[#8a8a8a]/20 text-[#E8E8E8] hover:border-[#C0C0C0]/50 hover:shadow-[0_0_20px_rgba(192,192,192,0.15)] hover:bg-black/50 transition-all duration-300 group",
+                      "flex flex-col items-center gap-1.5 p-2.5 rounded-lg bg-black/30 backdrop-blur border border-[#8a8a8a]/20 text-[#E8E8E8] hover:border-[#C0C0C0]/50 hover:shadow-[0_0_20px_rgba(192,192,192,0.15)] hover:bg-black/50 transition-all duration-300 group min-w-0",
+                      "flex items-center gap-3 w-full p-3 rounded-lg bg-black/30 backdrop-blur border border-[#8a8a8a]/20 text-[#E8E8E8] hover:border-[#C0C0C0]/50 hover:shadow-[0_0_20px_rgba(192,192,192,0.15)] hover:bg-black/50 transition-all duration-300 group",
+                      "w-8 h-8 rounded-full bg-[#8a8a8a]/20 flex items-center justify-center group-hover:bg-[#C0C0C0]/30 transition-colors",
+                      "flex-1 text-start text-xs font-medium truncate min-w-0",
+                      "text-[#8a8a8a]/60 group-hover:text-[#C0C0C0]"
+                    )}
+                  </div>
+                  <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#C0C0C0]/30 to-transparent mx-auto mt-5" />
+                </div>
+              )}
+
+              {/* Theme 12: Stitch */}
+              {themeId === "stitch" && (
+                <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-white via-[#E8F4FD] to-[#B8E0F7] border border-[#4A9BD9]/30 shadow-[0_0_30px_rgba(74,155,217,0.12)] relative overflow-hidden">
+                  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {stitchBgLogos.map((item, i) => (
+                      <img
+                        key={i}
+                        src={item.src}
+                        alt=""
+                        className="absolute object-contain pointer-events-none"
+                        style={{ top: item.top, left: item.left, ...item.style }}
+                      />
+                    ))}
+                  </div>
+                  <div className="relative z-10">
+                    {avatarCircle("ring-2 ring-[#4A9BD9]/60 shadow-[0_0_25px_rgba(74,155,217,0.25)]")}
+                    <h3 className="text-xl font-bold text-[#0A1628] mb-5 uppercase tracking-[0.1em]">
+                      {data.displayName || data.customerName || "STITCH"}
+                    </h3>
+                    {renderLinks(
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-[#4A9BD9]/20 text-[#0A1628]/90 hover:border-[#6BB8F0]/60 hover:shadow-[0_0_25px_rgba(74,155,217,0.3)] hover:bg-white/[0.08] transition-all duration-300 group",
+                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-md border border-[#4A9BD9]/20 text-[#0A1628]/90 hover:border-[#6BB8F0]/60 hover:shadow-[0_0_25px_rgba(74,155,217,0.3)] hover:bg-white/[0.08] transition-all duration-300 group min-w-0",
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-[#4A9BD9]/20 text-[#0A1628]/90 hover:border-[#6BB8F0]/60 hover:shadow-[0_0_25px_rgba(74,155,217,0.3)] hover:bg-white/[0.08] transition-all duration-300 group",
+                      "w-8 h-8 rounded-full bg-[#4A9BD9]/15 flex items-center justify-center group-hover:bg-[#6BB8F0]/25 transition-colors",
+                      "flex-1 text-start text-xs font-bold truncate min-w-0",
+                      "text-[#4A9BD9]/60 group-hover:text-[#6BB8F0]"
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Theme 13: Batreq (Penguin) */}
+              {themeId === "batreq" && (
+                <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-black via-[#1A1A1A] to-[#0D0D0D] border border-[#E8E8E8]/20 shadow-[0_0_30px_rgba(255,255,255,0.03)] relative overflow-hidden">
+                  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {batreqBgLogos.map((item, i) => (
+                      <img
+                        key={i}
+                        src={item.src}
+                        alt=""
+                        className="absolute object-contain pointer-events-none"
+                        style={{ top: item.top, left: item.left, ...item.style }}
+                      />
+                    ))}
+                  </div>
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                  <div className="relative z-10">
+                    {avatarCircle("ring-2 ring-white/40 shadow-[0_0_20px_rgba(255,255,255,0.08)]")}
+                    <h3 className="text-xl font-bold text-white mb-5 tracking-wide">
+                      {data.displayName || data.customerName || "BATREQ"}
+                    </h3>
+                    {renderLinks(
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 text-white/90 hover:border-white/40 hover:bg-white/[0.08] transition-all duration-300 group",
+                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 text-white/90 hover:border-white/40 hover:bg-white/[0.08] transition-all duration-300 group min-w-0",
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-sm border border-white/10 text-white/90 hover:border-white/40 hover:bg-white/[0.08] transition-all duration-300 group",
+                      "w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors",
+                      "flex-1 text-start text-xs font-medium truncate min-w-0",
+                      "text-white/30 group-hover:text-white/60"
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Theme 14: Pokemon Yellow (Dark) */}
+              {themeId === "yellow-pokemon" && (
+                <div className="rounded-2xl p-6 text-center bg-gradient-to-b from-black via-[#1A1A1A] to-black border border-yellow-400/40 shadow-[0_0_40px_rgba(250,204,21,0.15)] relative overflow-hidden">
+                  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {pokemonBgLogos.map((item, i) => (
+                      <img
+                        key={i}
+                        src={item.src}
+                        alt=""
+                        className="absolute object-contain pointer-events-none"
+                        style={{ top: item.top, left: item.left, ...item.style }}
+                      />
+                    ))}
+                  </div>
+                  <div className="relative z-10">
+                    {avatarCircle("ring-2 ring-yellow-400/60 shadow-[0_0_25px_rgba(250,204,21,0.4)]")}
+                    <h3 className="text-xl font-black text-white mb-5 uppercase tracking-[0.1em] drop-shadow-[0_0_12px_rgba(250,204,21,0.4)]"
+                      style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}>
+                      {data.displayName || data.customerName || "PIKACHU"}
+                    </h3>
+                    {renderLinks(
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-yellow-400/30 text-white/95 hover:border-yellow-400 hover:shadow-[0_0_25px_rgba(250,204,21,0.35)] hover:bg-yellow-400/10 transition-all duration-300 group",
+                      "flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-white/[0.04] backdrop-blur-md border border-yellow-400/30 text-white/95 hover:border-yellow-400 hover:shadow-[0_0_25px_rgba(250,204,21,0.35)] hover:bg-yellow-400/10 transition-all duration-300 group min-w-0",
+                      "flex items-center gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-yellow-400/30 text-white/95 hover:border-yellow-400 hover:shadow-[0_0_25px_rgba(250,204,21,0.35)] hover:bg-yellow-400/10 transition-all duration-300 group",
+                      "w-8 h-8 rounded-full bg-yellow-400/15 flex items-center justify-center group-hover:bg-yellow-400/25 transition-colors",
+                      "flex-1 text-start text-xs font-bold text-white/90 truncate min-w-0",
+                      "text-yellow-400/60 group-hover:text-yellow-400"
+                    )}
                   </div>
                 </div>
               )}
@@ -510,12 +724,14 @@ export default function AutoTapPreview({ data, onThemeChange }: AutoTapPreviewPr
 
       {/* Powered by GoTap */}
       <div className="mt-3 text-center">
-        <Link
-          href="/"
+        <a
+          href="https://gotap.eg"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-[10px] text-slate-muted/40 hover:text-cyan/60 transition-colors duration-200"
         >
-          {tp("poweredBy")}
-        </Link>
+          GOTAP.EG
+        </a>
       </div>
     </div>
   );

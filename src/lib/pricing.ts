@@ -1,7 +1,5 @@
 import { PRICES } from "./constants";
 
-const CUSTOM_PRINT_FEE = 50;
-
 const REMOTE_KEYWORDS = [
   "الصعيد", "صعيد",
   "دمياط",
@@ -24,17 +22,16 @@ export function calcShippingFee(address: string): number {
   return isRemote ? PRICES.SHIPPING_UPPER_EGYPT : PRICES.SHIPPING_CAIRO;
 }
 
-export function calcBasePrice(profileType: "single" | "multiple"): number {
-  const base = profileType === "single" ? PRICES.SINGLE_USER : PRICES.MULTIPLE_USERS;
-  return base + CUSTOM_PRINT_FEE;
+export function calcBasePrice(): number {
+  return 200;
 }
 
-export function calcTotal(profileType: "single" | "multiple", address: string): {
+export function calcTotal(address: string): {
   basePrice: number;
   shippingFee: number;
   total: number;
 } {
-  const basePrice = calcBasePrice(profileType);
+  const basePrice = calcBasePrice();
   const shippingFee = calcShippingFee(address);
   return { basePrice, shippingFee, total: basePrice + shippingFee };
 }

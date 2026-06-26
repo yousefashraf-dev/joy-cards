@@ -14,33 +14,28 @@ interface ThemeProps {
   iconMap: Record<string, React.ElementType>;
 }
 
-export default function SpidermanProfile({ name, logo, buttons, iconMap }: ThemeProps) {
+export default function YellowPokemonProfile({ name, logo, buttons, iconMap }: ThemeProps) {
   const t = useTranslations("products.profile");
 
-  const cornerItems = useMemo(() => [
-    { top: "-8%", left: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 rotate-12 opacity-25 max-sm:opacity-20 object-contain" },
-    { top: "auto", bottom: "-8%", left: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 -rotate-12 opacity-25 max-sm:opacity-20 object-contain" },
-    { top: "-8%", right: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 -rotate-[30deg] opacity-25 max-sm:opacity-20 object-contain" },
-    { top: "auto", bottom: "-8%", right: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 rotate-[30deg] opacity-25 max-sm:opacity-20 object-contain" },
-  ], []);
-
-  const smallItems = useMemo(() => generateScatter({
-    count: 16,
-    sources: ["/spider_2-removebg-preview.png"],
-    minSize: 40,
-    maxSize: 80,
+  const bgItems = useMemo(() => generateScatter({
+    count: 18,
+    sources: ["/yellow_-removebg-preview.png"],
+    minSize: 50,
+    maxSize: 120,
     opacity: 0.1,
   }), []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-700 via-slate-900 to-blue-900 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#1A1A1A] to-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {cornerItems.map((item, i) => (
-          <img key={`c-${i}`} src="/spider-removebg-preview.png" alt="" className={item.className}
-            style={{ top: item.top, left: item.left, right: item.right as string | undefined, bottom: item.bottom as string | undefined } as React.CSSProperties} />
-        ))}
-        {smallItems.map((item, i) => (
-          <img key={`s-${i}`} src={item.src} alt="" className="absolute object-contain pointer-events-none" style={{ top: item.top, left: item.left, ...item.style }} />
+        {bgItems.map((item, i) => (
+          <img
+            key={i}
+            src={item.src}
+            alt=""
+            className="absolute object-contain pointer-events-none"
+            style={{ top: item.top, left: item.left, ...item.style }}
+          />
         ))}
       </div>
 
@@ -50,20 +45,20 @@ export default function SpidermanProfile({ name, logo, buttons, iconMap }: Theme
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="rounded-2xl p-6 text-center border border-red-500/30 shadow-[0_0_30px_rgba(220,38,38,0.2)] bg-black/40 backdrop-blur-md">
+        <div className="rounded-2xl p-6 text-center border border-yellow-400/40 shadow-[0_0_40px_rgba(250,204,21,0.15)] bg-black/70 backdrop-blur-xl">
           <motion.div
             className="flex justify-center mb-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
           >
-            <div className="ring-2 ring-red-500/60 rounded-full p-0.5 shadow-[0_0_25px_rgba(220,38,38,0.35)]">
+            <div className="ring-2 ring-yellow-400/60 rounded-full p-0.5 shadow-[0_0_25px_rgba(250,204,21,0.4)]">
               {logo}
             </div>
           </motion.div>
 
           <motion.h1
-            className="text-xl font-black text-white mb-5 uppercase tracking-[0.1em] drop-shadow-[0_0_8px_rgba(220,38,38,0.3)]"
+            className="text-xl font-black text-white mb-5 uppercase tracking-[0.1em] drop-shadow-[0_0_12px_rgba(250,204,21,0.4)]"
             style={{ fontFamily: "'Impact', 'Arial Black', sans-serif" }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -82,18 +77,18 @@ export default function SpidermanProfile({ name, logo, buttons, iconMap }: Theme
                     href={btn.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-red-500/30 text-white/95 hover:border-blue-500/60 hover:shadow-[0_0_20px_rgba(59,130,246,0.25)] hover:bg-white/[0.08] transition-all duration-300 group"
+                    className="flex items-center justify-between gap-3 w-full p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-yellow-400/30 text-white/95 hover:border-yellow-400 hover:shadow-[0_0_25px_rgba(250,204,21,0.35)] hover:bg-yellow-400/10 transition-all duration-300 group"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                     whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(59,130,246,0.3)" }}
+                    whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(250,204,21,0.3)" }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500/20 to-blue-500/20 flex items-center justify-center group-hover:from-red-500/30 group-hover:to-blue-500/30 transition-all shrink-0">
-                      <Icon className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-full bg-yellow-400/15 flex items-center justify-center group-hover:bg-yellow-400/25 transition-all shrink-0">
+                      <Icon className="w-5 h-5 text-yellow-400" />
                     </div>
                     <span className="flex-1 text-center text-xs font-bold text-white/90 truncate">{btn.label}</span>
-                    <span className="text-red-400/60 group-hover:text-blue-400 shrink-0">→</span>
+                    <span className="text-yellow-400/60 group-hover:text-yellow-400 shrink-0">→</span>
                   </motion.a>
                 );
               })}
@@ -108,15 +103,15 @@ export default function SpidermanProfile({ name, logo, buttons, iconMap }: Theme
                   href={btn.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-red-500/30 text-white/95 hover:border-blue-500/60 hover:shadow-[0_0_20px_rgba(59,130,246,0.25)] hover:bg-white/[0.08] transition-all duration-300 group"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.04] backdrop-blur-md border border-yellow-400/30 text-white/95 hover:border-yellow-400 hover:shadow-[0_0_25px_rgba(250,204,21,0.35)] hover:bg-yellow-400/10 transition-all duration-300 group"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
                   whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(59,130,246,0.3)" }}
+                  whileTap={{ scale: 0.97, boxShadow: "0 0 20px rgba(250,204,21,0.3)" }}
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500/20 to-blue-500/20 flex items-center justify-center group-hover:from-red-500/30 group-hover:to-blue-500/30 transition-all">
-                    <Icon className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 rounded-full bg-yellow-400/15 flex items-center justify-center group-hover:bg-yellow-400/25 transition-all">
+                    <Icon className="w-5 h-5 text-yellow-400" />
                   </div>
                   <span className="text-center text-xs font-bold text-white/90">{btn.label}</span>
                 </motion.a>
@@ -135,7 +130,7 @@ export default function SpidermanProfile({ name, logo, buttons, iconMap }: Theme
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
           >
-            <Link href="/" className="hover:text-blue-400/60 transition-colors">
+            <Link href="/" className="hover:text-yellow-400/60 transition-colors">
               {t("poweredBy")}
             </Link>
           </motion.p>

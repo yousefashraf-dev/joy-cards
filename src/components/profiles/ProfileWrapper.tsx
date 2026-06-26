@@ -15,6 +15,11 @@ import TerminalDarkGlowProfile from "./TerminalDarkGlowProfile";
 import EnergyLightningProfile from "./EnergyLightningProfile";
 import BatmanProfile from "./BatmanProfile";
 import SpidermanProfile from "./SpidermanProfile";
+import EnergyPowerProfile from "./EnergyPowerProfile";
+import YellowPokemonProfile from "./YellowPokemonProfile";
+import GameOfThronesProfile from "./GameOfThronesProfile";
+import BatreqProfile from "./BatreqProfile";
+import StitchProfile from "./StitchProfile";
 import { CldImage } from "next-cloudinary";
 import { THEME_ARCHETYPE } from "@/lib/constants";
 import {
@@ -159,6 +164,11 @@ export default function ProfileWrapper({ profile }: ProfileWrapperProps) {
   if (profile.theme === "energy-lightning") return <EnergyLightningProfile {...sharedProps} />;
   if (profile.theme === "spiderman") return <SpidermanProfile {...sharedProps} />;
   if (profile.theme === "batman") return <BatmanProfile {...sharedProps} />;
+  if (profile.theme === "energy-power") return <EnergyPowerProfile {...sharedProps} />;
+  if (profile.theme === "game-of-thrones") return <GameOfThronesProfile {...sharedProps} />;
+  if (profile.theme === "stitch") return <StitchProfile {...sharedProps} />;
+  if (profile.theme === "batreq") return <BatreqProfile {...sharedProps} />;
+  if (profile.theme === "yellow-pokemon") return <YellowPokemonProfile {...sharedProps} />;
 
   // Non-Auto-Tap themes: use archetype-based rendering
   switch (archetype) {

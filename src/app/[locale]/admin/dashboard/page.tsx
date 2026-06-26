@@ -4,11 +4,15 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Plus, Shield } from "lucide-react";
+import { Lock, LogOut, Plus, Shield, ShoppingBag, Store } from "lucide-react";
 import CafeForm from "@/components/admin/CafeForm";
 import CafeTable from "@/components/admin/CafeTable";
+import ProductForm from "@/components/admin/ProductForm";
+import ProductTable from "@/components/admin/ProductTable";
 import type { Cafe } from "@/lib/cafe-schema";
 import { getAllCafes } from "@/lib/cafe-schema";
+import type { Product } from "@/lib/product-schema";
+import { getAllProducts } from "@/lib/product-schema";
 
 const ADMIN_PASSWORD = "oreo2552000";
 
@@ -16,23 +20,32 @@ export default function AdminDashboardPage() {
   const t = useTranslations("admin");
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
+  const [activeTab, setActiveTab] = useState<"cafes" | "products">("cafes");
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAuthenticated(sessionStorage.getItem("admin_auth") === "true");
   }, []);
+
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cafes, setCafes] = useState<Cafe[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCafe, setEditingCafe] = useState<Cafe | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    if (authenticated) {
+    if (authenticated && activeTab === "cafes") {
       getAllCafes().then(setCafes).catch(console.error);
     }
-  }, [authenticated, refreshKey]);
+  }, [authenticated, activeTab, refreshKey]);
+
+  useEffect(() => {
+    if (authenticated && activeTab === "products") {
+      getAllProducts().then(setProducts).catch(console.error);
+    }
+  }, [authenticated, activeTab, refreshKey]);
 
   const handleLogin = useCallback(() => {
     if (password === ADMIN_PASSWORD) {
@@ -56,19 +69,28 @@ export default function AdminDashboardPage() {
     [handleLogin]
   );
 
-  const handleEdit = useCallback((cafe: Cafe) => {
+  const handleEditCafe = useCallback((cafe: Cafe) => {
     setEditingCafe(cafe);
+    setEditingProduct(null);
+    setShowForm(true);
+  }, []);
+
+  const handleEditProduct = useCallback((product: Product) => {
+    setEditingProduct(product);
+    setEditingCafe(null);
     setShowForm(true);
   }, []);
 
   const handleFormClose = useCallback(() => {
     setShowForm(false);
     setEditingCafe(null);
+    setEditingProduct(null);
   }, []);
 
   const handleFormSuccess = useCallback(() => {
     setShowForm(false);
     setEditingCafe(null);
+    setEditingProduct(null);
     setRefreshKey((k) => k + 1);
   }, []);
 
@@ -81,8 +103,8 @@ export default function AdminDashboardPage() {
           className="w-full max-w-sm"
         >
           <div className="glass bg-matte-card/80 border border-white/10 rounded-2xl p-8 text-center">
-            <div className="w-16 h-16 rounded-full bg-neon-green/10 flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-8 h-8 text-neon-green" />
+            <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-8 h-8 text-gold" />
             </div>
             <h1 className="text-xl font-bold text-slate-light mb-2">
               {t("loginTitle")}
@@ -97,15 +119,13 @@ export default function AdminDashboardPage() {
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder={t("loginPlaceholder")}
-                className="w-full px-4 py-3 rounded-lg bg-dark-card border border-white/10 text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-neon-green/50 text-center text-lg tracking-widest"
+                className="w-full px-4 py-3 rounded-lg bg-dark-card border border-white/10 text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-gold/50 text-center text-lg tracking-widest"
                 autoFocus
               />
-              {error && (
-                <p className="text-red-400 text-sm">{error}</p>
-              )}
+              {error && <p className="text-red-400 text-sm">{error}</p>}
               <button
                 onClick={handleLogin}
-                className="w-full py-3 rounded-lg bg-neon-green text-matte-dark font-bold hover:bg-emerald-400 transition-colors duration-200"
+                className="w-full py-3 rounded-lg bg-gold text-matte-dark font-bold hover:bg-gold-light transition-colors duration-200"
               >
                 {t("loginButton")}
               </button>
@@ -122,7 +142,7 @@ export default function AdminDashboardPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <Shield className="w-6 h-6 text-neon-green" />
+            <Shield className="w-6 h-6 text-gold" />
             <h1 className="text-2xl font-bold text-slate-light">
               {t("dashboardTitle")}
             </h1>
@@ -131,12 +151,13 @@ export default function AdminDashboardPage() {
             <button
               onClick={() => {
                 setEditingCafe(null);
+                setEditingProduct(null);
                 setShowForm(true);
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neon-green text-matte-dark font-semibold hover:bg-emerald-400 transition-colors duration-200 text-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gold text-matte-dark font-semibold hover:bg-gold-light transition-colors duration-200 text-sm"
             >
               <Plus className="w-4 h-4" />
-              {t("addCafe")}
+              {activeTab === "cafes" ? t("addCafe") : t("addProduct")}
             </button>
             <button
               onClick={handleLogout}
@@ -147,7 +168,33 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Cafe Form Modal */}
+        {/* Side Navigation */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setActiveTab("cafes")}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              activeTab === "cafes"
+                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
+            }`}
+          >
+            <Store className="w-4 h-4" />
+            {t("cafesTab")}
+          </button>
+          <button
+            onClick={() => setActiveTab("products")}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              activeTab === "products"
+                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
+            }`}
+          >
+            <ShoppingBag className="w-4 h-4" />
+            {t("productsTab")}
+          </button>
+        </div>
+
+        {/* Form Modal */}
         <AnimatePresence>
           {showForm && (
             <motion.div
@@ -165,22 +212,49 @@ export default function AdminDashboardPage() {
                 exit={{ opacity: 0, y: 20 }}
                 className="w-full max-w-2xl mt-8 mb-8"
               >
-                <CafeForm
-                  cafe={editingCafe}
-                  onSuccess={handleFormSuccess}
-                  onCancel={handleFormClose}
-                />
+                {editingCafe || (activeTab === "cafes" && !editingProduct) ? (
+                  <CafeForm
+                    cafe={editingCafe}
+                    onSuccess={handleFormSuccess}
+                    onCancel={handleFormClose}
+                  />
+                ) : (
+                  <ProductForm
+                    product={editingProduct}
+                    onSuccess={handleFormSuccess}
+                    onCancel={handleFormClose}
+                  />
+                )}
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Cafe Table */}
-        <CafeTable
-          cafes={cafes}
-          onEdit={handleEdit}
-          onRefresh={() => setRefreshKey((k) => k + 1)}
-        />
+        {/* Content */}
+        {activeTab === "cafes" ? (
+          <CafeTable
+            cafes={cafes}
+            onEdit={handleEditCafe}
+            onRefresh={() => setRefreshKey((k) => k + 1)}
+          />
+        ) : (
+          <div className="grid lg:grid-cols-2 gap-6">
+            <div>
+              <ProductForm
+                product={null}
+                onSuccess={handleFormSuccess}
+                onCancel={() => {}}
+              />
+            </div>
+            <div>
+              <ProductTable
+                products={products}
+                onEdit={handleEditProduct}
+                onRefresh={() => setRefreshKey((k) => k + 1)}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -46,12 +46,12 @@ export interface DigitalCardsFields {
 }
 
 export interface AutoTapFields {
-  profileType: "single" | "multiple";
+  stickerType: "icon" | "username";
+  selectedPlatform?: "instagram" | "tiktok" | "snapchat";
   logoWidthCm: string;
   orderNotes?: string;
   addressDetail: string;
-  selectedPlatform?: string;
-  singlePlatformValue?: string;
+  usernameValue?: string;
 }
 
 export interface AutoTapFormData {
@@ -59,9 +59,9 @@ export interface AutoTapFormData {
   phone: string;
   addressDetail: string;
   orderNotes: string;
-  profileType: "single" | "multiple";
-  selectedPlatform: string;
-  singlePlatformValue: string;
+  stickerType: "icon" | "username";
+  selectedPlatform: "instagram" | "tiktok" | "snapchat" | "";
+  usernameValue: string;
   socialLinks: Record<string, string>;
   logo: string;
   logoWidthCm: string;

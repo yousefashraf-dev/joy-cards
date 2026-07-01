@@ -30,7 +30,10 @@ function buildProductDetails(data: OrderPayload): string {
   details.push(`النوع: ${data.productType}`);
   details.push(`التصميم: ${data.theme}`);
   if (data.autoTapFields) {
-    details.push(`نوع الحساب: ${data.autoTapFields.profileType === "single" ? "مستخدم واحد" : "متعدد المستخدمين"}`);
+    const stickerLabel = data.autoTapFields.stickerType === "icon"
+      ? `أيقونة ${data.autoTapFields.selectedPlatform || "سوشيال ميديا"}`
+      : "اسم مستخدم مخصص";
+    details.push(`نوع الاستيكر: ${stickerLabel}`);
     details.push(`المقاس: ${data.autoTapFields.logoWidthCm} سم`);
 
   } else if (data.digitalCardsFields) {
@@ -94,6 +97,9 @@ export async function submitOrder(
     "التصميم": data.theme,
     "تفاصيل المنتج": productDetails,
     "عرض اللوجو (سم)": data.autoTapFields?.logoWidthCm || "",
+    "نوع الاستيكر": data.autoTapFields?.stickerType === "icon"
+      ? `أيقونة ${data.autoTapFields?.selectedPlatform || "سوشيال ميديا"}`
+      : "اسم مستخدم",
     "ملاحظات": data.autoTapFields?.orderNotes || "",
     "تم الدفع": false,
     "جاهز للشحن": false,

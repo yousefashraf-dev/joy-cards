@@ -15,11 +15,38 @@ export interface ScatterItem {
   style: CSSProperties;
 }
 
+function distance(x1: number, y1: number, x2: number, y2: number): number {
+  return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
+
 export function generateScatter(config: ScatterConfig): ScatterItem[] {
   const items: ScatterItem[] = [];
+  const minDist = 14;
+  const maxAttempts = 30;
   for (let i = 0; i < config.count; i++) {
-    const top = Math.floor(Math.random() * 88) + 2;
-    const left = Math.floor(Math.random() * 88) - 5;
+    let top = Math.floor(Math.random() * 82) + 5;
+    let left = Math.floor(Math.random() * 82) + 2;
+    let placed = false;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      top = Math.floor(Math.random() * 82) + 5;
+      left = Math.floor(Math.random() * 82) + 2;
+      let tooClose = false;
+      for (const item of items) {
+        const exTop = parseFloat(item.top);
+        const exLeft = parseFloat(item.left);
+        if (distance(top, left, exTop, exLeft) < minDist) {
+          tooClose = true;
+          break;
+        }
+      }
+      if (!tooClose) {
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) {
+      // use last attempted position
+    }
     const deg = Math.floor(Math.random() * 120) - 60;
     const size = Math.floor(Math.random() * (config.maxSize - config.minSize) + config.minSize);
     const src = config.sources[i % config.sources.length];

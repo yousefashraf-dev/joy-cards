@@ -22,7 +22,7 @@ export default function YellowPokemonProfile({ name, logo, buttons, iconMap }: T
     sources: ["/yellow_-removebg-preview.png"],
     minSize: 50,
     maxSize: 120,
-    opacity: 0.1,
+    opacity: 0.28,
   }), []);
 
   return (

@@ -6,6 +6,8 @@ import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2 } from "lucide
 import type { Cafe } from "@/lib/cafe-schema";
 import { addCafe, updateCafe, uploadCafeFile } from "@/lib/cafe-schema";
 import { compressImage } from "@/lib/compressImage";
+import { CAFE_THEMES } from "@/lib/cafe-themes";
+import type { CafeTheme } from "@/lib/cafe-themes";
 import { useToast } from "@/components/ui/ToastProvider";
 
 interface CafeFormProps {
@@ -38,6 +40,9 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   );
   const [wifiName, setWifiName] = useState(cafe?.wifiName || "");
   const [wifiPassword, setWifiPassword] = useState(cafe?.wifiPassword || "");
+  const [vodafoneCash, setVodafoneCash] = useState(cafe?.vodafoneCash || "");
+  const [instaPay, setInstaPay] = useState(cafe?.instaPay || "");
+  const [theme, setTheme] = useState<CafeTheme>(cafe?.theme || "cafe");
 
   // File uploads
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -75,8 +80,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         const timeout = setTimeout(() => controller.abort(), 60000);
         const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
         clearTimeout(timeout);
-        const data = await res.json();
-        if (!res.ok || !data.url) throw new Error(data?.error || "Logo upload failed");
+        let data: { url?: string; error?: string };
+        try { data = await res.json(); }
+        catch { const text = await res.text().catch(() => ""); throw new Error(text ? `Server (${res.status}): ${text.slice(0, 200)}` : `Upload failed (HTTP ${res.status})`); }
+        if (!res.ok || !data.url) throw new Error(data.error || "Logo upload failed");
         logoUrl = data.url;
       }
 
@@ -91,8 +98,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
           const timeout = setTimeout(() => controller.abort(), 60000);
           const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
           clearTimeout(timeout);
-          const data = await res.json();
-          if (!res.ok || !data.url) throw new Error(data?.error || "Menu image upload failed");
+          let data: { url?: string; error?: string };
+          try { data = await res.json(); }
+          catch { const text = await res.text().catch(() => ""); throw new Error(text ? `Server (${res.status}): ${text.slice(0, 200)}` : `Upload failed (HTTP ${res.status})`); }
+          if (!res.ok || !data.url) throw new Error(data.error || "Menu image upload failed");
           uploaded.push(data.url);
         }
         finalMenuImages = [...finalMenuImages, ...uploaded];
@@ -112,6 +121,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         menuUrl: finalMenuUrl,
         menuImages: menuType === "images" ? finalMenuImages : [],
         menuType,
+        theme,
         phone: phone.trim(),
         whatsapp: whatsapp.trim(),
         websiteUrl: websiteUrl.trim(),
@@ -123,6 +133,8 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         googleReviewsUrl: googleReviewsUrl.trim(),
         wifiName: wifiName.trim(),
         wifiPassword: wifiPassword.trim(),
+        vodafoneCash: vodafoneCash.trim(),
+        instaPay: instaPay.trim(),
       };
 
       if (cafe?.id) {
@@ -375,6 +387,28 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
           </div>
         )}
 
+        {/* Theme Selection */}
+        <div>
+          <label className={labelClass}>{t("theme")}</label>
+          <div className="grid grid-cols-2 gap-3">
+            {(Object.entries(CAFE_THEMES) as [CafeTheme, typeof CAFE_THEMES[CafeTheme]][]).map(([key, cfg]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setTheme(key)}
+                className={`flex items-center gap-2 px-3 py-3 rounded-lg border text-sm transition-all duration-200 ${
+                  theme === key
+                    ? "border-neon-green bg-neon-green/10 text-neon-green"
+                    : "border-white/10 bg-dark-card text-slate-muted hover:border-white/30"
+                }`}
+              >
+                <span className="text-lg">{cfg.icon}</span>
+                <span className="font-medium">{cfg.label.ar}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Contact Info */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -511,6 +545,35 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                 onChange={(e) => setWifiPassword(e.target.value)}
                 className={inputClass}
                 placeholder={t("wifiPassword")}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Methods */}
+        <div>
+          <p className="text-sm text-slate-muted mb-3 font-medium">
+            Payment Methods
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <input
+                type="text"
+                value={vodafoneCash}
+                onChange={(e) => setVodafoneCash(e.target.value)}
+                className={inputClass}
+                placeholder="Vodafone Cash"
+                dir="ltr"
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                value={instaPay}
+                onChange={(e) => setInstaPay(e.target.value)}
+                className={inputClass}
+                placeholder="InstaPay"
+                dir="ltr"
               />
             </div>
           </div>

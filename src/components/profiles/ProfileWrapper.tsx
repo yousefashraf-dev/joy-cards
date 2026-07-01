@@ -70,6 +70,7 @@ function buildButtons(profile: Profile, pl: (key: string) => string): ProfileBut
   const l = profile.links || {};
 
   if (l.instagram)    buttons.push({ icon: "Instagram", url: formatSocialLink(l.instagram, "instagram"), label: "Instagram" });
+  if (l.tiktok)       buttons.push({ icon: "TikTok", url: formatSocialLink(l.tiktok, "tiktok"), label: "TikTok" });
   if (l.facebook) {
     let fbUrl = l.facebook.trim();
     if (/^https?:\/\/([a-z0-9-]+\.)?(facebook\.com|fb\.watch)\//i.test(fbUrl)) {
@@ -79,10 +80,9 @@ function buildButtons(profile: Profile, pl: (key: string) => string): ProfileBut
     }
     buttons.push({ icon: "Facebook", url: fbUrl, label: "Facebook" });
   }
-  if (l.tiktok)       buttons.push({ icon: "TikTok", url: formatSocialLink(l.tiktok, "tiktok"), label: "TikTok" });
   if (l.snapchat)     buttons.push({ icon: "Snapchat", url: formatSocialLink(l.snapchat, "snapchat"), label: "Snapchat" });
-  if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: formatSocialLink(l.whatsapp, "whatsapp"), label: "WhatsApp" });
   if (l.phoneSocial)  buttons.push({ icon: "Phone", url: formatSocialLink(l.phoneSocial, "phoneSocial"), label: "Call" });
+  if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: formatSocialLink(l.whatsapp, "whatsapp"), label: "WhatsApp" });
 
   const dc = profile.digitalCardsFields;
   if (dc) {

@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
     };
 
     if (!isPdf) {
-      uploadOptions.fetch_format = "webp";
       uploadOptions.format = "webp";
     }
 
@@ -63,6 +62,7 @@ export async function POST(request: NextRequest) {
         }
       );
       uploadStream.end(buffer);
+      uploadStream.on("error", reject);
     });
 
     return NextResponse.json({ url: result.secure_url });

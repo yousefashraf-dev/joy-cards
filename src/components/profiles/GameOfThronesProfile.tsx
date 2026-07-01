@@ -22,7 +22,7 @@ export default function GameOfThronesProfile({ name, logo, buttons, iconMap }: T
     sources: ["/game of thronse.png", "/game of thronse2.png"],
     minSize: 50,
     maxSize: 130,
-    opacity: 0.1,
+    opacity: 0.28,
   }), []);
 
   return (

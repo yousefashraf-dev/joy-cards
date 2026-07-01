@@ -22,7 +22,7 @@ export default function EnergyPowerProfile({ name, logo, buttons, iconMap }: The
     sources: ["/red_pull-removebg-preview.png", "/can_red_pull-removebg-preview.png"],
     minSize: 60,
     maxSize: 140,
-    opacity: 0.1,
+    opacity: 0.28,
   }), []);
 
   return (

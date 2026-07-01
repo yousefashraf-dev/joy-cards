@@ -44,8 +44,10 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
         const timeout = setTimeout(() => controller.abort(), 60000);
         const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
         clearTimeout(timeout);
-        const data = await res.json();
-        if (!res.ok || !data.url) throw new Error(data?.error || "Image upload failed");
+        let data: { url?: string; error?: string };
+        try { data = await res.json(); }
+        catch { const text = await res.text().catch(() => ""); throw new Error(text ? `Server (${res.status}): ${text.slice(0, 200)}` : `Upload failed (HTTP ${res.status})`); }
+        if (!res.ok || !data.url) throw new Error(data.error || "Image upload failed");
         allImages.push(data.url);
       }
 

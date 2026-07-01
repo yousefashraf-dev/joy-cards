@@ -6,10 +6,11 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone } from "lucide-react";
 import Image from "next/image";
 import type { Theme, AutoTapFormData } from "@/lib/types";
-import { PLATFORM_OPTIONS, PRODUCT_THEMES } from "@/lib/constants";
+import { PRODUCT_THEMES } from "@/lib/constants";
 import { compressImage } from "@/lib/compressImage";
 import { useToast } from "@/components/ui/ToastProvider";
 import { generateScatter } from "@/lib/scatterBackground";
+import { formatSocialLink, type Platform } from "@/lib/formatSocialLink";
 
 const iconMap: Record<string, React.ElementType> = {
   Instagram: Camera,
@@ -71,58 +72,67 @@ export default function AutoTapPreview({ data, onThemeChange, onLogoChange }: Au
     if (currentIndex < autoTapThemes.length - 1) onThemeChange(autoTapThemes[currentIndex + 1]);
   }, [currentIndex, autoTapThemes, onThemeChange]);
 
+  const SOCIAL_LINK_MAP: { id: string; icon: string }[] = [
+    { id: "instagram", icon: "Instagram" },
+    { id: "tiktok", icon: "TikTok" },
+    { id: "snapchat", icon: "Snapchat" },
+    { id: "facebook", icon: "Facebook" },
+    { id: "whatsapp", icon: "MessageCircle" },
+    { id: "phoneSocial", icon: "Phone" },
+  ];
+
   const effectiveLinks: { icon: string; label: string; url: string }[] = [];
 
-  if (data.profileType === "single" && data.selectedPlatform && data.singlePlatformValue) {
-    const platform = PLATFORM_OPTIONS.find((p) => p.id === data.selectedPlatform);
-    if (platform) {
-      effectiveLinks.push({ icon: platform.icon, label: platform.label, url: "#" });
-    }
-  } else if (data.profileType === "multiple") {
-    for (const [id, val] of Object.entries(data.socialLinks)) {
-      if (val.trim()) {
-        const platform = PLATFORM_OPTIONS.find((p) => p.id === id);
-        effectiveLinks.push({ icon: platform?.icon || "Globe", label: platform?.label || id, url: "#" });
+  if (data.usernameValue?.trim()) {
+    effectiveLinks.push({ icon: "Instagram", label: data.usernameValue.trim(), url: "#" });
+  }
+
+  if (data.socialLinks && Object.keys(data.socialLinks).length > 0) {
+    for (const linkDef of SOCIAL_LINK_MAP) {
+      const raw = data.socialLinks[linkDef.id]?.trim();
+      if (raw) {
+        const url = formatSocialLink(raw, linkDef.id as Platform);
+        effectiveLinks.push({ icon: linkDef.icon, label: raw, url: url || "#" });
       }
     }
   }
 
   const themeId = data.theme;
-  const isSingle = data.profileType === "single";
+  const isSingle = true;
 
   const batmanBgLogos = useMemo(() => generateScatter({
     count: 18, sources: ["/Batman-removebg-preview.png"],
-    minSize: 40, maxSize: 80, opacity: 0.12,
+    minSize: 40, maxSize: 80, opacity: 0.30,
   }), []);
 
   const spiderBgWebs = useMemo(() => generateScatter({
     count: 18, sources: ["/spider_2-removebg-preview.png"],
-    minSize: 50, maxSize: 100, opacity: 0.1,
+    minSize: 50, maxSize: 100, opacity: 0.28,
   }), []);
 
   const energyPowerBgLogos = useMemo(() => generateScatter({
     count: 18, sources: ["/red_pull-removebg-preview.png", "/can_red_pull-removebg-preview.png"],
-    minSize: 45, maxSize: 85, opacity: 0.1,
+    minSize: 45, maxSize: 85, opacity: 0.28,
   }), []);
 
   const gotBgLogos = useMemo(() => generateScatter({
     count: 18, sources: ["/game of thronse.png", "/game of thronse2.png"],
-    minSize: 40, maxSize: 80, opacity: 0.1,
+    minSize: 40, maxSize: 80, opacity: 0.28,
   }), []);
 
   const stitchBgLogos = useMemo(() => generateScatter({
     count: 18, sources: ["/stitch-removebg-preview.png"],
-    minSize: 40, maxSize: 80, opacity: 0.08,
+    minSize: 40, maxSize: 80, opacity: 0.25,
   }), []);
 
   const batreqBgLogos = useMemo(() => generateScatter({
     count: 18, sources: ["/batreq-removebg-preview.png"],
-    minSize: 40, maxSize: 80, opacity: 0.1,
+    minSize: 40, maxSize: 80, opacity: 0.28,
   }), []);
 
   const pokemonBgLogos = useMemo(() => generateScatter({
     count: 18, sources: ["/yellow_-removebg-preview.png"],
-    minSize: 40, maxSize: 80, opacity: 0.1,
+    minSize: 40, maxSize: 80, opacity: 0.28,
   }), []);
 
   const renderLinks = (singleClass: string, multipleClass: string, linkClass: string, iconClass: string, textClass: string, arrowClass: string) => {
@@ -215,36 +225,34 @@ export default function AutoTapPreview({ data, onThemeChange, onLogoChange }: Au
 
   const avatarCircle = (ringClass: string) => (
     <div className="flex justify-center mb-4">
-      <div
-        className={`w-24 h-24 rounded-full flex items-center justify-center overflow-hidden cursor-pointer transition-all relative z-50 pointer-events-auto ${ringClass}`}
-        onClick={() => logoInputRef.current?.click()}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }}
-      >
-        {uploading ? (
-          <div className="flex flex-col items-center justify-center gap-1">
-            <svg className="animate-spin w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            <span className="text-[10px] text-white/70">{t("uploading")}</span>
-          </div>
-        ) : data.logo ? (
-          <Image src={data.logo} alt="Logo" width={96} height={96} className="w-full h-full object-cover rounded-full" unoptimized />
-        ) : (
-          <span className="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
-            {data.customerName ? data.customerName.charAt(0).toUpperCase() : "?"}
-          </span>
-        )}
+      <div className="relative w-24 h-24">
+        <div
+          className={`w-24 h-24 rounded-full flex items-center justify-center overflow-hidden transition-all relative z-10 ${ringClass}`}
+        >
+          {uploading ? (
+            <div className="flex flex-col items-center justify-center gap-1">
+              <svg className="animate-spin w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <span className="text-[10px] text-white/70">{t("uploading")}</span>
+            </div>
+          ) : data.logo ? (
+            <Image src={data.logo} alt="Logo" width={96} height={96} className="w-full h-full object-cover rounded-full" unoptimized />
+          ) : (
+            <span className="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
+              {data.customerName ? data.customerName.charAt(0).toUpperCase() : "?"}
+            </span>
+          )}
+        </div>
+        <input
+          ref={logoInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleLogoUpload}
+          className="absolute inset-0 opacity-0 cursor-pointer z-30 rounded-full"
+        />
       </div>
-      <input
-        ref={logoInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleLogoUpload}
-        className="hidden"
-      />
     </div>
   );
 
@@ -310,10 +318,10 @@ export default function AutoTapPreview({ data, onThemeChange, onLogoChange }: Au
                 <div className="rounded-2xl p-6 text-center bg-gradient-to-br from-red-700 via-slate-900 to-blue-900 border border-red-500/30 shadow-[0_0_30px_rgba(220,38,38,0.2)] relative overflow-hidden">
                   {/* Spider web 1 (spider-removebg-preview) - 4 corners + Spider web 2 (spider_2-removebg-preview) - 11 scattered */}
                   <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                    <img src="/spider-removebg-preview.png" alt="" className="absolute -top-8 -right-8 w-28 h-28 opacity-30 rotate-12" />
-                    <img src="/spider-removebg-preview.png" alt="" className="absolute -bottom-8 -left-8 w-28 h-28 opacity-30 -rotate-12" />
-                    <img src="/spider-removebg-preview.png" alt="" className="absolute -top-8 -left-8 w-28 h-28 opacity-30 -rotate-[30deg]" />
-                    <img src="/spider-removebg-preview.png" alt="" className="absolute -bottom-8 -right-8 w-28 h-28 opacity-30 rotate-[30deg]" />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -top-8 -right-8 w-28 h-28 opacity-50 rotate-12" />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -bottom-8 -left-8 w-28 h-28 opacity-50 -rotate-12" />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -top-8 -left-8 w-28 h-28 opacity-50 -rotate-[30deg]" />
+                    <img src="/spider-removebg-preview.png" alt="" className="absolute -bottom-8 -right-8 w-28 h-28 opacity-50 rotate-[30deg]" />
                     {spiderBgWebs.map((item, i) => (
                       <img
                         key={i}

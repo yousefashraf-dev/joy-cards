@@ -18,15 +18,15 @@
     "home": "Home",
     "digitalCards": "Digital Card",
     "autoTap": "Car Tap",
-    "businessTap": "Restaurants & Cafes",
-    "shop": "Medals & Accessories Store",
+    "businessTap": "Restaurants, Cafes & Stores",
+    "shop": "Accessories Store",
     "language": "العربية",
     "toggleLanguage": "Toggle language",
     "toggleMenu": "Toggle menu"
   },
   "hero": {
     "headline": "Your Digital Identity, One Tap Away",
-    "subheadline": "Replace paper with premium NFC technology. Share your world with a single tap — business cards, car profiles, restaurant menus, and more.",
+    "subheadline": "Replace paper with premium NFC technology. Share your world with a single tap — digital business cards, restaurant menus, social links, and more.",
     "cta": "Explore Products",
     "tagline": "Your Digital Menu | Your Smart Card"
   },
@@ -51,16 +51,27 @@
   "products": {
     "title": "Our Products",
     "digitalCards": {
-      "title": "Personal ID Card (Digital NFC)",
-      "desc": "A card the size of a Visa or ID card, allowing you to add all your personal and professional data. The card comes plain so you can print your company design or brand logo on it.",
+      "title": "NFC Smart Card",
+      "desc": "The size of a Visa or ID card. Plain and ready for custom print with any design. NFC technology — tap any phone and all your data appears.",
       "cta": "Order Now",
-      "premiumDesc": "Credit card sized NFC card. Add your full personal & professional data. Comes plain for custom print.",
+      "ctaTitle": "Your NFC Smart Card",
+      "ctaDesc": "ID card-sized NFC smart card. Plain for custom print. Add whatever you want on it.",
+      "premiumDesc": "Comes plain for custom print — add your logo, brand, or any design.",
       "features": {
-        "instantSharing": "Instant Sharing",
-        "secureNfc": "Secure NFC Chip",
-        "customUrl": "Custom URL",
-        "premiumDesign": "Premium Design"
+        "instantSharing": "Tap = Share",
+        "secureNfc": "NFC No Battery",
+        "customUrl": "Your Custom URL",
+        "premiumDesign": "Custom Print"
       },
+      "whatYouCanAdd": [
+        "Social media accounts (Instagram, Facebook, TikTok, Snapchat, WhatsApp)",
+        "Email & LinkedIn",
+        "Payment methods (InstaPay, Vodafone Cash)",
+        "CV / Resume as PDF",
+        "Your website URL",
+        "Name, title & job position",
+        "Location on Google Maps"
+      ],
       "badge": "NFC Smart Card"
     },
     "autoTap": {
@@ -77,7 +88,7 @@
       "windowNotice": "Standard rear side window size: 35cm. Custom sizes available."
     },
     "businessTap": {
-      "title": "Restaurants & Cafes",
+      "title": "Restaurants, Cafes & Stores",
       "desc": "Transform your cafe or restaurant into a complete digital experience — interactive digital menu, instant reviews, smart Wi-Fi, and all your social channels in one single link.",
       "cta": "Order Now",
       "features": {
@@ -113,10 +124,13 @@
       "digitalCardShipping": "+ Shipping"
     },
     "steps": {
+      "stickerType": "Sticker Type",
+      "platform": "Platform",
       "shipping": "Shipping",
-      "social": "Social",
-      "design": "Design",
-      "sizing": "Sizing"
+      "customization": "Customization",
+      "theme": "Theme",
+      "sizing": "Size",
+      "review": "Review"
     },
     "forms": {
       "section": {
@@ -126,7 +140,11 @@
         "social": "Social Media Links",
         "product": "Product Details",
         "premium": "Premium Fields (Optional)",
-        "size": "Choose Sticker Size"
+        "size": "Choose Sticker Size",
+        "stickerType": "Choose Sticker Type",
+        "platform": "Choose Platform",
+        "customization": "Profile Customization",
+        "review": "Review Your Order"
       },
       "fields": {
         "customerName": "Full Name (Arabic Full Name)",
@@ -172,7 +190,9 @@
         "optional": "Optional",
         "rearWindow": "Rear Side Window",
         "windowStandard": "Standard size for the rear side window: {size}cm. Adjust if you want it bigger or smaller.",
-        "windowDiagram": "Width (cm)"
+        "windowDiagram": "Width (cm)",
+        "username": "Social Media Username",
+        "usernameHelper": "Your Instagram, TikTok or Snapchat username"
       },
       "profileType": {
         "single": "Single User",
@@ -180,6 +200,16 @@
         "multiple": "Multiple Users",
         "multipleDesc": "Multiple links for different accounts"
       },
+      "stickerTypeIcon": "Social Media Icon",
+      "stickerTypeUsername": "Custom Username",
+      "customSizeAvailable": "Custom size available",
+      "nameFrameGuide": "Your name will appear inside this elegant frame",
+      "dropzoneText": "Tap here to upload your logo or profile image",
+      "dropzoneHint": "PNG, JPG or WebP supported",
+      "manualSize": "Or enter custom size (cm)",
+      "basePrice": "Base price",
+      "total": "Total",
+      "usernameDesc": "Enter your social media username (e.g. @username)",
       "themeOptions": {
         "nardo-stealth": "Nardo Stealth",
         "nardo-stealthDesc": "Dark & Silver — Premium rounded cards",
@@ -284,6 +314,8 @@
       "desc": "Premium waterproof NFC sticker for your car. Tap to share your profile, social links, and more.",
       "badge": "Car Series",
       "shippingLabel": "Shipping fees",
+      "iconLabel": "Social Media Icon",
+      "usernameLabel": "Custom Username",
       "features": {
         "waterproof": "Waterproof",
         "instantConnect": "Instant Connect",
@@ -336,7 +368,9 @@
       "copyPassword": "Copy Password",
       "copied": "Copied!",
       "poweredBy": "Powered by GoTap",
-      "socialTitle": "Follow us"
+      "socialTitle": "Follow us",
+      "payVodafone": "Pay via Vodafone Cash",
+      "payInstaPay": "Pay via InstaPay"
     }
   },
   "shop": {
@@ -424,6 +458,7 @@
       "menuTypeImages": "Images",
       "menuTypeLink": "External Link",
       "menuLink": "Menu URL (External Link)",
+      "theme": "Page Theme",
       "phone": "Phone Number (Direct Call)",
       "whatsapp": "WhatsApp Number",
       "websiteUrl": "Website URL",

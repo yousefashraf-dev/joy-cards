@@ -22,16 +22,16 @@ export function calcShippingFee(address: string): number {
   return isRemote ? PRICES.SHIPPING_UPPER_EGYPT : PRICES.SHIPPING_CAIRO;
 }
 
-export function calcBasePrice(): number {
-  return 200;
+export function calcBasePrice(stickerType: "icon" | "username"): number {
+  return stickerType === "icon" ? 100 : 150;
 }
 
-export function calcTotal(address: string): {
+export function calcTotal(stickerType: "icon" | "username", address: string): {
   basePrice: number;
   shippingFee: number;
   total: number;
 } {
-  const basePrice = calcBasePrice();
+  const basePrice = calcBasePrice(stickerType);
   const shippingFee = calcShippingFee(address);
   return { basePrice, shippingFee, total: basePrice + shippingFee };
 }

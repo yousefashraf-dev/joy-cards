@@ -5,12 +5,10 @@ import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
-  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Ruler, FileText,
+  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Check, Camera, Music2, Ghost, ThumbsUp, MessageCircle, Phone,
 } from "lucide-react";
 import type { AutoTapFormData } from "@/lib/types";
-import { formatSocialLink, type Platform } from "@/lib/formatSocialLink";
 import { submitOrder } from "@/lib/submitOrder";
-import { PLATFORM_OPTIONS } from "@/lib/constants";
 import { calcTotal } from "@/lib/pricing";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SuccessModal from "./SuccessModal";
@@ -19,7 +17,7 @@ import { useLoading } from "@/components/ui/LoadingProvider";
 import { useToast } from "@/components/ui/ToastProvider";
 import { compressImage } from "@/lib/compressImage";
 
-const STEPS = ["shipping", "social", "design", "sizing"] as const;
+const ALL_STEPS = ["stickerType", "platform", "shipping", "customization", "theme", "sizing", "review"] as const;
 
 interface AutoTapFormProps {
   data: AutoTapFormData;
@@ -27,34 +25,51 @@ interface AutoTapFormProps {
   onSubmitComplete: () => void;
 }
 
+const sizeImages: Record<string, string> = {
+  "6": "/2.jpeg",
+  "25": "/1.jpeg",
+  "35": "/3.jpeg",
+};
+
+const PLATFORM_IMAGES: Record<string, string> = {
+  instagram: "/instgram.png",
+  tiktok: "/tik tok.png",
+  snapchat: "/snap chat.png",
+};
+
+const PLATFORM_ICONS: Record<string, React.ElementType> = {
+  instagram: Camera,
+  tiktok: Music2,
+  snapchat: Ghost,
+};
+
 export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTapFormProps) {
   const t = useTranslations("products.forms");
   const e = useTranslations("products.errors");
   const tm = useTranslations("messages");
   const st = useTranslations("products.steps");
-  const pt = useTranslations("products.forms.profileType");
   const tc = useTranslations("currency");
   const locale = useLocale();
-
-  const sizeImages: Record<string, string> = {
-    "6": "/2.jpeg",
-    "25": "/1.jpeg",
-    "35": "/3.jpeg",
-  };
 
   const [step, setStep] = useState(0);
   const stepperRef = useRef<HTMLDivElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
+  const currentSteps = data.stickerType === "icon"
+    ? ALL_STEPS.filter(s => s !== "sizing")
+    : ALL_STEPS.filter(s => s !== "platform");
+
+  const currentStep = currentSteps[step];
+
   useEffect(() => {
     stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [step]);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderPricing, setOrderPricing] = useState<{ totalPrice: number; shippingFee: number } | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [previewSize, setPreviewSize] = useState<string | null>(null);
   const { showLoading, hideLoading } = useLoading();
   const { showToast } = useToast();
 
@@ -95,7 +110,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       const resData = await res.json();
       if (!res.ok) {
-        console.error("Upload server error:", res.status, resData);
         showToast(resData?.error || t("uploadError"), "error");
         return;
       }
@@ -103,12 +117,10 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         onChange("logo", resData.url);
         showToast(t("uploadSuccess"), "success");
       } else {
-        console.error("Upload OK but no URL:", resData);
         showToast(t("uploadError"), "error");
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : t("uploadError");
-      console.error("Upload failed:", err);
       showToast(msg, "error");
     } finally {
       hideLoading();
@@ -119,34 +131,32 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
 
   const validateStep = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
-    if (step === 0) {
+    if (currentStep === "stickerType") {
+      if (!data.stickerType) newErrors.stickerType = e("required");
+    } else if (currentStep === "platform") {
+      if (!data.selectedPlatform) newErrors.selectedPlatform = e("required");
+    } else if (currentStep === "shipping") {
       if (!data.customerName.trim()) newErrors.customerName = e("required");
       if (!data.phone.trim()) newErrors.phone = e("required");
       else if (!/^\+?[0-9]{7,15}$/.test(data.phone.replace(/[\s-]/g, ""))) {
         newErrors.phone = e("invalidPhone");
       }
       if (!data.addressDetail.trim()) newErrors.addressDetail = e("required");
-    } else if (step === 1) {
-      if (data.profileType === "single") {
-        if (!data.selectedPlatform) newErrors.selectedPlatform = e("selectPlatform");
-        if (!data.singlePlatformValue.trim()) newErrors.singlePlatformValue = e("required");
-      } else {
-        const hasAny = Object.values(data.socialLinks).some((v) => v.trim());
-        if (!hasAny) newErrors.socialLinks = e("required");
-      }
-    } else if (step === 2) {
-      // Design selection step — no required validation (theme has default)
-    } else if (step === 3) {
-      if (!data.logoWidthCm) {
+    } else if (currentStep === "customization") {
+      if (!data.displayName.trim()) newErrors.displayName = e("required");
+    } else if (currentStep === "sizing") {
+      if (!data.logoWidthCm.trim()) {
         newErrors.logoWidthCm = e("required");
       }
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [step, data, e]);
+  }, [currentStep, data, e]);
 
   const handleNext = () => {
-    if (validateStep()) setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    if (validateStep()) {
+      setStep((s) => Math.min(s + 1, currentSteps.length - 1));
+    }
   };
 
   const handleBack = () => {
@@ -171,21 +181,13 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       showToast(tm("networkError"), "error");
     }, TIMEOUT_MS);
 
-    const pricing = calcTotal(data.addressDetail);
+    const pricing = calcTotal(data.stickerType, data.addressDetail);
     setOrderPricing({ totalPrice: pricing.total, shippingFee: pricing.shippingFee });
 
     const formattedSocials: Record<string, string> = {};
-
-    if (data.profileType === "single" && data.selectedPlatform && data.singlePlatformValue) {
-      formattedSocials[data.selectedPlatform] = formatSocialLink(
-        data.singlePlatformValue,
-        data.selectedPlatform as Platform
-      );
-    } else {
-      for (const [key, val] of Object.entries(data.socialLinks)) {
-        if (val.trim()) {
-          formattedSocials[key] = formatSocialLink(val, key as Platform);
-        }
+    for (const [key, val] of Object.entries(data.socialLinks)) {
+      if (val.trim()) {
+        formattedSocials[key] = val.trim();
       }
     }
 
@@ -202,13 +204,12 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         logo: data.logo || undefined,
         socialLinks: formattedSocials,
         autoTapFields: {
-          profileType: data.profileType,
-          logoWidthCm: data.logoWidthCm.trim() || "6",
+          stickerType: data.stickerType,
+          selectedPlatform: data.selectedPlatform || undefined,
+          logoWidthCm: data.stickerType === "icon" ? "6" : (data.logoWidthCm.trim() || "6"),
           orderNotes: data.orderNotes.trim() || undefined,
           addressDetail: data.addressDetail.trim(),
-          selectedPlatform: data.selectedPlatform || undefined,
-          singlePlatformValue: data.singlePlatformValue.trim() || undefined,
-
+          usernameValue: data.usernameValue.trim() || undefined,
         },
       }, pricing.total, locale);
       clearTimeout(safetyTimer);
@@ -232,8 +233,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   }, [onSubmitComplete]);
 
   const renderStepIndicator = () => (
-    <div ref={stepperRef} className="flex items-center justify-center gap-2 mb-8">
-      {STEPS.map((s, i) => (
+    <div ref={stepperRef} className="flex items-center justify-center gap-2 mb-8 flex-wrap">
+      {currentSteps.map((s, i) => (
         <div key={s} className="flex items-center gap-2">
           <div
             className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
@@ -244,7 +245,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                   : "bg-dark-card border border-white/20 text-slate-body"
             }`}
           >
-            {i < step ? "✓" : i + 1}
+            {i < step ? <Check className="w-4 h-4" /> : i + 1}
           </div>
           <span
             className={`text-xs hidden sm:block ${
@@ -253,7 +254,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           >
             {st(s)}
           </span>
-          {i < STEPS.length - 1 && (
+          {i < currentSteps.length - 1 && (
             <div
               className={`w-8 h-0.5 ${
                 i < step ? "bg-nardo/50" : "bg-white/10"
@@ -273,9 +274,24 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const renderError = (key: string) =>
     errors[key] && <p className="text-red-400 text-xs mt-1">{errors[key]}</p>;
 
+  const platformLabels: Record<string, string> = {
+    instagram: t("fields.instagram"),
+    tiktok: t("fields.tiktok"),
+    snapchat: t("fields.snapchat"),
+  };
+
+  const SOCIAL_FIELDS = [
+    { id: "instagram", icon: Camera, label: t("fields.instagram") },
+    { id: "tiktok", icon: Music2, label: t("fields.tiktok") },
+    { id: "snapchat", icon: Ghost, label: t("fields.snapchat") },
+    { id: "facebook", icon: ThumbsUp, label: t("fields.facebook") },
+    { id: "whatsapp", icon: MessageCircle, label: t("fields.whatsapp") },
+    { id: "phoneSocial", icon: Phone, label: t("fields.phoneSocial") },
+  ];
+
   return (
     <div>
-      {renderStepIndicator()}
+      {data.stickerType && renderStepIndicator()}
 
       <motion.div
         key={step}
@@ -283,8 +299,183 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Step 1: Shipping */}
-        {step === 0 && (
+        {/* Step 1: Sticker Type & Pricing */}
+        {currentStep === "stickerType" && (
+          <div className="space-y-5 px-2 sm:px-3">
+            <h3 className="text-lg font-semibold text-nardo mb-4">
+              {t("section.stickerType")}
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Option 1: Icon */}
+              <motion.button
+                type="button"
+                onClick={() => handleFieldChange("stickerType", "icon")}
+                className={`relative p-6 rounded-2xl border-2 text-left transition-all duration-300 cursor-pointer overflow-hidden ${
+                  data.stickerType === "icon"
+                    ? "border-gold bg-gold/10 shadow-[0_0_25px_rgba(212,175,55,0.2)]"
+                    : "border-white/10 bg-dark-card/60 hover:border-gold/40 hover:bg-dark-card/80"
+                }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {data.stickerType === "icon" && (
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gold/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+                )}
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                      <circle cx="12" cy="12" r="5"/>
+                      <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                  </div>
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
+                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2c-5.5 0-10 3.6-10 8.7 0 1.8.7 3.5 1.9 4.9.3.3.4.7.2 1.1l-.3.7c-.2.5-.1 1 .3 1.3.2.2.5.3.8.3.3 0 .6-.1.9-.2.6-.2 1.2-.4 1.9-.4s1.3.2 1.9.6c.8.5 1.7.8 2.5.8s1.7-.3 2.5-.8c.6-.4 1.2-.6 1.9-.6s1.3.2 1.9.4c.3.1.6.2.9.2.3 0 .6-.1.8-.3.4-.3.5-.8.3-1.3l-.3-.7c-.2-.4-.1-.8.2-1.1 1.2-1.4 1.9-3.1 1.9-4.9C22 5.6 17.5 2 12 2z"/>
+                    </svg>
+                  </div>
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                    <Ghost className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-lg font-bold text-gold">+</span>
+                </div>
+                <h4 className={`text-base font-bold mb-2 text-center ${data.stickerType === "icon" ? "text-gold" : "text-slate-light"}`}>
+                  أيقونة سوشيال ميديا
+                </h4>
+                <p className="text-xs text-slate-body/70 mb-3 text-center leading-relaxed">
+                  اختر منصة (إنستا، تيك توك، سناب) لطباعة أيقونتها
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
+                    data.stickerType === "icon"
+                      ? "bg-gold/5 border-gold/20"
+                      : "bg-white/[0.02] border-white/5"
+                  }`}>
+                    <p className="text-[11px] text-slate-muted font-medium">مقاس 5×5 سم</p>
+                  </div>
+                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
+                    data.stickerType === "icon"
+                      ? "bg-gold/5 border-gold/20"
+                      : "bg-white/[0.02] border-white/5"
+                  }`}>
+                    <p className="text-sm font-bold text-gold">100 {tc("egp")}</p>
+                  </div>
+                </div>
+              </motion.button>
+
+              {/* Option 2: Username */}
+              <motion.button
+                type="button"
+                onClick={() => handleFieldChange("stickerType", "username")}
+                className={`relative p-6 rounded-2xl border-2 text-left transition-all duration-300 cursor-pointer overflow-hidden ${
+                  data.stickerType === "username"
+                    ? "border-gold bg-gold/10 shadow-[0_0_25px_rgba(212,175,55,0.2)]"
+                    : "border-white/10 bg-dark-card/60 hover:border-gold/40 hover:bg-dark-card/80"
+                }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {data.stickerType === "username" && (
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gold/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+                )}
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-3 shadow-lg">
+                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="12" r="4" />
+                    </svg>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 mx-2">
+                    <span className="text-base font-mono text-gold font-bold">@username</span>
+                  </div>
+                </div>
+                <h4 className={`text-base font-bold mb-2 text-center ${data.stickerType === "username" ? "text-gold" : "text-slate-light"}`}>
+                  اسم مستخدم مخصص
+                </h4>
+                <p className="text-xs text-slate-body/70 mb-3 text-center leading-relaxed">
+                  اطبع اسمك أو كلمتك المفضلة على الاستيكر
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
+                    data.stickerType === "username"
+                      ? "bg-gold/5 border-gold/20"
+                      : "bg-white/[0.02] border-white/5"
+                  }`}>
+                    <p className="text-[11px] text-slate-muted font-medium">مقاس مخصص</p>
+                  </div>
+                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
+                    data.stickerType === "username"
+                      ? "bg-gold/5 border-gold/20"
+                      : "bg-white/[0.02] border-white/5"
+                  }`}>
+                    <p className="text-sm font-bold text-gold">150 {tc("egp")}</p>
+                  </div>
+                </div>
+              </motion.button>
+            </div>
+            {renderError("stickerType")}
+          </div>
+        )}
+
+        {/* Step 2: Platform Selection (only for icon) */}
+        {currentStep === "platform" && data.stickerType === "icon" && (
+          <div className="space-y-5 px-2 sm:px-3">
+            <h3 className="text-lg font-semibold text-nardo mb-4">
+              {t("section.platform")}
+            </h3>
+            <p className="text-sm text-slate-muted mb-5">
+              اختر المنصة التي تريد طباعة أيقونتها على الاستيكر
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {(["instagram", "tiktok", "snapchat"] as const).map((platform) => {
+                const Icon = PLATFORM_ICONS[platform];
+                const isSelected = data.selectedPlatform === platform;
+                return (
+                  <motion.button
+                    key={platform}
+                    type="button"
+                    onClick={() => handleFieldChange("selectedPlatform", platform)}
+                    className={`relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-300 cursor-pointer min-w-[90px] ${
+                      isSelected
+                        ? "border-gold bg-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.2)]"
+                        : "border-white/10 bg-dark-card/60 hover:border-gold/40 hover:bg-dark-card/80"
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-dark-card flex items-center justify-center">
+                      <Image
+                        src={PLATFORM_IMAGES[platform]}
+                        alt={platformLabels[platform]}
+                        width={40}
+                        height={40}
+                        className="object-contain"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Icon className={`w-3 h-3 ${isSelected ? "text-gold" : "text-slate-muted"}`} />
+                      <span className={`text-xs font-medium ${isSelected ? "text-gold" : "text-slate-light"}`}>
+                        {platformLabels[platform]}
+                      </span>
+                    </div>
+                    {isSelected && (
+                      <div className="absolute -top-1.5 -end-1.5 w-5 h-5 rounded-full bg-gold flex items-center justify-center">
+                        <Check className="w-3 h-3 text-matte-dark" />
+                      </div>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+            {renderError("selectedPlatform")}
+          </div>
+        )}
+
+        {/* Step 3: Shipping Information */}
+        {currentStep === "shipping" && (
           <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-nardo mb-4">
               {t("section.personal")}
@@ -330,64 +521,17 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               />
               {renderError("addressDetail")}
             </div>
-
           </div>
         )}
 
-        {/* Step 2: Profile Selection & Social Links + Sticker Name */}
-        {step === 1 && (
-          <div className="space-y-6">
+        {/* Step 4: Profile Customization */}
+        {currentStep === "customization" && (
+          <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-nardo mb-4">
-              {t("section.social")}
+              {t("section.customization")}
             </h3>
 
-            <div className="grid grid-cols-2 gap-3">
-              <motion.button
-                type="button"
-                onClick={() => handleFieldChange("profileType", "single")}
-                className={`p-4 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
-                  data.profileType === "single"
-                    ? "border-2 border-cyan-500 bg-cyan-500/10 shadow-[0_0_25px_rgba(0,243,255,0.2)] ring-2 ring-cyan-500/30"
-                    : "border border-white/15 bg-dark-card/60 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(0,243,255,0.08)] hover:bg-dark-card/80"
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span
-                  className={`text-sm font-semibold ${
-                    data.profileType === "single" ? "text-cyan-400" : "text-slate-light group-hover:text-white"
-                  }`}
-                >
-                  {pt("single")}
-                </span>
-                <p className="text-xs text-slate-body/80 mt-1">
-                  {pt("singleDesc")}
-                </p>
-              </motion.button>
-              <motion.button
-                type="button"
-                onClick={() => handleFieldChange("profileType", "multiple")}
-                className={`p-4 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
-                  data.profileType === "multiple"
-                    ? "border-2 border-cyan-500 bg-cyan-500/10 shadow-[0_0_25px_rgba(0,243,255,0.2)] ring-2 ring-cyan-500/30"
-                    : "border border-white/15 bg-dark-card/60 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(0,243,255,0.08)] hover:bg-dark-card/80"
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span
-                  className={`text-sm font-semibold ${
-                    data.profileType === "multiple" ? "text-cyan-400" : "text-slate-light group-hover:text-white"
-                  }`}
-                >
-                  {pt("multiple")}
-                </span>
-                <p className="text-xs text-slate-body/80 mt-1">
-                  {pt("multipleDesc")}
-                </p>
-              </motion.button>
-            </div>
-
+            {/* Display Name + Live Preview */}
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
                 {t("fields.displayName")}
@@ -401,146 +545,125 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 lang="ar"
                 className={inputClass("displayName")}
               />
+              {renderError("displayName")}
             </div>
 
-            {data.profileType === "single" ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-slate-body mb-1.5">
-                    {t("fields.selectPlatform")}
-                  </label>
-                  <select
-                    value={data.selectedPlatform}
-                    onChange={(e) => handleFieldChange("selectedPlatform", e.target.value)}
-                    className={inputClass("selectedPlatform")}
-                  >
-                    <option value="" className="text-neutral-900 bg-white">-- {t("fields.selectPlatform")} --</option>
-                    {PLATFORM_OPTIONS.map((p) => (
-                      <option key={p.id} value={p.id} className="text-neutral-900 bg-white">
-                        {p.label}
-                      </option>
-                    ))}
-                  </select>
-                  {renderError("selectedPlatform")}
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-body mb-1.5">
-                    {t("fields.singlePlatformValue")}
-                  </label>
-                  <input
-                    type="text"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck="false"
-                    value={data.singlePlatformValue}
-                    onChange={(e) =>
-                      handleFieldChange("singlePlatformValue", e.target.value.toLowerCase())
-                    }
-                    placeholder={t("fields.singlePlatformValue")}
-                    className={inputClass("singlePlatformValue")}
-                  />
-                  {renderError("singlePlatformValue")}
+            {/* Live Name Preview */}
+            <div className="flex items-center gap-5 p-5 rounded-2xl bg-white/[0.03] backdrop-blur-sm border border-gold/20">
+              <div className="shrink-0">
+                <div className="w-20 h-20 rounded-full ring-2 ring-gold/40 ring-offset-2 ring-offset-navy flex items-center justify-center bg-gradient-to-br from-gold/20 to-navy-light shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+                  {data.displayName.trim() ? (
+                    <span className="text-2xl font-bold text-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">
+                      {data.displayName.trim().charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <svg className="w-8 h-8 text-gold/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="12" r="4" />
+                    </svg>
+                  )}
                 </div>
               </div>
-            ) : (
-              <div className="space-y-4">
-                <p className="text-xs text-nardo font-medium">
-                  {t("socialHelperText")}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-gold/60 mb-1 font-medium tracking-wide">
+                  {t("nameFrameGuide")}
                 </p>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {PLATFORM_OPTIONS.map((platform) => (
-                    <div key={platform.id}>
-                      <label className="block text-sm text-slate-body mb-1.5">
-                        {t(`fields.${platform.id}`)}
-                  <span className="text-xs text-slate-body/60 ms-1">({t("fields.optional")})</span>
-                      </label>
+                <p className="text-lg font-bold text-slate-light truncate drop-shadow-[0_0_6px_rgba(255,255,255,0.1)]"
+                   style={{ fontFamily: "var(--font-signature)" }}
+                >
+                  {data.displayName.trim() || "الاسم هنا"}
+                </p>
+                <p className="text-[10px] text-slate-muted/50 mt-0.5">
+                  الاسم يظهر مباشرة أثناء الكتابة
+                </p>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div>
+              <label className="flex items-center gap-2 text-sm text-slate-body mb-3">
+                <span>{t("section.social")}</span>
+                <span className="text-xs text-slate-body/60">({t("fields.optional")})</span>
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {SOCIAL_FIELDS.map(({ id, icon: Icon, label }) => (
+                  <div key={id}>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <Icon className="w-4 h-4 text-slate-muted/60" />
+                      </div>
                       <input
                         type="text"
-                        autoCapitalize={platform.id === "whatsapp" || platform.id === "phoneSocial" ? "none" : "none"}
-                        autoCorrect={platform.id === "whatsapp" || platform.id === "phoneSocial" ? "off" : "off"}
-                        spellCheck="false"
-                        value={data.socialLinks[platform.id] || ""}
-                        onChange={(e) => handleSocialLinkChange(platform.id, platform.id === "whatsapp" || platform.id === "phoneSocial" ? e.target.value : e.target.value.toLowerCase())}
-                        placeholder={platform.id === "whatsapp" ? "01012345678" : t(`fields.${platform.id}`)}
-                        className={inputClass(platform.id)}
+                        value={data.socialLinks[id] || ""}
+                        onChange={(e) => handleSocialLinkChange(id, e.target.value)}
+                        placeholder={label}
+                        className={`${inputClass(id)} ps-10`}
                       />
-                      <p className="text-xs text-slate-body/60 mt-1">
-                        {platform.id === "whatsapp" || platform.id === "phoneSocial"
-                          ? t("whatsappHelper")
-                          : t("socialHelperText")}
-                      </p>
-                      {renderError(platform.id)}
                     </div>
-                  ))}
-                </div>
-                {errors.socialLinks && (
-                  <p className="text-red-400 text-xs">{errors.socialLinks}</p>
-                )}
-              </div>
-            )}
-
-              <div>
-                <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
-                  <ImageIcon className="w-4 h-4" />
-                  <span>{t("fields.logo")}</span>
-                  <span className="text-xs text-slate-body/60">({t("fields.optional")})</span>
-                </label>
-                {data.logo ? (
-                  <div className="relative inline-block">
-                    <Image
-                      src={data.logo}
-                      alt="Logo preview"
-                      width={96}
-                      height={96}
-                      className="w-24 h-24 rounded-xl object-cover border border-white/10"
-                      unoptimized
-                    />
-                    <button
-                      type="button"
-                      onClick={() => onChange("logo", "")}
-                      className="absolute -top-2 -end-2 w-6 h-6 rounded-full bg-red-500/80 flex items-center justify-center hover:bg-red-500 transition-colors"
-                    >
-                      <X className="w-3 h-3 text-white" />
-                    </button>
                   </div>
-                ) : (
-                  <div className="relative">
-                    <div
-                      onClick={() => logoInputRef.current?.click()}
-                      className="w-full p-6 rounded-xl border-2 border-dashed border-white/10 hover:border-nardo/30 bg-dark-card/50 hover:bg-dark-card transition-all duration-200 flex flex-col items-center gap-2 relative z-50 pointer-events-auto cursor-pointer"
-                    >
-                      <input
-                        ref={logoInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoUpload}
-                        className="hidden"
-                      />
-                      <Upload
-                        className={`w-6 h-6 ${
-                          uploading ? "text-nardo animate-pulse" : "text-slate-body"
-                        }`}
-                      />
-                      <span className="text-sm text-slate-body">
-                        {uploading ? t("uploading") : t("fields.logo")}
-                      </span>
-                    </div>
-                    {uploading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-matte-dark/90 rounded-xl z-20">
-                        <div className="flex flex-col items-center gap-2">
-                          <div className="w-10 h-10 border-3 border-nardo border-t-transparent rounded-full animate-spin" />
-                          <span className="text-xs text-slate-body/70">{t("uploadingWait")}</span>
-                        </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Premium Logo Upload */}
+            <div>
+              <label className="flex items-center gap-2 text-sm text-slate-body mb-3">
+                <ImageIcon className="w-4 h-4" />
+                <span>{t("fields.logo")}</span>
+                <span className="text-xs text-slate-body/60">({t("fields.optional")})</span>
+              </label>
+              <div className="flex flex-col items-center gap-3">
+                <div className="relative w-28 h-28">
+                  <div
+                    onClick={() => logoInputRef.current?.click()}
+                    className={`w-28 h-28 rounded-full bg-gradient-to-br from-gold/10 to-navy-light border-2 border-dashed flex items-center justify-center cursor-pointer transition-all duration-300 overflow-hidden ${
+                      uploading ? "border-gold animate-pulse" : data.logo ? "border-gold/70 shadow-[0_0_20px_rgba(212,175,55,0.2)]" : "border-gold/40 hover:border-gold/70 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)]"
+                    }`}
+                  >
+                    {uploading ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+                        <span className="text-[10px] text-gold/70">{t("uploading")}</span>
+                      </div>
+                    ) : data.logo ? (
+                      <Image src={data.logo} alt="Logo" width={112} height={112} className="w-full h-full object-cover rounded-full" unoptimized />
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Upload className="w-8 h-8 text-gold/60" />
+                        <span className="text-[10px] text-gold/60">ارفع الشعار</span>
                       </div>
                     )}
                   </div>
-                )}
+                  {!uploading && data.logo && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onChange("logo", "");
+                      }}
+                      className="absolute -top-1 -end-1 w-6 h-6 rounded-full bg-red-500/80 flex items-center justify-center hover:bg-red-500 transition-colors z-10"
+                    >
+                      <X className="w-3 h-3 text-white" />
+                    </button>
+                  )}
+                </div>
+                <p className="text-xs text-slate-muted/60 text-center max-w-[200px]">
+                  {data.logo ? "اضغط على الصورة لتغييرها" : "اضغط لرفع شعار الشركة أو صورتك الشخصية"}
+                </p>
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
               </div>
+            </div>
           </div>
         )}
 
-        {/* Step 3: Choose Your Design — Interactive Preview Carousel */}
-        {step === 2 && (
+        {/* Step 5: Theme Selection */}
+        {currentStep === "theme" && (
           <div className="space-y-5">
             <h3 className="text-lg font-semibold text-nardo mb-4">
               {t("section.theme")}
@@ -553,100 +676,179 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           </div>
         )}
 
-        {/* Step 4: Size Guide + Notes */}
-        {step === 3 && (
-          <div className="space-y-5">
+        {/* Step 6: Size & Notes (only for username) */}
+        {currentStep === "sizing" && data.stickerType === "username" && (
+          <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-gradient-gold mb-4">
               {t("section.size")}
             </h3>
 
-            {/* Size preview tabs (interactive guide only) */}
-            <div>
-              <p className="text-xs text-slate-muted/70 mb-3">
-                اضغط على المقاس لمشاهدة الصورة التوضيحية
-              </p>
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                {(["6", "25", "35"] as const).map((size) => {
-                  const labels: Record<string, string> = { "6": "6", "25": "25", "35": "35" };
-                  return (
-                    <motion.button
-                      key={size}
-                      type="button"
-                      onClick={() => setPreviewSize(size)}
-                      className={`flex flex-col items-center gap-1 p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${
-                        previewSize === size
-                          ? "border-gold bg-gold/10 text-gold shadow-[0_0_20px_rgba(212,175,55,0.2)]"
-                          : "border-white/10 bg-dark-card/50 text-slate-body hover:border-gold/40 hover:bg-gold/5"
-                      }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span className="text-2xl font-bold">{labels[size]}</span>
-                      <span className="text-[10px] text-slate-muted">{t("sizeCm")}</span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              {/* Image Preview */}
-              {previewSize && (
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={previewSize}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              {(["6", "25", "35"] as const).map((size) => {
+                const labels: Record<string, string> = { "6": "6", "25": "25", "35": "35" };
+                return (
+                  <motion.button
+                    key={size}
+                    type="button"
+                    onClick={() => handleFieldChange("logoWidthCm", size)}
+                    className={`flex flex-col items-center gap-1 p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                      data.logoWidthCm === size
+                        ? "border-gold bg-gold/10 text-gold shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                        : "border-white/10 bg-dark-card/50 text-slate-body hover:border-gold/40 hover:bg-gold/5"
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <div className="glass bg-dark-card/60 border border-gold/20 rounded-2xl overflow-hidden mb-3">
-                      <img
-                        src={sizeImages[previewSize]}
-                        alt={`Size ${previewSize}cm preview`}
-                        className="w-full h-auto object-cover"
-                      />
-                    </div>
-                    <p className="text-center text-sm text-gold mb-4 font-medium">
-                      {t("sizeExample", { size: previewSize })}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-              )}
+                    <span className="text-2xl font-bold">{labels[size]}</span>
+                    <span className="text-[10px] text-slate-muted">{t("sizeCm")}</span>
+                  </motion.button>
+                );
+              })}
             </div>
 
-            {/* Manual size input */}
+            {/* Manual Size Input */}
             <div>
-              <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
-                <Ruler className="w-4 h-4" />
-                <span>المقاس المطلوب (بالسنتيمتر)</span>
+              <label className="block text-sm text-slate-body mb-1.5">
+                مقاس مخصص (سم)
+                <span className="text-xs text-slate-body/60 ms-1">({t("fields.optional")})</span>
               </label>
               <input
                 type="number"
-                value={data.logoWidthCm}
-                onChange={(e) => handleFieldChange("logoWidthCm", e.target.value)}
-                placeholder="مثال: 25"
-                className="w-full px-4 py-2.5 rounded-lg bg-dark-card/50 border border-white/10 text-sm text-slate-light placeholder-slate-muted/50 focus:outline-none focus:border-gold/50 transition-colors"
+                inputMode="decimal"
+                value={data.logoWidthCm && !["6", "25", "35"].includes(data.logoWidthCm) ? data.logoWidthCm : ""}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "" || /^\d+(\.\d?)?$/.test(val)) {
+                    handleFieldChange("logoWidthCm", val);
+                  }
+                }}
+                placeholder="أدخل المقاس المخصص (مثال: 10)"
+                className={inputClass("logoWidthCm")}
               />
               {renderError("logoWidthCm")}
             </div>
 
-            {/* Order notes */}
+            <AnimatePresence mode="wait">
+              {data.logoWidthCm && sizeImages[data.logoWidthCm] && (
+                <motion.div
+                  key={data.logoWidthCm}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="glass bg-dark-card/60 border border-gold/20 rounded-2xl overflow-hidden mb-3">
+                    <img
+                      src={sizeImages[data.logoWidthCm]}
+                      alt={`Size ${data.logoWidthCm}cm preview`}
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                  <p className="text-center text-sm text-gold mb-4 font-medium">
+                    {t("sizeExample", { size: data.logoWidthCm })}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Order Notes */}
             <div>
-              <label className="flex items-center gap-2 text-sm text-slate-body mb-1.5">
-                <FileText className="w-4 h-4" />
-                <span>ملاحظات الطلب (اختياري)</span>
+              <label className="block text-sm text-slate-body mb-1.5">
+                {t("fields.orderNotes")}
+                <span className="text-xs text-slate-body/60 ms-1">({t("fields.optional")})</span>
               </label>
               <textarea
                 value={data.orderNotes}
                 onChange={(e) => handleFieldChange("orderNotes", e.target.value)}
-                placeholder="أي ملاحظات أو تعليمات إضافية..."
+                placeholder={t("placeholders.orderNotes")}
                 rows={3}
-                className="w-full px-4 py-2.5 rounded-lg bg-dark-card/50 border border-white/10 text-sm text-slate-light placeholder-slate-muted/50 focus:outline-none focus:border-gold/50 transition-colors resize-none"
+                className={`${inputClass("orderNotes")} resize-none`}
               />
             </div>
+          </div>
+        )}
 
-            {/* Unified price */}
-            <div className="text-center mt-6 p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-gold/30">
-              <span className="text-gradient-gold text-2xl font-bold">200 {tc("egp")} + {t("shippingLabel")}</span>
+        {/* Step 7: Review & Submit */}
+        {currentStep === "review" && (
+          <div className="space-y-5 px-2 sm:px-3">
+            <h3 className="text-lg font-semibold text-nardo mb-4">
+              {t("section.review")}
+            </h3>
+
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                <p className="text-xs text-slate-muted mb-1">{t("fields.customerName")}</p>
+                <p className="text-sm text-slate-light font-medium">{data.customerName}</p>
+              </div>
+              <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                <p className="text-xs text-slate-muted mb-1">{t("fields.phone")}</p>
+                <p className="text-sm text-slate-light font-medium">{data.phone}</p>
+              </div>
+              <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                <p className="text-xs text-slate-muted mb-1">{t("fields.addressDetail")}</p>
+                <p className="text-sm text-slate-light font-medium">{data.addressDetail}</p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-gold/5 border border-gold/30">
+                <p className="text-xs text-slate-muted mb-1">{t("section.stickerType")}</p>
+                <p className="text-sm text-gold font-bold">
+                  {data.stickerType === "icon"
+                    ? t("stickerTypeIcon")
+                    : t("stickerTypeUsername")
+                  }
+                </p>
+              </div>
+
+              {data.stickerType === "icon" && data.selectedPlatform && (
+                <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                  <p className="text-xs text-slate-muted mb-1">{t("section.platform")}</p>
+                  <p className="text-sm text-slate-light font-medium capitalize">
+                    {platformLabels[data.selectedPlatform]}
+                  </p>
+                </div>
+              )}
+
+              {data.displayName && (
+                <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                  <p className="text-xs text-slate-muted mb-1">{t("fields.displayName")}</p>
+                  <p className="text-sm text-slate-light font-medium">{data.displayName}</p>
+                </div>
+              )}
+
+              {data.stickerType === "username" && data.logoWidthCm && (
+                <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                  <p className="text-xs text-slate-muted mb-1">{t("fields.stickerSize")}</p>
+                  <p className="text-sm text-slate-light font-medium">{data.logoWidthCm} {t("sizeCm")}</p>
+                </div>
+              )}
+
+              <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                <p className="text-xs text-slate-muted mb-1">{t("section.theme")}</p>
+                <p className="text-sm text-slate-light font-medium capitalize">{data.theme}</p>
+              </div>
+
+              {data.orderNotes && (
+                <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                  <p className="text-xs text-slate-muted mb-1">{t("fields.orderNotes")}</p>
+                  <p className="text-sm text-slate-light">{data.orderNotes}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Price Summary */}
+            <div className="text-center mt-6 p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-gold/30">
+              <div className="space-y-1">
+                <p className="text-sm text-slate-muted">
+                  {t("basePrice")}: <span className="text-gold font-bold">{calcTotal(data.stickerType, data.addressDetail).basePrice} {tc("egp")}</span>
+                </p>
+                <p className="text-sm text-slate-muted">
+                  {t("shippingLabel")}: <span className="text-gold font-bold">{calcTotal(data.stickerType, data.addressDetail).shippingFee} {tc("egp")}</span>
+                </p>
+                <div className="w-full h-px bg-gold/20 my-2" />
+                <p className="text-lg text-gold font-bold">
+                  {t("total")}: {calcTotal(data.stickerType, data.addressDetail).total} {tc("egp")}
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -661,8 +863,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         ) : (
           <div />
         )}
-        {step < STEPS.length - 1 ? (
-          <PrimaryButton type="button" onClick={handleNext} disabled={uploading}>
+        {step < currentSteps.length - 1 ? (
+          <PrimaryButton type="button" onClick={handleNext} disabled={uploading || !data.stickerType}>
             {t("next")}
             <ChevronRight className="w-4 h-4" />
           </PrimaryButton>

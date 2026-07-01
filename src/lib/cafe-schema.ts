@@ -12,6 +12,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import type { CafeTheme } from "./cafe-themes";
 
 export interface Cafe {
   id?: string;
@@ -21,6 +22,7 @@ export interface Cafe {
   menuUrl?: string;
   menuImages?: string[];
   menuType?: "pdf" | "images" | "link";
+  theme?: CafeTheme;
   phone?: string;
   whatsapp?: string;
   websiteUrl?: string;
@@ -32,6 +34,8 @@ export interface Cafe {
   googleReviewsUrl?: string;
   wifiName?: string;
   wifiPassword?: string;
+  vodafoneCash?: string;
+  instaPay?: string;
   createdAt?: number;
 }
 
@@ -80,6 +84,7 @@ export async function getAllCafes(): Promise<Cafe[]> {
       menuUrl: data.menuUrl,
       menuImages: data.menuImages || [],
       menuType: data.menuType,
+      theme: data.theme || "cafe",
       phone: data.phone,
       whatsapp: data.whatsapp,
       websiteUrl: data.websiteUrl,
@@ -91,6 +96,8 @@ export async function getAllCafes(): Promise<Cafe[]> {
       googleReviewsUrl: data.googleReviewsUrl,
       wifiName: data.wifiName,
       wifiPassword: data.wifiPassword,
+      vodafoneCash: data.vodafoneCash,
+      instaPay: data.instaPay,
       createdAt: data.createdAt?.toMillis() || Date.now(),
     } as Cafe;
   });
@@ -111,6 +118,7 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     menuUrl: data.menuUrl,
     menuImages: data.menuImages || [],
     menuType: data.menuType,
+    theme: data.theme || "cafe",
     phone: data.phone,
     whatsapp: data.whatsapp,
     websiteUrl: data.websiteUrl,
@@ -122,6 +130,8 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     googleReviewsUrl: data.googleReviewsUrl,
     wifiName: data.wifiName,
     wifiPassword: data.wifiPassword,
+    vodafoneCash: data.vodafoneCash,
+    instaPay: data.instaPay,
     createdAt: data.createdAt?.toMillis() || Date.now(),
   } as Cafe;
 }

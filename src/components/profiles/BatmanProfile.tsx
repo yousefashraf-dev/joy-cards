@@ -22,7 +22,7 @@ export default function BatmanProfile({ name, logo, buttons, iconMap }: ThemePro
     sources: ["/Batman-removebg-preview.png"],
     minSize: 40,
     maxSize: 90,
-    opacity: 0.1,
+    opacity: 0.30,
   }), []);
 
   return (

@@ -18,10 +18,10 @@ export default function SpidermanProfile({ name, logo, buttons, iconMap }: Theme
   const t = useTranslations("products.profile");
 
   const cornerItems = useMemo(() => [
-    { top: "-8%", left: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 rotate-12 opacity-25 max-sm:opacity-20 object-contain" },
-    { top: "auto", bottom: "-8%", left: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 -rotate-12 opacity-25 max-sm:opacity-20 object-contain" },
-    { top: "-8%", right: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 -rotate-[30deg] opacity-25 max-sm:opacity-20 object-contain" },
-    { top: "auto", bottom: "-8%", right: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 rotate-[30deg] opacity-25 max-sm:opacity-20 object-contain" },
+    { top: "-8%", left: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 rotate-12 opacity-45 max-sm:opacity-20 object-contain" },
+    { top: "auto", bottom: "-8%", left: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 -rotate-12 opacity-45 max-sm:opacity-20 object-contain" },
+    { top: "-8%", right: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 -rotate-[30deg] opacity-45 max-sm:opacity-20 object-contain" },
+    { top: "auto", bottom: "-8%", right: "-5%", className: "absolute w-32 h-32 max-sm:w-20 max-sm:h-20 rotate-[30deg] opacity-45 max-sm:opacity-20 object-contain" },
   ], []);
 
   const smallItems = useMemo(() => generateScatter({
@@ -29,7 +29,7 @@ export default function SpidermanProfile({ name, logo, buttons, iconMap }: Theme
     sources: ["/spider_2-removebg-preview.png"],
     minSize: 40,
     maxSize: 80,
-    opacity: 0.1,
+    opacity: 0.28,
   }), []);
 
   return (

@@ -22,7 +22,7 @@ export default function StitchProfile({ name, logo, buttons, iconMap }: ThemePro
     sources: ["/stitch-removebg-preview.png"],
     minSize: 50,
     maxSize: 120,
-    opacity: 0.08,
+    opacity: 0.25,
   }), []);
 
   return (

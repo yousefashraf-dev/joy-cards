@@ -236,7 +236,9 @@ export default function CafePage() {
     {
       key: "telegram",
       href: cafe.telegram
-        ? `https://t.me/${cafe.telegram.replace(/^@/, "")}`
+        ? cafe.telegram.startsWith("http://") || cafe.telegram.startsWith("https://")
+          ? cafe.telegram
+          : `https://t.me/${cafe.telegram.replace(/^@/, "")}`
         : "",
       icon: <Send className="w-5 h-5" />,
     },

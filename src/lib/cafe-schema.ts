@@ -128,6 +128,7 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     instagram: data.instagram,
     tiktok: data.tiktok,
     snapchatUrl: data.snapchatUrl,
+    telegram: data.telegram,
     googleMapsUrl: data.googleMapsUrl,
     googleReviewsUrl: data.googleReviewsUrl,
     wifiName: data.wifiName,

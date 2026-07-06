@@ -404,49 +404,46 @@ export default function CafePage() {
               transition={{ delay: 0.3 }}
               className="mb-8"
             >
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-xs mb-4 uppercase tracking-widest text-center" style={{ color: `${accentHex}99` }}>
+                {t("payMethods")}
+              </p>
+              <div className="grid grid-cols-2 gap-4">
                 {vodafoneLink && (
                   <a
                     href={vodafoneLink}
-                    className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl backdrop-blur-md border transition-all duration-300 group"
+                    className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
                     style={{
-                      backgroundColor: isVape ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.05)",
+                      backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
                       borderColor: `${accentHex}4D`,
                       color: accentHex,
                     }}
                   >
-                    <svg className="w-8 h-8 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
+                    <svg className="w-10 h-10 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
                       <circle cx="24" cy="24" r="22" fill="#E60000" />
                       <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
                       <circle cx="26" cy="16" r="2.5" fill="white" />
                     </svg>
-                    <span className="text-xs font-semibold text-center leading-tight">
-                      Vodafone Cash
-                    </span>
-                    <span className="text-[9px] font-mono opacity-60" dir="ltr">
-                      *9*7*{cafe.vodafoneCash}#
+                    <span className="text-sm font-bold text-center leading-tight">
+                      {t("payVodafone")}
                     </span>
                   </a>
                 )}
                 {instaPayLink && (
                   <a
                     href={instaPayLink}
-                    className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl backdrop-blur-md border transition-all duration-300 group"
+                    className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
                     style={{
-                      backgroundColor: isVape ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.05)",
+                      backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
                       borderColor: `${accentHex}4D`,
                       color: accentHex,
                     }}
                   >
-                    <svg className="w-8 h-8 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
+                    <svg className="w-10 h-10 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
                       <rect x="2" y="2" width="44" height="44" rx="12" fill="#00A859" />
                       <path d="M18 32 L28 24 L18 16" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     </svg>
-                    <span className="text-xs font-semibold text-center leading-tight">
-                      InstaPay
-                    </span>
-                    <span className="text-[9px] font-mono opacity-60" dir="ltr">
-                      {cafe.instaPay}
+                    <span className="text-sm font-bold text-center leading-tight">
+                      {t("payInstaPay")}
                     </span>
                   </a>
                 )}

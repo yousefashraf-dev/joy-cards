@@ -3,6 +3,7 @@ export type Platform =
   | "facebook"
   | "tiktok"
   | "snapchat"
+  | "telegram"
   | "whatsapp"
   | "phoneSocial"
   | "linkedin"
@@ -23,6 +24,7 @@ const PLATFORM_CONFIG: Record<Platform, { prefix?: string; transform?: (input: s
   facebook: { prefix: "https://facebook.com/" },
   tiktok: { prefix: "https://tiktok.com/@" },
   snapchat: { prefix: "https://snapchat.com/add/" },
+  telegram: { prefix: "https://t.me/" },
   whatsapp: { prefix: "https://wa.me/", transform: (input) => input.replace(/[^0-9]/g, "") },
   phoneSocial: { prefix: "tel:+", transform: (input) => input.replace(/[^0-9]/g, "") },
   linkedin: { prefix: "https://linkedin.com/company/" },

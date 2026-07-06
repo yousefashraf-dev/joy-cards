@@ -3,7 +3,7 @@
 import { useMemo, useCallback, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone } from "lucide-react";
+import { ChevronLeft, ChevronRight, Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone, Send } from "lucide-react";
 import Image from "next/image";
 import type { Theme, AutoTapFormData } from "@/lib/types";
 import { PRODUCT_THEMES } from "@/lib/constants";
@@ -17,6 +17,7 @@ const iconMap: Record<string, React.ElementType> = {
   Facebook: ThumbsUp,
   TikTok: Music2,
   Snapchat: Ghost,
+  Telegram: Send,
   MessageCircle,
   Phone,
 };
@@ -77,6 +78,7 @@ export default function AutoTapPreview({ data, onThemeChange, onLogoChange }: Au
     { id: "tiktok", icon: "TikTok" },
     { id: "snapchat", icon: "Snapchat" },
     { id: "facebook", icon: "Facebook" },
+    { id: "telegram", icon: "Telegram" },
     { id: "whatsapp", icon: "MessageCircle" },
     { id: "phoneSocial", icon: "Phone" },
   ];

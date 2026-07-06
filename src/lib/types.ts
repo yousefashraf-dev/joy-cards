@@ -32,6 +32,7 @@ export interface SocialLinks {
   facebook?: string;
   tiktok?: string;
   snapchat?: string;
+  telegram?: string;
   whatsapp?: string;
   phoneSocial?: string;
 }

@@ -18,6 +18,7 @@ import {
   Check,
   X,
   Music2,
+  Send,
 } from "lucide-react";
 import { getCafeBySlug } from "@/lib/cafe-schema";
 import type { Cafe } from "@/lib/cafe-schema";
@@ -233,6 +234,13 @@ export default function CafePage() {
       icon: <Phone className="w-5 h-5" />,
     },
     {
+      key: "telegram",
+      href: cafe.telegram
+        ? `https://t.me/${cafe.telegram.replace(/^@/, "")}`
+        : "",
+      icon: <Send className="w-5 h-5" />,
+    },
+    {
       key: "whatsapp",
       href: sanitizedWhatsApp
         ? `https://wa.me/${sanitizedWhatsApp}`
@@ -380,7 +388,7 @@ export default function CafePage() {
                       </div>
                     </div>
                     <span className="text-xs font-semibold text-center transition-opacity duration-200 group-hover:opacity-80">
-                      {item.key === "googleMaps" ? "Google Maps" : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key}
+                      {item.key === "googleMaps" ? "Google Maps" : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "telegram" ? "Telegram" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key}
                     </span>
                   </a>
                 ))}

@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2 } from "lucide-react";
+import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send } from "lucide-react";
 import type { Cafe } from "@/lib/cafe-schema";
 import { addCafe, updateCafe, uploadCafeFile } from "@/lib/cafe-schema";
 import { compressImage } from "@/lib/compressImage";
@@ -34,6 +34,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [instagram, setInstagram] = useState(cafe?.instagram || "");
   const [tiktok, setTiktok] = useState(cafe?.tiktok || "");
   const [snapchatUrl, setSnapchatUrl] = useState(cafe?.snapchatUrl || "");
+  const [telegram, setTelegram] = useState(cafe?.telegram || "");
   const [googleMapsUrl, setGoogleMapsUrl] = useState(cafe?.googleMapsUrl || "");
   const [googleReviewsUrl, setGoogleReviewsUrl] = useState(
     cafe?.googleReviewsUrl || ""
@@ -129,6 +130,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         instagram: instagram.trim(),
         tiktok: tiktok.trim(),
         snapchatUrl: snapchatUrl.trim(),
+        telegram: telegram.trim(),
         googleMapsUrl: googleMapsUrl.trim(),
         googleReviewsUrl: googleReviewsUrl.trim(),
         wifiName: wifiName.trim(),
@@ -491,6 +493,16 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                 onChange={(e) => setSnapchatUrl(e.target.value)}
                 className={inputClass}
                 placeholder={t("snapchatUrl")}
+                dir="ltr"
+              />
+            </div>
+            <div>
+              <input
+                type="url"
+                value={telegram}
+                onChange={(e) => setTelegram(e.target.value)}
+                className={inputClass}
+                placeholder={t("telegram")}
                 dir="ltr"
               />
             </div>

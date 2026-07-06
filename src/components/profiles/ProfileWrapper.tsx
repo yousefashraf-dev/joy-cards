@@ -23,7 +23,7 @@ import StitchProfile from "./StitchProfile";
 import { CldImage } from "next-cloudinary";
 import { THEME_ARCHETYPE } from "@/lib/constants";
 import {
-  Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone,
+  Camera, ThumbsUp, Music2, Ghost, MessageCircle, Phone, Send,
   Globe, MapPin, Briefcase, Mail, FileText, Utensils, Star, ShoppingCart,
 } from "lucide-react";
 
@@ -32,6 +32,7 @@ const iconMap: Record<string, React.ElementType> = {
   Facebook: ThumbsUp,
   TikTok: Music2,
   Snapchat: Ghost,
+  Telegram: Send,
   MessageCircle,
   Phone,
   Globe,
@@ -81,6 +82,7 @@ function buildButtons(profile: Profile, pl: (key: string) => string): ProfileBut
     buttons.push({ icon: "Facebook", url: fbUrl, label: "Facebook" });
   }
   if (l.snapchat)     buttons.push({ icon: "Snapchat", url: formatSocialLink(l.snapchat, "snapchat"), label: "Snapchat" });
+  if (l.telegram)     buttons.push({ icon: "Telegram", url: formatSocialLink(l.telegram, "telegram"), label: "Telegram" });
   if (l.phoneSocial)  buttons.push({ icon: "Phone", url: formatSocialLink(l.phoneSocial, "phoneSocial"), label: "Call" });
   if (l.whatsapp)     buttons.push({ icon: "MessageCircle", url: formatSocialLink(l.whatsapp, "whatsapp"), label: "WhatsApp" });
 

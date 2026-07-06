@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
-  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Check, Camera, Music2, Ghost, ThumbsUp, MessageCircle, Phone,
+  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Check, Camera, Music2, Ghost, ThumbsUp, MessageCircle, Phone, Send,
 } from "lucide-react";
 import type { AutoTapFormData } from "@/lib/types";
 import { submitOrder } from "@/lib/submitOrder";
@@ -285,6 +285,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     { id: "tiktok", icon: Music2, label: t("fields.tiktok") },
     { id: "snapchat", icon: Ghost, label: t("fields.snapchat") },
     { id: "facebook", icon: ThumbsUp, label: t("fields.facebook") },
+    { id: "telegram", icon: Send, label: t("fields.telegram") },
     { id: "whatsapp", icon: MessageCircle, label: t("fields.whatsapp") },
     { id: "phoneSocial", icon: Phone, label: t("fields.phoneSocial") },
   ];

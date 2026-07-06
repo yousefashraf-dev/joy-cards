@@ -30,6 +30,7 @@ export interface Cafe {
   instagram?: string;
   tiktok?: string;
   snapchatUrl?: string;
+  telegram?: string;
   googleMapsUrl?: string;
   googleReviewsUrl?: string;
   wifiName?: string;
@@ -92,6 +93,7 @@ export async function getAllCafes(): Promise<Cafe[]> {
       instagram: data.instagram,
       tiktok: data.tiktok,
       snapchatUrl: data.snapchatUrl,
+      telegram: data.telegram,
       googleMapsUrl: data.googleMapsUrl,
       googleReviewsUrl: data.googleReviewsUrl,
       wifiName: data.wifiName,

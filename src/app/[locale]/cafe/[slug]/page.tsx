@@ -253,10 +253,14 @@ export default function CafePage() {
 
   const hasPayments = cafe.vodafoneCash || cafe.instaPay;
   const vodafoneLink = cafe.vodafoneCash
-    ? `tel:%2A9%2A7%2A${cafe.vodafoneCash}%23`
+    ? cafe.vodafoneCash.startsWith("http://") || cafe.vodafoneCash.startsWith("https://")
+      ? cafe.vodafoneCash
+      : `tel:%2A9%2A7%2A${cafe.vodafoneCash}%23`
     : "";
   const instaPayLink = cafe.instaPay
-    ? `instapay://payment?to=${cafe.instaPay}`
+    ? cafe.instaPay.startsWith("http://") || cafe.instaPay.startsWith("https://")
+      ? cafe.instaPay
+      : `instapay://payment?to=${cafe.instaPay}`
     : "";
 
   return (

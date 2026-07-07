@@ -460,6 +460,8 @@
       "menuTypeImages": "صور",
       "menuTypeLink": "رابط خارجي",
       "menuLink": "رابط المنيو (خارجي)",
+      "qrCode": "رمز QR",
+      "downloadQR": "تحميل رمز QR",
       "theme": "اختر ثيم الصفحة",
       "phone": "رقم الهاتف (اتصال مباشر)",
       "whatsapp": "رقم الواتساب",

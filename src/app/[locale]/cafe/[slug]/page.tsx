@@ -115,6 +115,7 @@ const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; pos
     { component: VapeSvg, position: "left-0 bottom-1/3 -translate-x-1/4 w-52 h-52" },
     { component: VapeSvg, position: "right-1/4 top-3/4 -translate-y-1/3 w-40 h-40" },
   ],
+  standard: [],
 };
 
 export default function CafePage() {

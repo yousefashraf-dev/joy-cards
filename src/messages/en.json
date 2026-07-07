@@ -460,6 +460,8 @@
       "menuTypeImages": "Images",
       "menuTypeLink": "External Link",
       "menuLink": "Menu URL (External Link)",
+      "qrCode": "QR Code",
+      "downloadQR": "Download QR Code",
       "theme": "Page Theme",
       "phone": "Phone Number (Direct Call)",
       "whatsapp": "WhatsApp Number",

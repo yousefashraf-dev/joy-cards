@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Edit3, Trash2, Copy, Check, ExternalLink } from "lucide-react";
+import { Edit3, Trash2, Copy, Check, ExternalLink, Download } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import type { Cafe } from "@/lib/cafe-schema";
 import { deleteCafe } from "@/lib/cafe-schema";
 
@@ -19,6 +20,22 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
   const locale = useLocale();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [qrTarget, setQrTarget] = useState<string | null>(null);
+  const hiddenQrRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadQR = useCallback((slug: string) => {
+    const link = `https://gotap.vercel.app/${locale}/cafe/${slug}`;
+    setQrTarget(link);
+    setTimeout(() => {
+      const canvas = hiddenQrRef.current?.querySelector("canvas");
+      if (!canvas) return;
+      const url = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `qr-${slug}.png`;
+      a.click();
+    }, 100);
+  }, [locale]);
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -136,6 +153,13 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
                   >
                     <ExternalLink className="w-3 h-3" />
                   </a>
+                  <button
+                    onClick={() => handleDownloadQR(cafe.slug)}
+                    className="inline-flex items-center gap-1 text-xs text-slate-muted/50 hover:text-neon-green ml-1 transition-colors"
+                    title="Download QR"
+                  >
+                    <Download className="w-3 h-3" />
+                  </button>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-2">
@@ -160,6 +184,10 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
             ))}
           </tbody>
         </table>
+      </div>
+      {/* Hidden QR canvas for download */}
+      <div ref={hiddenQrRef} className="hidden">
+        {qrTarget && <QRCodeCanvas value={qrTarget} size={200} level="H" />}
       </div>
     </div>
   );

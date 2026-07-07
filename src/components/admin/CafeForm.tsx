@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send } from "lucide-react";
+import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send, Download } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import type { Cafe } from "@/lib/cafe-schema";
 import { addCafe, updateCafe, uploadCafeFile } from "@/lib/cafe-schema";
 import { compressImage } from "@/lib/compressImage";
@@ -44,6 +45,18 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [vodafoneCash, setVodafoneCash] = useState(cafe?.vodafoneCash || "");
   const [instaPay, setInstaPay] = useState(cafe?.instaPay || "");
   const [theme, setTheme] = useState<CafeTheme>(cafe?.theme || "cafe");
+
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadQR = useCallback(() => {
+    const canvas = qrRef.current?.querySelector("canvas");
+    if (!canvas) return;
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `qr-${slug || "cafe"}.png`;
+    a.click();
+  }, [slug]);
 
   // File uploads
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -220,6 +233,40 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
             <p className="text-xs text-slate-muted/50 mt-1">
               {t("slugHelper", { slug: slug || "..." })}
             </p>
+          </div>
+        </div>
+
+        {/* QR Code */}
+        <div>
+          <label className={labelClass}>{t("qrCode")}</label>
+          <div className="flex items-center gap-4 p-4 rounded-lg bg-dark-card border border-white/10">
+            <div ref={qrRef} className="shrink-0">
+              {slug ? (
+                <QRCodeCanvas
+                  value={`https://gotap.vercel.app/ar/cafe/${slug}`}
+                  size={90}
+                  level="H"
+                />
+              ) : (
+                <div className="w-[90px] h-[90px] rounded-lg bg-white/5 flex items-center justify-center">
+                  <span className="text-xs text-slate-muted/50">---</span>
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-slate-muted truncate" dir="ltr">
+                https://gotap.vercel.app/ar/cafe/{slug || "..."}
+              </p>
+              <button
+                type="button"
+                onClick={handleDownloadQR}
+                disabled={!slug}
+                className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs transition-all duration-200 border-neon-green/30 text-neon-green hover:bg-neon-green/10 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Download className="w-3.5 h-3.5" />
+                {t("downloadQR")}
+              </button>
+            </div>
           </div>
         </div>
 

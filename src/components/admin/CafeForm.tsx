@@ -47,9 +47,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [theme, setTheme] = useState<CafeTheme>(cafe?.theme || "cafe");
 
   const qrRef = useRef<HTMLDivElement>(null);
+  const qrPrintRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadQR = useCallback(() => {
-    const canvas = qrRef.current?.querySelector("canvas");
+    const canvas = qrPrintRef.current?.querySelector("canvas");
     if (!canvas) return;
     const url = canvas.toDataURL("image/png");
     const a = document.createElement("a");
@@ -268,6 +269,17 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Hidden high-res QR for print download */}
+        <div ref={qrPrintRef} className="hidden">
+          {slug && (
+            <QRCodeCanvas
+              value={`https://gotap.vercel.app/ar/cafe/${slug}`}
+              size={2000}
+              level="H"
+            />
+          )}
         </div>
 
         {/* Logo Upload */}

@@ -185,9 +185,9 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
           </tbody>
         </table>
       </div>
-      {/* Hidden QR canvas for download */}
+      {/* Hidden high-res QR canvas for print download */}
       <div ref={hiddenQrRef} className="hidden">
-        {qrTarget && <QRCodeCanvas value={qrTarget} size={200} level="H" />}
+        {qrTarget && <QRCodeCanvas value={qrTarget} size={2000} level="H" />}
       </div>
     </div>
   );

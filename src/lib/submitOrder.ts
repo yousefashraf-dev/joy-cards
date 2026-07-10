@@ -110,20 +110,19 @@ export async function submitOrder(
   console.log("Payload being sent:", JSON.stringify(gasPayload, null, 2));
   console.log("==========================================");
 
-  // 6. Send to Google Apps Script (best-effort, Firestore already saved)
-  try {
-    await fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify(gasPayload),
-    });
+  // 6. Send to Google Apps Script (fire-and-forget, Firestore already saved)
+  fetch(GAS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(gasPayload),
+  }).then(() => {
     console.log("GAS request sent successfully (opaque response, cannot read body)");
-  } catch (error) {
+  }).catch((error) => {
     console.error("==========================================");
     console.error("GAS FETCH FAILED - Order already saved to Firestore.");
     console.error("Error:", error);
     console.error("==========================================");
-  }
+  });
 
   return {
     success: true,

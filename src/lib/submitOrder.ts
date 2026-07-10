@@ -30,10 +30,7 @@ function buildProductDetails(data: OrderPayload): string {
   details.push(`النوع: ${data.productType}`);
   details.push(`التصميم: ${data.theme}`);
   if (data.autoTapFields) {
-    const stickerLabel = data.autoTapFields.stickerType === "icon"
-      ? `أيقونة ${data.autoTapFields.selectedPlatform || "سوشيال ميديا"}`
-      : "اسم مستخدم مخصص";
-    details.push(`نوع الاستيكر: ${stickerLabel}`);
+    details.push(`نوع الاستيكر: اسم مستخدم مخصص`);
     details.push(`المقاس: ${data.autoTapFields.logoWidthCm} سم`);
 
   } else if (data.digitalCardsFields) {
@@ -97,9 +94,7 @@ export async function submitOrder(
     "التصميم": data.theme,
     "تفاصيل المنتج": productDetails,
     "عرض اللوجو (سم)": data.autoTapFields?.logoWidthCm || "",
-    "نوع الاستيكر": data.autoTapFields?.stickerType === "icon"
-      ? `أيقونة ${data.autoTapFields?.selectedPlatform || "سوشيال ميديا"}`
-      : "اسم مستخدم",
+    "نوع الاستيكر": "اسم مستخدم",
     "ملاحظات": data.autoTapFields?.orderNotes || "",
     "تم الدفع": false,
     "جاهز للشحن": false,
@@ -115,11 +110,7 @@ export async function submitOrder(
   console.log("Payload being sent:", JSON.stringify(gasPayload, null, 2));
   console.log("==========================================");
 
-  // 6. Send to Google Apps Script
-  // Using mode: "no-cors" to bypass CORS restrictions.
-  // GAS receives the JSON body via e.postData.contents regardless of content-type.
-  // IMPORTANT: No AbortController timeout — GAS cold starts can be slow.
-  // We rely on the caller's safety timer instead (30s in handleSubmit).
+  // 6. Send to Google Apps Script (best-effort, Firestore already saved)
   try {
     await fetch(GAS_URL, {
       method: "POST",
@@ -129,11 +120,9 @@ export async function submitOrder(
     console.log("GAS request sent successfully (opaque response, cannot read body)");
   } catch (error) {
     console.error("==========================================");
-    console.error("GAS FETCH FAILED - Order may not have been saved to sheet!");
+    console.error("GAS FETCH FAILED - Order already saved to Firestore.");
     console.error("Error:", error);
-    console.error("GAS URL:", GAS_URL);
     console.error("==========================================");
-    throw error;
   }
 
   return {

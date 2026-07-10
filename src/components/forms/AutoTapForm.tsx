@@ -17,7 +17,7 @@ import { useLoading } from "@/components/ui/LoadingProvider";
 import { useToast } from "@/components/ui/ToastProvider";
 import { compressImage } from "@/lib/compressImage";
 
-const ALL_STEPS = ["stickerType", "platform", "shipping", "customization", "theme", "sizing", "review"] as const;
+const ALL_STEPS = ["shipping", "customization", "theme", "sizing", "review"] as const;
 
 interface AutoTapFormProps {
   data: AutoTapFormData;
@@ -31,17 +31,7 @@ const sizeImages: Record<string, string> = {
   "35": "/3.jpeg",
 };
 
-const PLATFORM_IMAGES: Record<string, string> = {
-  instagram: "/instgram.png",
-  tiktok: "/tik tok.png",
-  snapchat: "/snap chat.png",
-};
 
-const PLATFORM_ICONS: Record<string, React.ElementType> = {
-  instagram: Camera,
-  tiktok: Music2,
-  snapchat: Ghost,
-};
 
 export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTapFormProps) {
   const t = useTranslations("products.forms");
@@ -55,10 +45,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const stepperRef = useRef<HTMLDivElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
-  const currentSteps = data.stickerType === "icon"
-    ? ALL_STEPS.filter(s => s !== "sizing")
-    : ALL_STEPS.filter(s => s !== "platform");
-
+  const currentSteps = ALL_STEPS;
   const currentStep = currentSteps[step];
 
   useEffect(() => {
@@ -131,11 +118,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
 
   const validateStep = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
-    if (currentStep === "stickerType") {
-      if (!data.stickerType) newErrors.stickerType = e("required");
-    } else if (currentStep === "platform") {
-      if (!data.selectedPlatform) newErrors.selectedPlatform = e("required");
-    } else if (currentStep === "shipping") {
+    if (currentStep === "shipping") {
       if (!data.customerName.trim()) newErrors.customerName = e("required");
       if (!data.phone.trim()) newErrors.phone = e("required");
       else if (!/^\+?[0-9]{7,15}$/.test(data.phone.replace(/[\s-]/g, ""))) {
@@ -164,7 +147,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     setErrors({});
   };
 
-  const TIMEOUT_MS = 30000;
+  const TIMEOUT_MS = 60000;
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
@@ -181,7 +164,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       showToast(tm("networkError"), "error");
     }, TIMEOUT_MS);
 
-    const pricing = calcTotal(data.stickerType, data.addressDetail);
+    const pricing = calcTotal(data.addressDetail);
     setOrderPricing({ totalPrice: pricing.total, shippingFee: pricing.shippingFee });
 
     const formattedSocials: Record<string, string> = {};
@@ -204,9 +187,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         logo: data.logo || undefined,
         socialLinks: formattedSocials,
         autoTapFields: {
-          stickerType: data.stickerType,
-          selectedPlatform: data.selectedPlatform || undefined,
-          logoWidthCm: data.stickerType === "icon" ? "6" : (data.logoWidthCm.trim() || "6"),
+          stickerType: "username",
+          logoWidthCm: data.logoWidthCm.trim() || "6",
           orderNotes: data.orderNotes.trim() || undefined,
           addressDetail: data.addressDetail.trim(),
           usernameValue: data.usernameValue.trim() || undefined,
@@ -274,12 +256,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
   const renderError = (key: string) =>
     errors[key] && <p className="text-red-400 text-xs mt-1">{errors[key]}</p>;
 
-  const platformLabels: Record<string, string> = {
-    instagram: t("fields.instagram"),
-    tiktok: t("fields.tiktok"),
-    snapchat: t("fields.snapchat"),
-  };
-
   const SOCIAL_FIELDS = [
     { id: "instagram", icon: Camera, label: t("fields.instagram") },
     { id: "tiktok", icon: Music2, label: t("fields.tiktok") },
@@ -292,7 +268,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
 
   return (
     <div>
-      {data.stickerType && renderStepIndicator()}
+      {renderStepIndicator()}
 
       <motion.div
         key={step}
@@ -300,182 +276,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Step 1: Sticker Type & Pricing */}
-        {currentStep === "stickerType" && (
-          <div className="space-y-5 px-2 sm:px-3">
-            <h3 className="text-lg font-semibold text-nardo mb-4">
-              {t("section.stickerType")}
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Option 1: Icon */}
-              <motion.button
-                type="button"
-                onClick={() => handleFieldChange("stickerType", "icon")}
-                className={`relative p-6 rounded-2xl border-2 text-left transition-all duration-300 cursor-pointer overflow-hidden ${
-                  data.stickerType === "icon"
-                    ? "border-gold bg-gold/10 shadow-[0_0_25px_rgba(212,175,55,0.2)]"
-                    : "border-white/10 bg-dark-card/60 hover:border-gold/40 hover:bg-dark-card/80"
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {data.stickerType === "icon" && (
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-gold/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                )}
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                      <circle cx="12" cy="12" r="5"/>
-                      <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/>
-                    </svg>
-                  </div>
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
-                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2c-5.5 0-10 3.6-10 8.7 0 1.8.7 3.5 1.9 4.9.3.3.4.7.2 1.1l-.3.7c-.2.5-.1 1 .3 1.3.2.2.5.3.8.3.3 0 .6-.1.9-.2.6-.2 1.2-.4 1.9-.4s1.3.2 1.9.6c.8.5 1.7.8 2.5.8s1.7-.3 2.5-.8c.6-.4 1.2-.6 1.9-.6s1.3.2 1.9.4c.3.1.6.2.9.2.3 0 .6-.1.8-.3.4-.3.5-.8.3-1.3l-.3-.7c-.2-.4-.1-.8.2-1.1 1.2-1.4 1.9-3.1 1.9-4.9C22 5.6 17.5 2 12 2z"/>
-                    </svg>
-                  </div>
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
-                    <Ghost className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="text-lg font-bold text-gold">+</span>
-                </div>
-                <h4 className={`text-base font-bold mb-2 text-center ${data.stickerType === "icon" ? "text-gold" : "text-slate-light"}`}>
-                  أيقونة سوشيال ميديا
-                </h4>
-                <p className="text-xs text-slate-body/70 mb-3 text-center leading-relaxed">
-                  اختر منصة (إنستا، تيك توك، سناب) لطباعة أيقونتها
-                </p>
-                <div className="flex items-center justify-center gap-2">
-                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
-                    data.stickerType === "icon"
-                      ? "bg-gold/5 border-gold/20"
-                      : "bg-white/[0.02] border-white/5"
-                  }`}>
-                    <p className="text-[11px] text-slate-muted font-medium">مقاس 5×5 سم</p>
-                  </div>
-                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
-                    data.stickerType === "icon"
-                      ? "bg-gold/5 border-gold/20"
-                      : "bg-white/[0.02] border-white/5"
-                  }`}>
-                    <p className="text-sm font-bold text-gold">100 {tc("egp")}</p>
-                  </div>
-                </div>
-              </motion.button>
-
-              {/* Option 2: Username */}
-              <motion.button
-                type="button"
-                onClick={() => handleFieldChange("stickerType", "username")}
-                className={`relative p-6 rounded-2xl border-2 text-left transition-all duration-300 cursor-pointer overflow-hidden ${
-                  data.stickerType === "username"
-                    ? "border-gold bg-gold/10 shadow-[0_0_25px_rgba(212,175,55,0.2)]"
-                    : "border-white/10 bg-dark-card/60 hover:border-gold/40 hover:bg-dark-card/80"
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {data.stickerType === "username" && (
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-gold/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                )}
-                <div className="flex items-center justify-center mb-4">
-                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-3 shadow-lg">
-                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="12" r="4" />
-                    </svg>
-                  </div>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 mx-2">
-                    <span className="text-base font-mono text-gold font-bold">@username</span>
-                  </div>
-                </div>
-                <h4 className={`text-base font-bold mb-2 text-center ${data.stickerType === "username" ? "text-gold" : "text-slate-light"}`}>
-                  اسم مستخدم مخصص
-                </h4>
-                <p className="text-xs text-slate-body/70 mb-3 text-center leading-relaxed">
-                  اطبع اسمك أو كلمتك المفضلة على الاستيكر
-                </p>
-                <div className="flex items-center justify-center gap-2">
-                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
-                    data.stickerType === "username"
-                      ? "bg-gold/5 border-gold/20"
-                      : "bg-white/[0.02] border-white/5"
-                  }`}>
-                    <p className="text-[11px] text-slate-muted font-medium">مقاس مخصص</p>
-                  </div>
-                  <div className={`px-3 py-1.5 rounded-lg border text-center ${
-                    data.stickerType === "username"
-                      ? "bg-gold/5 border-gold/20"
-                      : "bg-white/[0.02] border-white/5"
-                  }`}>
-                    <p className="text-sm font-bold text-gold">150 {tc("egp")}</p>
-                  </div>
-                </div>
-              </motion.button>
-            </div>
-            {renderError("stickerType")}
-          </div>
-        )}
-
-        {/* Step 2: Platform Selection (only for icon) */}
-        {currentStep === "platform" && data.stickerType === "icon" && (
-          <div className="space-y-5 px-2 sm:px-3">
-            <h3 className="text-lg font-semibold text-nardo mb-4">
-              {t("section.platform")}
-            </h3>
-            <p className="text-sm text-slate-muted mb-5">
-              اختر المنصة التي تريد طباعة أيقونتها على الاستيكر
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {(["instagram", "tiktok", "snapchat"] as const).map((platform) => {
-                const Icon = PLATFORM_ICONS[platform];
-                const isSelected = data.selectedPlatform === platform;
-                return (
-                  <motion.button
-                    key={platform}
-                    type="button"
-                    onClick={() => handleFieldChange("selectedPlatform", platform)}
-                    className={`relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all duration-300 cursor-pointer min-w-[90px] ${
-                      isSelected
-                        ? "border-gold bg-gold/10 shadow-[0_0_15px_rgba(212,175,55,0.2)]"
-                        : "border-white/10 bg-dark-card/60 hover:border-gold/40 hover:bg-dark-card/80"
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-dark-card flex items-center justify-center">
-                      <Image
-                        src={PLATFORM_IMAGES[platform]}
-                        alt={platformLabels[platform]}
-                        width={40}
-                        height={40}
-                        className="object-contain"
-                        unoptimized
-                      />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Icon className={`w-3 h-3 ${isSelected ? "text-gold" : "text-slate-muted"}`} />
-                      <span className={`text-xs font-medium ${isSelected ? "text-gold" : "text-slate-light"}`}>
-                        {platformLabels[platform]}
-                      </span>
-                    </div>
-                    {isSelected && (
-                      <div className="absolute -top-1.5 -end-1.5 w-5 h-5 rounded-full bg-gold flex items-center justify-center">
-                        <Check className="w-3 h-3 text-matte-dark" />
-                      </div>
-                    )}
-                  </motion.button>
-                );
-              })}
-            </div>
-            {renderError("selectedPlatform")}
-          </div>
-        )}
-
-        {/* Step 3: Shipping Information */}
+        {/* Step 1: Shipping Information */}
         {currentStep === "shipping" && (
           <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-nardo mb-4">
@@ -525,7 +326,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           </div>
         )}
 
-        {/* Step 4: Profile Customization */}
+        {/* Step 2: Profile Customization */}
         {currentStep === "customization" && (
           <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-nardo mb-4">
@@ -663,7 +464,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           </div>
         )}
 
-        {/* Step 5: Theme Selection */}
+        {/* Step 3: Theme Selection */}
         {currentStep === "theme" && (
           <div className="space-y-5">
             <h3 className="text-lg font-semibold text-nardo mb-4">
@@ -677,8 +478,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           </div>
         )}
 
-        {/* Step 6: Size & Notes (only for username) */}
-        {currentStep === "sizing" && data.stickerType === "username" && (
+        {/* Step 4: Size & Notes */}
+        {currentStep === "sizing" && (
           <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-gradient-gold mb-4">
               {t("section.size")}
@@ -769,7 +570,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           </div>
         )}
 
-        {/* Step 7: Review & Submit */}
+        {/* Step 5: Review & Submit */}
         {currentStep === "review" && (
           <div className="space-y-5 px-2 sm:px-3">
             <h3 className="text-lg font-semibold text-nardo mb-4">
@@ -790,25 +591,6 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 <p className="text-sm text-slate-light font-medium">{data.addressDetail}</p>
               </div>
 
-              <div className="p-4 rounded-xl bg-gold/5 border border-gold/30">
-                <p className="text-xs text-slate-muted mb-1">{t("section.stickerType")}</p>
-                <p className="text-sm text-gold font-bold">
-                  {data.stickerType === "icon"
-                    ? t("stickerTypeIcon")
-                    : t("stickerTypeUsername")
-                  }
-                </p>
-              </div>
-
-              {data.stickerType === "icon" && data.selectedPlatform && (
-                <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
-                  <p className="text-xs text-slate-muted mb-1">{t("section.platform")}</p>
-                  <p className="text-sm text-slate-light font-medium capitalize">
-                    {platformLabels[data.selectedPlatform]}
-                  </p>
-                </div>
-              )}
-
               {data.displayName && (
                 <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
                   <p className="text-xs text-slate-muted mb-1">{t("fields.displayName")}</p>
@@ -816,7 +598,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 </div>
               )}
 
-              {data.stickerType === "username" && data.logoWidthCm && (
+              {data.logoWidthCm && (
                 <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
                   <p className="text-xs text-slate-muted mb-1">{t("fields.stickerSize")}</p>
                   <p className="text-sm text-slate-light font-medium">{data.logoWidthCm} {t("sizeCm")}</p>
@@ -840,14 +622,14 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             <div className="text-center mt-6 p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-gold/30">
               <div className="space-y-1">
                 <p className="text-sm text-slate-muted">
-                  {t("basePrice")}: <span className="text-gold font-bold">{calcTotal(data.stickerType, data.addressDetail).basePrice} {tc("egp")}</span>
+                  {t("basePrice")}: <span className="text-gold font-bold">{calcTotal(data.addressDetail).basePrice} {tc("egp")}</span>
                 </p>
                 <p className="text-sm text-slate-muted">
-                  {t("shippingLabel")}: <span className="text-gold font-bold">{calcTotal(data.stickerType, data.addressDetail).shippingFee} {tc("egp")}</span>
+                  {t("shippingLabel")}: <span className="text-gold font-bold">{calcTotal(data.addressDetail).shippingFee} {tc("egp")}</span>
                 </p>
                 <div className="w-full h-px bg-gold/20 my-2" />
                 <p className="text-lg text-gold font-bold">
-                  {t("total")}: {calcTotal(data.stickerType, data.addressDetail).total} {tc("egp")}
+                  {t("total")}: {calcTotal(data.addressDetail).total} {tc("egp")}
                 </p>
               </div>
             </div>
@@ -865,7 +647,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           <div />
         )}
         {step < currentSteps.length - 1 ? (
-          <PrimaryButton type="button" onClick={handleNext} disabled={uploading || !data.stickerType}>
+          <PrimaryButton type="button" onClick={handleNext} disabled={uploading}>
             {t("next")}
             <ChevronRight className="w-4 h-4" />
           </PrimaryButton>

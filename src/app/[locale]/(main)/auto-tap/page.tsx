@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Car, Droplets, Zap, Wind, Shield } from "lucide-react";
 import type { AutoTapFormData } from "@/lib/types";
-import { calcBasePrice } from "@/lib/pricing";
 import AutoTapForm from "@/components/forms/AutoTapForm";
 
 const INITIAL_DATA: AutoTapFormData = {
@@ -14,7 +13,7 @@ const INITIAL_DATA: AutoTapFormData = {
   phone: "",
   addressDetail: "",
   orderNotes: "",
-  stickerType: "icon",
+  stickerType: "username",
   selectedPlatform: "",
   usernameValue: "",
   socialLinks: {},
@@ -26,7 +25,6 @@ const INITIAL_DATA: AutoTapFormData = {
 
 export default function AutoTapPage() {
   const t = useTranslations("products.autoTap");
-  const tc = useTranslations("currency");
   const [formData, setFormData] = useState<AutoTapFormData>(INITIAL_DATA);
 
   const handleFieldChange = useCallback(
@@ -120,21 +118,7 @@ export default function AutoTapPage() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="glass bg-white/5 backdrop-blur-md border border-gold/30 rounded-2xl p-5 lg:p-6 text-center"
           >
-            {formData.stickerType ? (
-              <>
-                <h2 className="text-2xl md:text-3xl font-bold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,0.3)] mb-1">
-                  {calcBasePrice(formData.stickerType)} {tc("egp")}
-                </h2>
-                <p className="text-xs text-slate-muted/60">{t("shippingLabel")}</p>
-              </>
-            ) : (
-              <>
-                <h2 className="text-lg font-bold text-gold drop-shadow-[0_0_10px_rgba(212,175,55,0.3)] mb-1">
-                  {t("iconLabel")} 100 {tc("egp")} | {t("usernameLabel")} 150 {tc("egp")}
-                </h2>
-                <p className="text-xs text-slate-muted/60">{t("shippingLabel")}</p>
-              </>
-            )}
+            <p className="text-sm text-slate-muted">{t("shippingLabel")}</p>
           </motion.div>
         </div>
       </section>

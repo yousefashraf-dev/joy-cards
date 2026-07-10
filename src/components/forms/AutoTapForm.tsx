@@ -147,7 +147,8 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     setErrors({});
   };
 
-  const TIMEOUT_MS = 15000;
+  const TIMEOUT_MS = 30000;
+  const completedRef = useRef(false);
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
@@ -155,10 +156,12 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       showToast(tm("waitUpload"), "error");
       return;
     }
+    completedRef.current = false;
     setSubmitting(true);
     showLoading(tm("sending"));
 
     const safetyTimer = setTimeout(() => {
+      if (completedRef.current) return;
       hideLoading();
       setSubmitting(false);
       showToast(tm("networkError"), "error");
@@ -194,12 +197,14 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           usernameValue: data.usernameValue.trim() || undefined,
         },
       }, pricing.total, locale);
+      completedRef.current = true;
       clearTimeout(safetyTimer);
       showToast(tm("sent"), "success");
       hideLoading();
       setSubmitting(false);
       setShowSuccess(true);
     } catch {
+      completedRef.current = true;
       clearTimeout(safetyTimer);
       hideLoading();
       setSubmitting(false);

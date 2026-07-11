@@ -3,7 +3,6 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -119,7 +118,6 @@ const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; pos
 };
 
 export default function CafePage() {
-  const t = useTranslations("products.cafe");
   const params = useParams();
   const slug = params.slug as string;
   const [cafe, setCafe] = useState<Cafe | null>(null);
@@ -430,7 +428,7 @@ export default function CafePage() {
               className="mb-8"
             >
               <p className="text-xs mb-4 uppercase tracking-widest text-center" style={{ color: `${accentHex}99` }}>
-                {t("payMethods")}
+                Payment Methods
               </p>
               <div className={`grid gap-4 ${vodafoneLink && instaPayLink ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
                 {vodafoneLink && (
@@ -449,7 +447,7 @@ export default function CafePage() {
                       <circle cx="26" cy="16" r="2.5" fill="white" />
                     </svg>
                     <span className="text-sm font-bold text-center leading-tight">
-                      {t("payVodafone")}
+                      Pay via Vodafone Cash
                     </span>
                   </a>
                 )}
@@ -468,7 +466,7 @@ export default function CafePage() {
                       <path d="M18 32 L28 24 L18 16" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     </svg>
                     <span className="text-sm font-bold text-center leading-tight">
-                      {t("payInstaPay")}
+                      Pay via InstaPay
                     </span>
                   </a>
                 )}
@@ -495,7 +493,7 @@ export default function CafePage() {
                 }}
               >
                 <Globe className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-semibold">{t("ourWebsite")}</span>
+                <span className="text-sm font-semibold">Our Website</span>
               </a>
             </motion.div>
           )}
@@ -518,21 +516,30 @@ export default function CafePage() {
                 }}
               >
                 <Wifi className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-semibold">{t("connectWifi")}</span>
+                <span className="text-sm font-semibold">Connect to Wi-Fi</span>
               </button>
             </motion.div>
           )}
 
           {/* Footer */}
-          <motion.p
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
             className="text-center text-xs"
             style={{ color: `${accentHex}4D` }}
           >
-            {t("poweredBy")}
-          </motion.p>
+            Powered by{" "}
+            <a
+              href="https://gotap.vercel.app/ar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+              style={{ color: accentHex }}
+            >
+              Go Tap
+            </a>
+          </motion.div>
         </div>
 
         {/* Menu Modal */}
@@ -575,7 +582,7 @@ export default function CafePage() {
                   <div className="flex items-center gap-3">
                     <Wifi className="w-6 h-6" style={{ color: accentHex }} />
                     <h3 className="text-lg font-bold" style={{ color: accentHex }}>
-                      {t("wifiModalTitle")}
+                      Wi-Fi Network
                     </h3>
                   </div>
                   <button
@@ -589,7 +596,7 @@ export default function CafePage() {
                 <div className="space-y-4">
                   <div>
                     <p className="text-xs text-slate-muted mb-1">
-                      {t("wifiNetwork")}
+                      Network Name
                     </p>
                     <div
                       className="w-full px-4 py-3 rounded-lg backdrop-blur-md border font-mono text-base"
@@ -604,7 +611,7 @@ export default function CafePage() {
                   </div>
                   <div>
                     <p className="text-xs text-slate-muted mb-1">
-                      {t("wifiPassword")}
+                      Password
                     </p>
                     <div className="flex items-center gap-2">
                       <div
@@ -634,7 +641,7 @@ export default function CafePage() {
                       </button>
                     </div>
                     {copied && (
-                      <p className="text-xs text-green-400 mt-2">{t("copied")}</p>
+                      <p className="text-xs text-green-400 mt-2">Copied!</p>
                     )}
                   </div>
                 </div>

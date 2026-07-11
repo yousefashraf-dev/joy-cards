@@ -341,7 +341,7 @@ export default function CafePage() {
                   }}
                 >
                   <span className="text-xl group-hover:scale-110 transition-transform">🔗</span>
-                  {t("browseMenu")}
+                  Menu
                 </button>
               ) : (
                 <a
@@ -356,7 +356,7 @@ export default function CafePage() {
                   }}
                 >
                   <span className="text-xl group-hover:scale-110 transition-transform">🔗</span>
-                  {t("browseMenu")}
+                  Menu
                 </a>
               )}
             </motion.div>
@@ -373,31 +373,49 @@ export default function CafePage() {
               <p className="text-xs mb-6 uppercase tracking-widest text-center" style={{ color: `${accentHex}99` }}>
                 Follow Us
               </p>
-              <div className="grid grid-cols-2 gap-y-6 gap-x-4 justify-items-center">
-                {socialItems.map((item) => (
-                  <a
-                    key={item.key}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-2 transition-all duration-300 group"
-                  >
-                    <div
-                      className="w-20 h-20 rounded-full backdrop-blur-md border-2 flex items-center justify-center group-hover:scale-110 transition-all duration-300"
-                      style={{
-                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
-                        borderColor: `${accentHex}4D`,
-                        color: accentHex,
-                      }}
-                    >
-                      <div className="w-10 h-10 flex items-center justify-center">
-                        {item.icon}
-                      </div>
-                    </div>
-                    <span className="text-xs font-semibold text-center transition-opacity duration-200 group-hover:opacity-80">
-                      {item.key === "googleMaps" ? "Google Maps" : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "telegram" ? "Telegram" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key}
-                    </span>
-                  </a>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                {(() => {
+                  const n = socialItems.length;
+                  if (n <= 2) return [{ items: socialItems, cols: n }];
+                  if (n === 3) return [{ items: socialItems, cols: 3 }];
+                  if (n % 2 === 0) {
+                    const rows = [];
+                    for (let i = 0; i < n; i += 2) rows.push({ items: socialItems.slice(i, i + 2), cols: 2 });
+                    return rows;
+                  }
+                  const rows = [];
+                  let i = 0;
+                  for (; i < n - 3; i += 2) rows.push({ items: socialItems.slice(i, i + 2), cols: 2 });
+                  rows.push({ items: socialItems.slice(i), cols: 3 });
+                  return rows;
+                })().map((row, idx) => (
+                  <div key={idx} className="grid gap-y-6 gap-x-4 justify-items-center" style={{ gridTemplateColumns: `repeat(${row.cols}, 1fr)` }}>
+                    {row.items.map((item) => (
+                      <a
+                        key={item.key}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex flex-col items-center gap-2 transition-all duration-300 group ${row.cols === 3 ? "scale-90" : ""}`}
+                      >
+                        <div
+                          className="w-20 h-20 rounded-full backdrop-blur-md border-2 flex items-center justify-center group-hover:scale-110 transition-all duration-300"
+                          style={{
+                            backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                            borderColor: `${accentHex}4D`,
+                            color: accentHex,
+                          }}
+                        >
+                          <div className="w-10 h-10 flex items-center justify-center">
+                            {item.icon}
+                          </div>
+                        </div>
+                        <span className="text-xs font-semibold text-center transition-opacity duration-200 group-hover:opacity-80">
+                          {item.key === "googleMaps" ? "Google Maps" : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "telegram" ? "Telegram" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 ))}
               </div>
             </motion.div>
@@ -414,7 +432,7 @@ export default function CafePage() {
               <p className="text-xs mb-4 uppercase tracking-widest text-center" style={{ color: `${accentHex}99` }}>
                 {t("payMethods")}
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className={`grid gap-4 ${vodafoneLink && instaPayLink ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
                 {vodafoneLink && (
                   <a
                     href={vodafoneLink}

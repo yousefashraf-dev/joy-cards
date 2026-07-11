@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send, Download } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
-import type { Cafe } from "@/lib/cafe-schema";
+import type { Cafe, WorkingHour } from "@/lib/cafe-schema";
 import { addCafe, updateCafe, uploadCafeFile } from "@/lib/cafe-schema";
 import { compressImage } from "@/lib/compressImage";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
@@ -45,6 +45,9 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [vodafoneCash, setVodafoneCash] = useState(cafe?.vodafoneCash || "");
   const [instaPay, setInstaPay] = useState(cafe?.instaPay || "");
   const [theme, setTheme] = useState<CafeTheme>(cafe?.theme || "cafe");
+  const [youtubeUrl, setYoutubeUrl] = useState(cafe?.youtubeUrl || "");
+  const [bio, setBio] = useState(cafe?.bio || "");
+  const [workingHours, setWorkingHours] = useState<WorkingHour[]>(cafe?.workingHours || []);
 
   const qrRef = useRef<HTMLDivElement>(null);
   const qrPrintRef = useRef<HTMLDivElement>(null);
@@ -151,6 +154,9 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         wifiPassword: wifiPassword.trim(),
         vodafoneCash: vodafoneCash.trim(),
         instaPay: instaPay.trim(),
+        youtubeUrl: youtubeUrl.trim(),
+        bio: bio.trim(),
+        workingHours,
       };
 
       if (cafe?.id) {
@@ -592,6 +598,90 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
               dir="ltr"
             />
           </div>
+        </div>
+
+        {/* YouTube Link */}
+        <div>
+          <label className={labelClass}>YouTube</label>
+          <input
+            type="url"
+            value={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
+            className={inputClass}
+            placeholder="https://youtube.com/..."
+            dir="ltr"
+          />
+        </div>
+
+        {/* Bio / Description */}
+        <div>
+          <label className={labelClass}>{t("bio")}</label>
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            className={`${inputClass} min-h-[80px] resize-y`}
+            placeholder={t("bioPlaceholder")}
+            rows={3}
+          />
+        </div>
+
+        {/* Working Hours */}
+        <div>
+          <p className="text-sm text-slate-muted mb-3 font-medium">
+            {t("workingHours")}
+          </p>
+          {workingHours.map((wh, i) => (
+            <div key={i} className="flex items-center gap-2 mb-2">
+              <select
+                value={wh.day}
+                onChange={(e) => {
+                  const updated = [...workingHours];
+                  updated[i] = { ...updated[i], day: e.target.value };
+                  setWorkingHours(updated);
+                }}
+                className={`${inputClass} w-[130px]`}
+              >
+                {["saturday","sunday","monday","tuesday","wednesday","thursday","friday"].map((d) => (
+                  <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
+                ))}
+              </select>
+              <input
+                type="time"
+                value={wh.open}
+                onChange={(e) => {
+                  const updated = [...workingHours];
+                  updated[i] = { ...updated[i], open: e.target.value };
+                  setWorkingHours(updated);
+                }}
+                className={`${inputClass} w-[110px]`}
+              />
+              <span className="text-slate-muted text-sm">—</span>
+              <input
+                type="time"
+                value={wh.close}
+                onChange={(e) => {
+                  const updated = [...workingHours];
+                  updated[i] = { ...updated[i], close: e.target.value };
+                  setWorkingHours(updated);
+                }}
+                className={`${inputClass} w-[110px]`}
+              />
+              <button
+                type="button"
+                onClick={() => setWorkingHours((prev) => prev.filter((_, idx) => idx !== i))}
+                className="p-2 rounded-lg text-red-400 hover:bg-red-400/10 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setWorkingHours((prev) => [...prev, { day: "saturday", open: "09:00", close: "23:00" }])}
+            className="mt-1 px-4 py-2 rounded-lg border border-dashed border-white/20 text-sm text-slate-muted hover:text-slate-light hover:border-white/40 transition-all duration-200"
+          >
+            + {t("addHour")}
+          </button>
         </div>
 
         {/* Wi-Fi */}

@@ -14,6 +14,13 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { CafeTheme } from "./cafe-themes";
 
+export interface WorkingHour {
+  day: string;
+  open: string;
+  close: string;
+  closed?: boolean;
+}
+
 export interface Cafe {
   id?: string;
   name: string;
@@ -37,6 +44,9 @@ export interface Cafe {
   wifiPassword?: string;
   vodafoneCash?: string;
   instaPay?: string;
+  youtubeUrl?: string;
+  bio?: string;
+  workingHours?: WorkingHour[];
   createdAt?: number;
 }
 
@@ -100,6 +110,9 @@ export async function getAllCafes(): Promise<Cafe[]> {
       wifiPassword: data.wifiPassword,
       vodafoneCash: data.vodafoneCash,
       instaPay: data.instaPay,
+      youtubeUrl: data.youtubeUrl,
+      bio: data.bio,
+      workingHours: data.workingHours || [],
       createdAt: data.createdAt?.toMillis() || Date.now(),
     } as Cafe;
   });
@@ -135,6 +148,9 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     wifiPassword: data.wifiPassword,
     vodafoneCash: data.vodafoneCash,
     instaPay: data.instaPay,
+    youtubeUrl: data.youtubeUrl,
+    bio: data.bio,
+    workingHours: data.workingHours || [],
     createdAt: data.createdAt?.toMillis() || Date.now(),
   } as Cafe;
 }

@@ -18,6 +18,8 @@ import {
   X,
   Music2,
   Send,
+  Clock,
+  Share2,
 } from "lucide-react";
 import { getCafeBySlug } from "@/lib/cafe-schema";
 import type { Cafe } from "@/lib/cafe-schema";
@@ -124,6 +126,7 @@ export default function CafePage() {
   const [loading, setLoading] = useState(true);
   const [menuModal, setMenuModal] = useState(false);
   const [wifiModal, setWifiModal] = useState(false);
+  const [hoursModal, setHoursModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [menuImages, setMenuImages] = useState<string[]>([]);
 
@@ -318,6 +321,11 @@ export default function CafePage() {
             >
               {cafe.name}
             </h1>
+            {cafe.bio && (
+              <p className="text-sm mt-3 leading-relaxed opacity-80 max-w-md mx-auto" style={{ color: accentHex }}>
+                {cafe.bio}
+              </p>
+            )}
           </motion.div>
 
           {/* 2. Hero Menu Button */}
@@ -359,6 +367,56 @@ export default function CafePage() {
               )}
             </motion.div>
           ) : null}
+
+          {/* YouTube */}
+          {cafe.youtubeUrl && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="mb-8"
+            >
+              <a
+                href={cafe.youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl backdrop-blur-md border transition-all duration-300 group"
+                style={{
+                  backgroundColor: isVape ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.05)",
+                  borderColor: `${accentHex}4D`,
+                  color: accentHex,
+                }}
+              >
+                <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.5 6.2c-.3-1-1-1.8-2-2C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.5.7c-1 .2-1.7 1-2 2C0 8 0 12 0 12s0 4 .5 5.8c.3 1 1 1.8 2 2 2 .7 9.5.7 9.5.7s7.5 0 9.5-.7c1-.2 1.7-1 2-2 .5-1.8.5-5.8.5-5.8s0-4-.5-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/>
+                </svg>
+                <span className="text-sm font-semibold">YouTube</span>
+              </a>
+            </motion.div>
+          )}
+
+          {/* Working Hours */}
+          {cafe.workingHours && cafe.workingHours.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-8"
+            >
+              <button
+                onClick={() => setHoursModal(true)}
+                className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl backdrop-blur-md border transition-all duration-300 group"
+                style={{
+                  backgroundColor: isVape ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.05)",
+                  borderColor: `${accentHex}4D`,
+                  color: accentHex,
+                }}
+              >
+                <Clock className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-semibold">Business Hours</span>
+              </button>
+            </motion.div>
+          )}
 
           {/* 3. Social & Contact */}
           {socialItems.length > 0 && (
@@ -649,6 +707,88 @@ export default function CafePage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Working Hours Modal */}
+        <AnimatePresence>
+          {hoursModal && cafe.workingHours && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 z-50"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setHoursModal(false);
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="w-full max-w-sm backdrop-blur-xl border rounded-2xl p-8"
+                style={{
+                  backgroundColor: `${themeCfg.ringOffset}F2`,
+                  borderColor: `${accentHex}4D`,
+                  boxShadow: `0 0 40px ${accentHex}26`,
+                }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-6 h-6" style={{ color: accentHex }} />
+                    <h3 className="text-lg font-bold" style={{ color: accentHex }}>
+                      Business Hours
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setHoursModal(false)}
+                    className="text-slate-muted hover:text-slate-light transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {cafe.workingHours.map((wh, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                      <span className="text-sm font-medium capitalize" style={{ color: accentHex }}>
+                        {wh.day}
+                      </span>
+                      <span className="text-sm text-slate-muted">
+                        {wh.closed ? "Closed" : `${wh.open} — ${wh.close}`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Share Button */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-8 text-center"
+        >
+          <button
+            onClick={() => {
+              const url = window.location.href;
+              if (navigator.share) {
+                navigator.share({ title: cafe?.name || "GoTap", url }).catch(() => {});
+              } else {
+                navigator.clipboard.writeText(url).then(() => setCopied(true)).catch(() => {});
+              }
+            }}
+            className="w-10 h-10 rounded-full backdrop-blur-md border inline-flex items-center justify-center transition-all duration-300 hover:scale-110"
+            style={{
+              backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+              borderColor: `${accentHex}4D`,
+              color: accentHex,
+            }}
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+        </motion.div>
       </div>
     </div>
   );

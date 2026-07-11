@@ -45,6 +45,7 @@ export interface Cafe {
   vodafoneCash?: string;
   instaPay?: string;
   youtubeUrl?: string;
+  email?: string;
   bio?: string;
   workingHours?: WorkingHour[];
   createdAt?: number;
@@ -111,6 +112,7 @@ export async function getAllCafes(): Promise<Cafe[]> {
       vodafoneCash: data.vodafoneCash,
       instaPay: data.instaPay,
       youtubeUrl: data.youtubeUrl,
+      email: data.email,
       bio: data.bio,
       workingHours: data.workingHours || [],
       createdAt: data.createdAt?.toMillis() || Date.now(),

@@ -36,6 +36,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [tiktok, setTiktok] = useState(cafe?.tiktok || "");
   const [snapchatUrl, setSnapchatUrl] = useState(cafe?.snapchatUrl || "");
   const [telegram, setTelegram] = useState(cafe?.telegram || "");
+  const [email, setEmail] = useState(cafe?.email || "");
   const [googleMapsUrl, setGoogleMapsUrl] = useState(cafe?.googleMapsUrl || "");
   const [googleReviewsUrl, setGoogleReviewsUrl] = useState(
     cafe?.googleReviewsUrl || ""
@@ -155,6 +156,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         vodafoneCash: vodafoneCash.trim(),
         instaPay: instaPay.trim(),
         youtubeUrl: youtubeUrl.trim(),
+        email: email.trim(),
         bio: bio.trim(),
         workingHours,
       };
@@ -571,10 +573,20 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                 dir="ltr"
               />
             </div>
+            <div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputClass}
+                placeholder={t("email")}
+                dir="ltr"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Google Links */}
+        {/* YouTube Link */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>{t("googleMapsUrl")}</label>
@@ -639,33 +651,50 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                   updated[i] = { ...updated[i], day: e.target.value };
                   setWorkingHours(updated);
                 }}
-                className={`${inputClass} w-[130px]`}
+                className={`${inputClass} w-[110px]`}
               >
                 {["saturday","sunday","monday","tuesday","wednesday","thursday","friday"].map((d) => (
                   <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
                 ))}
               </select>
-              <input
-                type="time"
-                value={wh.open}
-                onChange={(e) => {
-                  const updated = [...workingHours];
-                  updated[i] = { ...updated[i], open: e.target.value };
-                  setWorkingHours(updated);
-                }}
-                className={`${inputClass} w-[110px]`}
-              />
-              <span className="text-slate-muted text-sm">—</span>
-              <input
-                type="time"
-                value={wh.close}
-                onChange={(e) => {
-                  const updated = [...workingHours];
-                  updated[i] = { ...updated[i], close: e.target.value };
-                  setWorkingHours(updated);
-                }}
-                className={`${inputClass} w-[110px]`}
-              />
+              <label className="flex items-center gap-1.5 text-xs text-slate-muted cursor-pointer whitespace-nowrap">
+                <input
+                  type="checkbox"
+                  checked={wh.closed || false}
+                  onChange={(e) => {
+                    const updated = [...workingHours];
+                    updated[i] = { ...updated[i], closed: e.target.checked };
+                    setWorkingHours(updated);
+                  }}
+                  className="accent-red-500"
+                />
+                Closed
+              </label>
+              {!wh.closed && (
+                <>
+                  <input
+                    type="time"
+                    value={wh.open}
+                    onChange={(e) => {
+                      const updated = [...workingHours];
+                      updated[i] = { ...updated[i], open: e.target.value };
+                      setWorkingHours(updated);
+                    }}
+                    className={`${inputClass} w-[100px]`}
+                  />
+                  <span className="text-slate-muted text-sm">—</span>
+                  <input
+                    type="time"
+                    value={wh.close}
+                    onChange={(e) => {
+                      const updated = [...workingHours];
+                      updated[i] = { ...updated[i], close: e.target.value };
+                      setWorkingHours(updated);
+                    }}
+                    className={`${inputClass} w-[100px]`}
+                  />
+                </>
+              )}
               <button
                 type="button"
                 onClick={() => setWorkingHours((prev) => prev.filter((_, idx) => idx !== i))}

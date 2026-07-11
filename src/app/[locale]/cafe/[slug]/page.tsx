@@ -18,6 +18,7 @@ import {
   X,
   Music2,
   Send,
+  Mail,
   Clock,
   Share2,
 } from "lucide-react";
@@ -93,6 +94,12 @@ function VapeSvg({ className }: { className?: string }) {
       <line x1="128" y1="155" x2="150" y2="155" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
     </svg>
   );
+}
+
+function to12h(time: string) {
+  const [h, m] = time.split(":").map(Number);
+  const ap = h >= 12 ? "PM" : "AM";
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${ap}`;
 }
 
 const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; position: string }[]> = {
@@ -245,6 +252,20 @@ export default function CafePage() {
       icon: <Send className="w-5 h-5" />,
     },
     {
+      key: "youtube",
+      href: cafe.youtubeUrl || "",
+      icon: (
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.5 6.2c-.3-1-1-1.8-2-2C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.5.7c-1 .2-1.7 1-2 2C0 8 0 12 0 12s0 4 .5 5.8c.3 1 1 1.8 2 2 2 .7 9.5.7 9.5.7s7.5 0 9.5-.7c1-.2 1.7-1 2-2 .5-1.8.5-5.8.5-5.8s0-4-.5-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/>
+        </svg>
+      ),
+    },
+    {
+      key: "email",
+      href: cafe.email ? `mailto:${cafe.email}` : "",
+      icon: <Mail className="w-5 h-5" />,
+    },
+    {
       key: "whatsapp",
       href: sanitizedWhatsApp
         ? `https://wa.me/${sanitizedWhatsApp}`
@@ -368,33 +389,6 @@ export default function CafePage() {
             </motion.div>
           ) : null}
 
-          {/* YouTube */}
-          {cafe.youtubeUrl && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="mb-8"
-            >
-              <a
-                href={cafe.youtubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl backdrop-blur-md border transition-all duration-300 group"
-                style={{
-                  backgroundColor: isVape ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.05)",
-                  borderColor: `${accentHex}4D`,
-                  color: accentHex,
-                }}
-              >
-                <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23.5 6.2c-.3-1-1-1.8-2-2C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.5.7c-1 .2-1.7 1-2 2C0 8 0 12 0 12s0 4 .5 5.8c.3 1 1 1.8 2 2 2 .7 9.5.7 9.5.7s7.5 0 9.5-.7c1-.2 1.7-1 2-2 .5-1.8.5-5.8.5-5.8s0-4-.5-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/>
-                </svg>
-                <span className="text-sm font-semibold">YouTube</span>
-              </a>
-            </motion.div>
-          )}
-
           {/* Working Hours */}
           {cafe.workingHours && cafe.workingHours.length > 0 && (
             <motion.div
@@ -467,7 +461,7 @@ export default function CafePage() {
                           </div>
                         </div>
                         <span className="text-xs font-semibold text-center transition-opacity duration-200 group-hover:opacity-80">
-                          {item.key === "googleMaps" ? "Google Maps" : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "telegram" ? "Telegram" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key}
+                          {item.key === "googleMaps" ? "Google Maps" : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "youtube" ? "YouTube" : item.key === "email" ? "Email" : item.key === "telegram" ? "Telegram" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key}
                         </span>
                       </a>
                     ))}
@@ -752,8 +746,8 @@ export default function CafePage() {
                       <span className="text-sm font-medium capitalize" style={{ color: accentHex }}>
                         {wh.day}
                       </span>
-                      <span className="text-sm text-slate-muted">
-                        {wh.closed ? "Closed" : `${wh.open} — ${wh.close}`}
+                      <span className={`text-sm ${wh.closed ? "text-red-400" : "text-slate-muted"}`}>
+                        {wh.closed ? "Closed" : `${to12h(wh.open)} — ${to12h(wh.close)}`}
                       </span>
                     </div>
                   ))}

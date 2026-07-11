@@ -151,6 +151,7 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     vodafoneCash: data.vodafoneCash,
     instaPay: data.instaPay,
     youtubeUrl: data.youtubeUrl,
+    email: data.email,
     bio: data.bio,
     workingHours: data.workingHours || [],
     createdAt: data.createdAt?.toMillis() || Date.now(),

@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Edit3, Trash2, Copy, Check, ExternalLink, Download } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import type { Cafe } from "@/lib/cafe-schema";
-import { deleteCafe } from "@/lib/cafe-schema";
+
 
 interface CafeTableProps {
   cafes: Cafe[];
@@ -42,7 +42,7 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
       if (!window.confirm(t("deleteConfirm"))) return;
       setDeletingId(id);
       try {
-        await deleteCafe(id);
+        await fetch(`/api/cafes/${id}`, { method: "DELETE" });
         onRefresh();
       } catch (error) {
         console.error("Delete error:", error);

@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Edit3, Trash2, Tag } from "lucide-react";
 import type { Product } from "@/lib/product-schema";
-import { deleteProduct, updateProduct } from "@/lib/product-schema";
-
 interface ProductTableProps {
   products: Product[];
   onEdit: (product: Product) => void;
@@ -22,7 +20,7 @@ export default function ProductTable({ products, onEdit, onRefresh }: ProductTab
     if (!window.confirm(t("deleteConfirm"))) return;
     setDeletingId(id);
     try {
-      await deleteProduct(id);
+      await fetch(`/api/products/${id}`, { method: "DELETE" });
       onRefresh();
     } catch (error) {
       console.error("Delete error:", error);
@@ -36,7 +34,11 @@ export default function ProductTable({ products, onEdit, onRefresh }: ProductTab
     const salePriceStr = saleInputs[product.id!];
     if (!salePriceStr || isNaN(Number(salePriceStr))) return;
     try {
-      await updateProduct(product.id!, { salePrice: Number(salePriceStr) });
+      await fetch(`/api/products/${product.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ salePrice: Number(salePriceStr) }),
+      });
       onRefresh();
       setSaleInputs((prev) => ({ ...prev, [product.id!]: "" }));
     } catch (error) {
@@ -46,7 +48,11 @@ export default function ProductTable({ products, onEdit, onRefresh }: ProductTab
 
   const handleRemoveDiscount = useCallback(async (product: Product) => {
     try {
-      await updateProduct(product.id!, { salePrice: null });
+      await fetch(`/api/products/${product.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ salePrice: null }),
+      });
       onRefresh();
     } catch (error) {
       console.error("Remove discount error:", error);

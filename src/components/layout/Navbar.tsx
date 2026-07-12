@@ -18,6 +18,7 @@ export default function Navbar() {
     { href: "/digital-cards", label: t("digitalCards") },
     { href: "/auto-tap", label: t("autoTap") },
     { href: "/business-tap", label: t("businessTap") },
+    { href: "/wedding-cards", label: t("weddingCards") },
     { href: "/shop", label: t("shop") },
   ];
 

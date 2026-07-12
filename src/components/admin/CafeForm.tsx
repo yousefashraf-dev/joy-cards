@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send, Download } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import type { Cafe, WorkingHour } from "@/lib/cafe-schema";
-import { addCafe, updateCafe, uploadCafeFile } from "@/lib/cafe-schema";
+
 import { compressImage } from "@/lib/compressImage";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
 import type { CafeTheme } from "@/lib/cafe-themes";
@@ -126,10 +126,18 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         finalMenuImages = [...finalMenuImages, ...uploaded];
         finalMenuUrl = "";
       } else if (menuType === "pdf" && menuFiles.length > 0) {
-        finalMenuUrl = await uploadCafeFile(
-          menuFiles[0],
-          `menus/${slug}-${Date.now()}-${menuFiles[0].name}`
-        );
+        const compressed = await compressImage(menuFiles[0]);
+        const fd = new FormData();
+        fd.append("file", compressed);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000);
+        const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
+        clearTimeout(timeout);
+        let uploadData: { url?: string; error?: string };
+        try { uploadData = await res.json(); }
+        catch { const text = await res.text().catch(() => ""); throw new Error(text ? `Server (${res.status}): ${text.slice(0, 200)}` : `Upload failed (HTTP ${res.status})`); }
+        if (!res.ok || !uploadData.url) throw new Error(uploadData.error || "Menu PDF upload failed");
+        finalMenuUrl = uploadData.url;
         finalMenuImages = [];
       }
 
@@ -162,9 +170,18 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
       };
 
       if (cafe?.id) {
-        await updateCafe(cafe.id, data);
+        await fetch(`/api/cafes/${cafe.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       } else {
-        const docId = await addCafe(data);
+        const res = await fetch("/api/cafes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const { id: docId } = await res.json();
         // Send to Google Sheets via API proxy
         try {
           await fetch("/api/cafe-to-sheet", {

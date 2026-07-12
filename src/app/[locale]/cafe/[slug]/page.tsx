@@ -22,7 +22,6 @@ import {
   Clock,
   Share2,
 } from "lucide-react";
-import { getCafeBySlug } from "@/lib/cafe-schema";
 import type { Cafe } from "@/lib/cafe-schema";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
 import type { CafeTheme } from "@/lib/cafe-themes";
@@ -145,14 +144,15 @@ export default function CafePage() {
 
   useEffect(() => {
     if (!slug) return;
-    getCafeBySlug(slug)
+    fetch(`/api/cafes?slug=${slug}`)
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         setCafe(data);
         if (data?.menuType === "images") {
           if (data.menuImages && data.menuImages.length > 0) {
             setMenuImages(data.menuImages);
           } else if (data.menuUrl) {
-            setMenuImages(data.menuUrl.split(",").map((u) => u.trim()));
+            setMenuImages(data.menuUrl.split(",").map((u: string) => u.trim()));
           }
         }
       })

@@ -4,7 +4,6 @@ import { useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { X, Upload, ImageIcon } from "lucide-react";
 import type { Product } from "@/lib/product-schema";
-import { addProduct, updateProduct } from "@/lib/product-schema";
 import { compressImage } from "@/lib/compressImage";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -60,9 +59,17 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
       };
 
       if (product?.id) {
-        await updateProduct(product.id, data);
+        await fetch(`/api/products/${product.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       } else {
-        await addProduct(data);
+        await fetch("/api/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
       }
       onSuccess();
     } catch (error) {

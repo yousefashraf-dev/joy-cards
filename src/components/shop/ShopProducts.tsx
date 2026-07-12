@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Plus, Minus, X, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Product } from "@/lib/product-schema";
-import { getProducts } from "@/lib/product-schema";
 import { WHATSAPP_NUMBER } from "@/lib/constants";
 import SectionHeading from "@/components/ui/SectionHeading";
 
@@ -21,7 +20,7 @@ export default function ShopProducts() {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getProducts(3).then(setProducts).catch(console.error).finally(() => setLoading(false));
+    fetch("/api/products").then((r) => r.ok ? r.json() : []).then((all) => setProducts(all.slice(0, 3))).catch(console.error).finally(() => setLoading(false));
   }, []);
 
   const getEffectivePrice = (p: Product) => p.salePrice ?? p.price;

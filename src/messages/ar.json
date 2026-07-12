@@ -17,6 +17,7 @@
   "nav": {
     "home": "الرئيسية",
     "digitalCards": "الكارت الرقمي",
+    "weddingCards": "كروت الفرح",
     "autoTap": "تاپ السيارات",
     "businessTap": "للمطاعم والكافيهات والمتاجر",
     "shop": "متجر الإكسسوارات",
@@ -86,6 +87,21 @@
       },
       "badge": "ملصقات NFC للسيارات",
       "windowNotice": "المقاس القياسي للزجاج الجانبي الخلفي: 35سم. يمكنك طلب مقاس أكبر أو أصغر."
+    },
+    "weddingCards": {
+      "title": "كروت الفرح الإلكترونية",
+      "desc": "دعوة زفاف إلكترونية فاخرة بتقنية NFC. شارك فرحتك مع ضيوفك بلمسة — قصة الحب، المكان، العد التنازلي، ودليل اللبس في رابط واحد.",
+      "cta": "اطلب الآن",
+      "badge": "كارت الفرح NFC",
+      "whatYouCanAdd": [
+        "صور العروسين",
+        "قصة الحب",
+        "التاريخ والوقت مع عد تنازلي",
+        "المكان مع رابط Google Maps",
+        "دليل اللبس (Dress Code) للرجال والنساء",
+        "تأكيد الحضور عبر واتساب",
+        "QR Code للمشاركة"
+      ]
     },
     "businessTap": {
       "title": "للمطاعم والكافيهات والمتاجر",
@@ -431,17 +447,20 @@
     "dashboardTitle": "لوحة تحكم الأدمن",
     "cafesTab": "الكافيهات والبطاقات الرقمية",
     "productsTab": "متجر المنتجات",
+    "weddingsTab": "كروت الفرح",
     "addCafe": "إضافة كافيه/مطعم جديد",
     "editCafe": "تعديل الكافيه",
     "addProduct": "إضافة منتج",
     "editProduct": "تعديل المنتج",
+    "addWedding": "إضافة كارت فرح",
+    "editWedding": "تعديل كارت الفرح",
     "salePrice": "سعر الخصم",
     "applyDiscount": "تطبيق خصم",
     "removeDiscount": "إزالة الخصم",
     "specialOffer": "عرض خاص",
     "deleteConfirm": "هل أنت متأكد من حذف هذا الكافيه؟",
-    "saveSuccess": "تم حفظ الكافيه بنجاح!",
-    "deleteSuccess": "تم حذف الكافيه بنجاح!",
+    "saveSuccess": "تم الحفظ بنجاح!",
+    "deleteSuccess": "تم الحذف بنجاح!",
     "errorOccurred": "حدث خطأ. حاول مرة أخرى.",
     "generatedLink": "رابط الكافيه",
     "copyLink": "نسخ الرابط",
@@ -487,7 +506,38 @@
       "price": "السعر (ج.م)",
       "category": "التصنيف",
       "description": "الوصف",
-      "images": "صور المنتج"
+      "images": "صور المنتج",
+    "coupleName1": "اسم العريس",
+    "coupleName2": "اسم العروسة",
+    "date": "تاريخ الفرح",
+    "time": "وقت الفرح",
+    "venue": "اسم المكان",
+    "venueMapsLink": "رابط Google Maps",
+    "dressCode": "دليل اللبس (عام)",
+    "dressCodeHer": "ألوان للنساء",
+    "dressCodeHim": "ألوان للرجال",
+    "story": "قصة الحب",
+    "image": "صورة العروسين"
     }
+  },
+  "wedding": {
+    "title": "كارت الفرح",
+    "days": "يوم",
+    "hours": "ساعة",
+    "minutes": "دقيقة",
+    "seconds": "ثانية",
+    "story": "قصتنا",
+    "venue": "المكان",
+    "dressCode": "دليل اللبس",
+    "forHer": "للنساء",
+    "forHim": "للرجال",
+    "rsvp": "تأكيد الحضور",
+    "rsvpMessage": "مساء الخير! حابب أؤكد حضوري لحفل زفاف {name1} و {name2} 🎉",
+    "share": "شارك الدعوة",
+    "countdown": "العد التنازلي",
+    "scrollDown": "اسحب لمشاهدة المزيد",
+    "openMap": "افتح في Google Maps",
+    "poweredBy": "مدعوم من GoTap",
+    "qrCode": "رمز QR"
   }
 }

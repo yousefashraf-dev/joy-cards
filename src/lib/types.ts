@@ -25,7 +25,23 @@ export type Theme =
 
 export type ThemeArchetype = "dark-premium" | "neon-sporty" | "glass-clean";
 
-export type ProductType = "digital-cards" | "auto-tap" | "business-tap";
+export type ProductType = "digital-cards" | "auto-tap" | "business-tap" | "wedding";
+
+export interface WeddingCardFields {
+  coupleName1: string;
+  coupleName2: string;
+  slug: string;
+  image?: string;
+  story?: string;
+  date: string;
+  time: string;
+  venue: string;
+  venueMapsLink?: string;
+  dressCode?: string;
+  dressCodeHer?: string;
+  dressCodeHim?: string;
+  active: boolean;
+}
 
 export interface SocialLinks {
   instagram?: string;
@@ -92,6 +108,7 @@ export interface OrderPayload {
   digitalCardsFields?: DigitalCardsFields;
   autoTapFields?: AutoTapFields;
   businessTapFields?: BusinessTapFields;
+  weddingCardFields?: WeddingCardFields;
 }
 
 export interface Profile {
@@ -106,6 +123,7 @@ export interface Profile {
   digitalCardsFields?: DigitalCardsFields;
   autoTapFields?: AutoTapFields;
   businessTapFields?: BusinessTapFields;
+  weddingCardFields?: WeddingCardFields;
   createdAt: number;
 }
 

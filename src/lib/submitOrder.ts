@@ -1,6 +1,4 @@
 import { GAS_URL } from "./constants";
-import { getClientDb } from "./client-firebase";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
 import type { OrderPayload } from "./types";
 
 function stripUndefined<T>(obj: T): T {
@@ -51,23 +49,16 @@ export async function submitOrder(
 ): Promise<{ success: boolean; message: string; profileId?: string }> {
   let profileId: string | undefined;
 
-  // 1. Save to Firestore first to get the profile ID
+  // 1. Save to Firestore via API route
   try {
-    const db = getClientDb();
-    const docRef = await addDoc(collection(db, "profiles"), {
-      name: data.customerName,
-      displayName: data.displayName || "",
-      logo: data.logo || "",
-      theme: data.theme,
-      active: true,
-      productType: data.productType,
-      links: data.socialLinks || {},
-      digitalCardsFields: data.digitalCardsFields ? stripUndefined(data.digitalCardsFields) : null,
-      autoTapFields: data.autoTapFields ? stripUndefined(data.autoTapFields) : null,
-      businessTapFields: data.businessTapFields ? stripUndefined(data.businessTapFields) : null,
-      createdAt: Timestamp.now(),
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
-    profileId = docRef.id;
+    if (!res.ok) throw new Error("Order API failed");
+    const { profileId: id } = await res.json();
+    profileId = id;
   } catch (error) {
     console.error("Firestore profile creation error:", error);
     throw error;

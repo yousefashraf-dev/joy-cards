@@ -17,6 +17,7 @@
   "nav": {
     "home": "Home",
     "digitalCards": "Digital Card",
+    "weddingCards": "Wedding Cards",
     "autoTap": "Car Tap",
     "businessTap": "Restaurants, Cafes & Stores",
     "shop": "Accessories Store",
@@ -86,6 +87,21 @@
       },
       "badge": "NFC Car Stickers",
       "windowNotice": "Standard rear side window size: 35cm. Custom sizes available."
+    },
+    "weddingCards": {
+      "title": "Wedding Invitation Cards",
+      "desc": "Premium NFC wedding invitation. Share your joy with guests with a tap — love story, venue, countdown timer, and dress code in one link.",
+      "cta": "Order Now",
+      "badge": "Wedding NFC Card",
+      "whatYouCanAdd": [
+        "Couple photos",
+        "Love story",
+        "Date & time with countdown",
+        "Venue with Google Maps link",
+        "Dress code for men & women",
+        "RSVP via WhatsApp",
+        "Shareable QR Code"
+      ]
     },
     "businessTap": {
       "title": "Restaurants, Cafes & Stores",
@@ -431,10 +447,13 @@
     "dashboardTitle": "Admin Dashboard",
     "cafesTab": "Cafes & Digital Cards",
     "productsTab": "Product Store",
+    "weddingsTab": "Wedding Cards",
     "addCafe": "Add New Cafe",
     "editCafe": "Edit Cafe",
     "addProduct": "Add Product",
     "editProduct": "Edit Product",
+    "addWedding": "Add Wedding Card",
+    "editWedding": "Edit Wedding Card",
     "salePrice": "Sale Price",
     "applyDiscount": "Apply Discount",
     "removeDiscount": "Remove Discount",
@@ -489,7 +508,38 @@
         "description": "Description",
         "images": "Product Images",
         "save": "Save",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "coupleName1": "Groom's Name",
+        "coupleName2": "Bride's Name",
+        "date": "Wedding Date",
+        "time": "Wedding Time",
+        "venue": "Venue Name",
+        "venueMapsLink": "Google Maps Link",
+        "dressCode": "Dress Code (General)",
+        "dressCodeHer": "Colors for Her",
+        "dressCodeHim": "Colors for Him",
+        "story": "Love Story",
+        "image": "Couple Photo"
       }
     }
+  },
+  "wedding": {
+    "title": "Wedding Card",
+    "days": "Day",
+    "hours": "Hour",
+    "minutes": "Minute",
+    "seconds": "Second",
+    "story": "Our Story",
+    "venue": "Venue",
+    "dressCode": "Dress Code",
+    "forHer": "For Her",
+    "forHim": "For Him",
+    "rsvp": "Yes, I'm Coming!",
+    "rsvpMessage": "Good evening! I'd like to confirm my attendance at {name1} & {name2}'s wedding 🎉",
+    "share": "Share Invitation",
+    "countdown": "Countdown",
+    "scrollDown": "Scroll for more",
+    "openMap": "Open in Google Maps",
+    "poweredBy": "Powered by GoTap",
+    "qrCode": "QR Code"
   }

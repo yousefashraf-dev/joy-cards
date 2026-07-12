@@ -4,15 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Plus, Shield, ShoppingBag, Store } from "lucide-react";
+import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, Heart } from "lucide-react";
 import CafeForm from "@/components/admin/CafeForm";
 import CafeTable from "@/components/admin/CafeTable";
 import ProductForm from "@/components/admin/ProductForm";
 import ProductTable from "@/components/admin/ProductTable";
+import WeddingForm from "@/components/admin/WeddingForm";
+import WeddingTable from "@/components/admin/WeddingTable";
 import type { Cafe } from "@/lib/cafe-schema";
-import { getAllCafes } from "@/lib/cafe-schema";
 import type { Product } from "@/lib/product-schema";
-import { getAllProducts } from "@/lib/product-schema";
+import type { WeddingCard } from "@/lib/wedding-schema";
 
 const ADMIN_PASSWORD = "oreo2552000";
 
@@ -20,7 +21,7 @@ export default function AdminDashboardPage() {
   const t = useTranslations("admin");
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<"cafes" | "products">("cafes");
+  const [activeTab, setActiveTab] = useState<"cafes" | "products" | "weddings">("cafes");
 
   useEffect(() => {
     setAuthenticated(sessionStorage.getItem("admin_auth") === "true");
@@ -30,20 +31,28 @@ export default function AdminDashboardPage() {
   const [error, setError] = useState("");
   const [cafes, setCafes] = useState<Cafe[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [weddings, setWeddings] = useState<WeddingCard[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCafe, setEditingCafe] = useState<Cafe | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingWedding, setEditingWedding] = useState<WeddingCard | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (authenticated && activeTab === "cafes") {
-      getAllCafes().then(setCafes).catch(console.error);
+      fetch("/api/cafes").then((r) => r.ok ? r.json() : []).then(setCafes).catch(console.error);
     }
   }, [authenticated, activeTab, refreshKey]);
 
   useEffect(() => {
     if (authenticated && activeTab === "products") {
-      getAllProducts().then(setProducts).catch(console.error);
+      fetch("/api/products").then((r) => r.ok ? r.json() : []).then(setProducts).catch(console.error);
+    }
+  }, [authenticated, activeTab, refreshKey]);
+
+  useEffect(() => {
+    if (authenticated && activeTab === "weddings") {
+      fetch("/api/weddings").then((r) => r.ok ? r.json() : []).then(setWeddings).catch(console.error);
     }
   }, [authenticated, activeTab, refreshKey]);
 
@@ -72,12 +81,21 @@ export default function AdminDashboardPage() {
   const handleEditCafe = useCallback((cafe: Cafe) => {
     setEditingCafe(cafe);
     setEditingProduct(null);
+    setEditingWedding(null);
     setShowForm(true);
   }, []);
 
   const handleEditProduct = useCallback((product: Product) => {
     setEditingProduct(product);
     setEditingCafe(null);
+    setEditingWedding(null);
+    setShowForm(true);
+  }, []);
+
+  const handleEditWedding = useCallback((wedding: WeddingCard) => {
+    setEditingWedding(wedding);
+    setEditingCafe(null);
+    setEditingProduct(null);
     setShowForm(true);
   }, []);
 
@@ -85,12 +103,14 @@ export default function AdminDashboardPage() {
     setShowForm(false);
     setEditingCafe(null);
     setEditingProduct(null);
+    setEditingWedding(null);
   }, []);
 
   const handleFormSuccess = useCallback(() => {
     setShowForm(false);
     setEditingCafe(null);
     setEditingProduct(null);
+    setEditingWedding(null);
     setRefreshKey((k) => k + 1);
   }, []);
 
@@ -152,12 +172,13 @@ export default function AdminDashboardPage() {
               onClick={() => {
                 setEditingCafe(null);
                 setEditingProduct(null);
+                setEditingWedding(null);
                 setShowForm(true);
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gold text-matte-dark font-semibold hover:bg-gold-light transition-colors duration-200 text-sm"
             >
               <Plus className="w-4 h-4" />
-              {activeTab === "cafes" ? t("addCafe") : t("addProduct")}
+              {activeTab === "cafes" ? t("addCafe") : activeTab === "weddings" ? t("addWedding") : t("addProduct")}
             </button>
             <button
               onClick={handleLogout}
@@ -192,6 +213,17 @@ export default function AdminDashboardPage() {
             <ShoppingBag className="w-4 h-4" />
             {t("productsTab")}
           </button>
+          <button
+            onClick={() => setActiveTab("weddings")}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              activeTab === "weddings"
+                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
+            }`}
+          >
+            <Heart className="w-4 h-4" />
+            {t("weddingsTab")}
+          </button>
         </div>
 
         {/* Form Modal */}
@@ -212,9 +244,15 @@ export default function AdminDashboardPage() {
                 exit={{ opacity: 0, y: 20 }}
                 className="w-full max-w-2xl mt-8 mb-8"
               >
-                {editingCafe || (activeTab === "cafes" && !editingProduct) ? (
+                {editingCafe || (activeTab === "cafes" && !editingProduct && !editingWedding) ? (
                   <CafeForm
                     cafe={editingCafe}
+                    onSuccess={handleFormSuccess}
+                    onCancel={handleFormClose}
+                  />
+                ) : editingWedding || (activeTab === "weddings" && !editingCafe && !editingProduct) ? (
+                  <WeddingForm
+                    wedding={editingWedding}
                     onSuccess={handleFormSuccess}
                     onCancel={handleFormClose}
                   />
@@ -235,6 +273,12 @@ export default function AdminDashboardPage() {
           <CafeTable
             cafes={cafes}
             onEdit={handleEditCafe}
+            onRefresh={() => setRefreshKey((k) => k + 1)}
+          />
+        ) : activeTab === "weddings" ? (
+          <WeddingTable
+            weddings={weddings}
+            onEdit={handleEditWedding}
             onRefresh={() => setRefreshKey((k) => k + 1)}
           />
         ) : (

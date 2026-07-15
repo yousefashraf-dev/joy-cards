@@ -7,6 +7,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import type { WeddingCard } from "@/lib/wedding-schema";
 import { compressImage } from "@/lib/compressImage";
 import { useToast } from "@/components/ui/ToastProvider";
+import { BASE_URL } from "@/lib/constants";
 
 interface WeddingFormProps {
   wedding?: WeddingCard | null;
@@ -27,6 +28,7 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
   const [time, setTime] = useState(wedding?.time || "");
   const [venue, setVenue] = useState(wedding?.venue || "");
   const [venueMapsLink, setVenueMapsLink] = useState(wedding?.venueMapsLink || "");
+  const [happyMoment, setHappyMoment] = useState(wedding?.happyMoment || "");
   const [story, setStory] = useState(wedding?.story || "");
   const [dressCode, setDressCode] = useState(wedding?.dressCode || "");
   const [dressCodeHer, setDressCodeHer] = useState(wedding?.dressCodeHer || "");
@@ -34,6 +36,8 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
   const [active, setActive] = useState(wedding?.active ?? true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [existingImage, setExistingImage] = useState(wedding?.image || "");
+  const [storyImageFile, setStoryImageFile] = useState<File | null>(null);
+  const [existingStoryImage, setExistingStoryImage] = useState(wedding?.storyImage || "");
 
   const qrRef = useRef<HTMLDivElement>(null);
   const qrPrintRef = useRef<HTMLDivElement>(null);
@@ -70,6 +74,7 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
     setSaving(true);
     try {
       let imageUrl = existingImage;
+      let storyImageUrl = existingStoryImage;
 
       if (imageFile) {
         const compressed = await compressImage(imageFile);
@@ -86,12 +91,29 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
         imageUrl = data.url;
       }
 
+      if (storyImageFile) {
+        const compressed = await compressImage(storyImageFile);
+        const fd = new FormData();
+        fd.append("file", compressed);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000);
+        const res = await fetch("/api/upload", { method: "POST", body: fd, signal: controller.signal });
+        clearTimeout(timeout);
+        let data: { url?: string; error?: string };
+        try { data = await res.json(); }
+        catch { const text = await res.text().catch(() => ""); throw new Error(text ? `Server (${res.status}): ${text.slice(0, 200)}` : `Upload failed (HTTP ${res.status})`); }
+        if (!res.ok || !data.url) throw new Error(data.error || "Image upload failed");
+        storyImageUrl = data.url;
+      }
+
       const data = {
         coupleName1: coupleName1.trim(),
         coupleName2: coupleName2.trim(),
         slug: slug.trim(),
         image: imageUrl,
+        happyMoment: happyMoment.trim(),
         story: story.trim(),
+        storyImage: storyImageUrl,
         date: date.trim(),
         time: time.trim(),
         venue: venue.trim(),
@@ -181,7 +203,7 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
             dir="ltr"
           />
           <p className="text-xs text-slate-muted/50 mt-1">
-            gotap.vercel.app/ar/wedding/{slug || "..."}
+            {BASE_URL}/ar/wedding/{slug || "..."}
           </p>
         </div>
 
@@ -191,7 +213,7 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
             <div ref={qrRef} className="shrink-0">
               {slug ? (
                 <QRCodeCanvas
-                  value={`https://gotap.vercel.app/ar/wedding/${slug}`}
+                  value={`${BASE_URL}/ar/wedding/${slug}`}
                   size={90}
                   level="H"
                 />
@@ -203,7 +225,7 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-slate-muted truncate" dir="ltr">
-                https://gotap.vercel.app/ar/wedding/{slug || "..."}
+                {BASE_URL}/ar/wedding/{slug || "..."}
               </p>
               <button
                 type="button"
@@ -221,7 +243,7 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
         <div ref={qrPrintRef} className="hidden">
           {slug && (
             <QRCodeCanvas
-              value={`https://gotap.vercel.app/ar/wedding/${slug}`}
+              value={`${BASE_URL}/ar/wedding/${slug}`}
               size={2000}
               level="H"
             />
@@ -296,6 +318,18 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
         </div>
 
         <div>
+          <label className={labelClass}>{t("happyMoment")}</label>
+          <textarea
+            value={happyMoment}
+            onChange={(e) => setHappyMoment(e.target.value)}
+            className={`${inputClass} min-h-[80px] resize-y`}
+            placeholder="The best moments in life are the ones we share with the people we love..."
+            rows={3}
+            dir="ltr"
+          />
+        </div>
+
+        <div>
           <label className={labelClass}>{t("story")}</label>
           <textarea
             value={story}
@@ -305,6 +339,25 @@ export default function WeddingForm({ wedding, onSuccess, onCancel }: WeddingFor
             rows={4}
             dir="ltr"
           />
+        </div>
+
+        <div>
+          <label className={labelClass}>{t("storyImage")}</label>
+          <label
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-white/20 bg-dark-card/50 cursor-pointer hover:border-gold/50 transition-colors duration-200"
+          >
+            <Upload className="w-5 h-5 text-slate-muted" />
+            <span className="text-sm text-slate-muted">
+              {storyImageFile ? storyImageFile.name : existingStoryImage ? t("image") : "PNG, JPG"}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setStoryImageFile(e.target.files?.[0] || null)}
+            />
+          </label>
         </div>
 
         <div>

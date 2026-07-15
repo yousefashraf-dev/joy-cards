@@ -21,6 +21,8 @@
   --color-gold-light: #F0D060;
   --color-gold-dark: #B8960F;
   --font-sans: 'Inter', 'Noto Kufi Arabic', system-ui, sans-serif;
+  --font-cairo: 'Cairo', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
 }
 
 @layer base {

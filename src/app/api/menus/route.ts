@@ -48,13 +48,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const db = getAdminDb();
-    const docRef = await db.collection("cafes").add({
+    const docRef = await db.collection("menus").add({
       ...body,
       createdAt: new Date(),
     });
     return NextResponse.json({ id: docRef.id }, { status: 201 });
   } catch (error) {
-    console.error("API POST /cafes error:", error);
+    console.error("API POST /menus error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -69,11 +69,11 @@ export async function GET(req: NextRequest) {
 
     if (slug) {
       const snapshot = await db
-        .collection("cafes")
+        .collection("menus")
         .where("slug", "==", slug)
         .get();
       if (snapshot.empty) {
-        return NextResponse.json({ error: "Cafe not found" }, { status: 404 });
+        return NextResponse.json({ error: "Menu not found" }, { status: 404 });
       }
       const doc = snapshot.docs[0];
       const data = doc.data();
@@ -82,79 +82,47 @@ export async function GET(req: NextRequest) {
         name: data.name,
         slug: data.slug,
         logo: data.logo,
-        menuUrl: data.menuUrl,
-        menuImages: data.menuImages || [],
-        menuType: data.menuType,
-        menuCategories: normalizeCategories(data.menuCategories),
-        menuItems: data.menuItems || [],
+        categories: normalizeCategories(data.categories),
+        items: (data.items || []).map((i: Record<string, unknown>) => ({
+          name: i.name as string,
+          price: i.price as string,
+          category: i.category as string,
+          size: i.size as string | undefined,
+          description: i.description as string | undefined,
+        })),
         theme: data.theme || "cafe",
-        phone: data.phone,
-        whatsapp: data.whatsapp,
-        websiteUrl: data.websiteUrl,
-        facebook: data.facebook,
-        instagram: data.instagram,
-        tiktok: data.tiktok,
-        snapchatUrl: data.snapchatUrl,
-        telegram: data.telegram,
-        googleMapsUrl: data.googleMapsUrl,
-        googleReviewsUrl: data.googleReviewsUrl,
-        wifiName: data.wifiName,
-        wifiPassword: data.wifiPassword,
-        vodafoneCash: data.vodafoneCash,
-        vodafoneCashExtra: data.vodafoneCashExtra || [],
-        instaPay: data.instaPay,
-        youtubeUrl: data.youtubeUrl,
-        email: data.email,
-        bio: data.bio,
-        workingHours: data.workingHours || [],
         createdAt: data.createdAt?.toMillis() || Date.now(),
       });
     }
 
     const snapshot = await db
-      .collection("cafes")
+      .collection("menus")
       .orderBy("createdAt", "desc")
       .get();
 
-    const cafes = snapshot.docs.map((d) => {
+    const menus = snapshot.docs.map((d) => {
       const data = d.data();
       return {
         id: d.id,
         name: data.name,
         slug: data.slug,
         logo: data.logo,
-        menuUrl: data.menuUrl,
-        menuImages: data.menuImages || [],
-        menuType: data.menuType,
-        menuCategories: normalizeCategories(data.menuCategories),
-        menuItems: data.menuItems || [],
+        categories: normalizeCategories(data.categories),
+        items: (data.items || []).map((i: Record<string, unknown>) => ({
+          name: i.name as string,
+          price: i.price as string,
+          category: i.category as string,
+          size: i.size as string | undefined,
+          description: i.description as string | undefined,
+        })),
         theme: data.theme || "cafe",
-        phone: data.phone,
-        whatsapp: data.whatsapp,
-        websiteUrl: data.websiteUrl,
-        facebook: data.facebook,
-        instagram: data.instagram,
-        tiktok: data.tiktok,
-        snapchatUrl: data.snapchatUrl,
-        telegram: data.telegram,
-        googleMapsUrl: data.googleMapsUrl,
-        googleReviewsUrl: data.googleReviewsUrl,
-        wifiName: data.wifiName,
-        wifiPassword: data.wifiPassword,
-        vodafoneCash: data.vodafoneCash,
-        vodafoneCashExtra: data.vodafoneCashExtra || [],
-        instaPay: data.instaPay,
-        youtubeUrl: data.youtubeUrl,
-        email: data.email,
-        bio: data.bio,
-        workingHours: data.workingHours || [],
         createdAt: data.createdAt?.toMillis() || Date.now(),
       };
     });
 
-    return NextResponse.json(cafes);
+    return NextResponse.json(menus);
   } catch (error) {
-    console.error("API /cafes error:", error);
+    console.error("API /menus error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

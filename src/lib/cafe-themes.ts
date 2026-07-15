@@ -1,4 +1,4 @@
-export type CafeTheme = "cafe" | "restaurant" | "flowers" | "vape" | "standard";
+export type CafeTheme = "cafe" | "restaurant" | "cafe-restaurant" | "flowers" | "vape" | "standard" | "premium";
 
 export interface CafeThemeConfig {
   label: { ar: string; en: string };
@@ -7,6 +7,7 @@ export interface CafeThemeConfig {
   bgLoading: string;
   accent: string;
   ringOffset: string;
+  decorationColor?: string;
 }
 
 export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
@@ -25,6 +26,15 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     bgLoading: "#1C1510",
     accent: "#D4AF37",
     ringOffset: "#1C1510",
+  },
+  "cafe-restaurant": {
+    label: { ar: "كافيه ومطعم", en: "Cafe & Restaurant" },
+    icon: "☕🍽️",
+    bg: "linear-gradient(to bottom, #0A0A0C, #08080A, #040406)",
+    bgLoading: "#0A0A0C",
+    accent: "#C4956A",
+    ringOffset: "#0A0A0C",
+    decorationColor: "#FFFFFF",
   },
   flowers: {
     label: { ar: "ورد", en: "Flowers" },
@@ -49,5 +59,14 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     bgLoading: "#0f172a",
     accent: "#cbd5e1",
     ringOffset: "#0f172a",
+  },
+  premium: {
+    label: { ar: "بريميم", en: "Premium" },
+    icon: "💎",
+    bg: "linear-gradient(to bottom, #0F0D0A, #0C0A08, #060504)",
+    bgLoading: "#0F0D0A",
+    accent: "#D4985C",
+    ringOffset: "#0F0D0A",
+    decorationColor: "#D4985C",
   },
 };

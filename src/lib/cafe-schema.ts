@@ -21,6 +21,61 @@ export interface WorkingHour {
   closed?: boolean;
 }
 
+export interface MenuCategory {
+  name: string;
+  icon: string;
+}
+
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  سلطة: "🥗", salad: "🥗",
+  "مشروبات ساخنة": "☕", "مشروبات ساخنه": "☕", "hot drinks": "☕", coffee: "☕", قهوة: "☕", شاي: "🍵",
+  "مشروبات باردة": "🥤", "مشروبات بارده": "🥤", "cold drinks": "🥤", juice: "🧃", عصير: "🧃", عصائر: "🧃",
+  بيتزا: "🍕", pizza: "🍕",
+  برجر: "🍔", burger: "🍔",
+  سوشي: "🍣", sushi: "🍣",
+  حلويات: "🍰", sweets: "🍰", dessert: "🍰", "آيس كريم": "🍦",
+  شوربة: "🍜", soup: "🍜",
+  باستا: "🍝", pasta: "🍝",
+  مقبلات: "🥓", appetizer: "🥓", starters: "🥓",
+  لحوم: "🥩", meat: "🥩", steak: "🥩",
+  مشاوي: "🍖", grill: "🍖",
+  فطار: "🍳", breakfast: "🍳", "وجبة فطار": "🍳",
+  سموذي: "🥑", smoothie: "🥑",
+  ميلك: "🥛", "ميلك شيك": "🥛",
+  دونات: "🍩", donut: "🍩",
+  مخبوزات: "🥨", bakery: "🥨", خبز: "🍞",
+  سمك: "🐟", fish: "🐟", seafood: "🦐",
+  دجاج: "🍗", chicken: "🍗",
+  "وجبات أطفال": "👶", kids: "👶",
+};
+
+export function normalizeCategories(cats: unknown): MenuCategory[] {
+  if (!Array.isArray(cats)) return [];
+  if (cats.length === 0) return [];
+  if (typeof cats[0] === "string") {
+    return (cats as string[]).map((name) => {
+      const lower = name.trim().toLowerCase();
+      let icon = "";
+      for (const [key, emoji] of Object.entries(CATEGORY_ICON_MAP)) {
+        if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) {
+          icon = emoji;
+          break;
+        }
+      }
+      return { name: name.trim(), icon };
+    });
+  }
+  return cats as MenuCategory[];
+}
+
+export interface MenuItem {
+  name: string;
+  price: string;
+  category: string;
+  size?: string;
+  description?: string;
+}
+
 export interface Cafe {
   id?: string;
   name: string;
@@ -28,7 +83,9 @@ export interface Cafe {
   logo?: string;
   menuUrl?: string;
   menuImages?: string[];
-  menuType?: "pdf" | "images" | "link";
+  menuType?: "pdf" | "images" | "link" | "web";
+  menuCategories?: MenuCategory[];
+  menuItems?: MenuItem[];
   theme?: CafeTheme;
   phone?: string;
   whatsapp?: string;
@@ -43,6 +100,7 @@ export interface Cafe {
   wifiName?: string;
   wifiPassword?: string;
   vodafoneCash?: string;
+  vodafoneCashExtra?: string[];
   instaPay?: string;
   youtubeUrl?: string;
   email?: string;
@@ -86,7 +144,7 @@ export async function getAllCafes(): Promise<Cafe[]> {
   const db = getClientDb();
   const q = query(collection(db, "cafes"), orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => {
+    return snapshot.docs.map((d) => {
     const data = d.data();
     return {
       id: d.id,
@@ -96,6 +154,8 @@ export async function getAllCafes(): Promise<Cafe[]> {
       menuUrl: data.menuUrl,
       menuImages: data.menuImages || [],
       menuType: data.menuType,
+      menuCategories: normalizeCategories(data.menuCategories),
+      menuItems: data.menuItems || [],
       theme: data.theme || "cafe",
       phone: data.phone,
       whatsapp: data.whatsapp,
@@ -109,16 +169,17 @@ export async function getAllCafes(): Promise<Cafe[]> {
       googleReviewsUrl: data.googleReviewsUrl,
       wifiName: data.wifiName,
       wifiPassword: data.wifiPassword,
-      vodafoneCash: data.vodafoneCash,
-      instaPay: data.instaPay,
-      youtubeUrl: data.youtubeUrl,
-      email: data.email,
-      bio: data.bio,
-      workingHours: data.workingHours || [],
-      createdAt: data.createdAt?.toMillis() || Date.now(),
-    } as Cafe;
-  });
-}
+        vodafoneCash: data.vodafoneCash,
+        vodafoneCashExtra: data.vodafoneCashExtra || [],
+        instaPay: data.instaPay,
+        youtubeUrl: data.youtubeUrl,
+        email: data.email,
+        bio: data.bio,
+        workingHours: data.workingHours || [],
+        createdAt: data.createdAt?.toMillis() || Date.now(),
+      } as Cafe;
+    });
+  }
 
 export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
   const db = getClientDb();
@@ -135,6 +196,8 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     menuUrl: data.menuUrl,
     menuImages: data.menuImages || [],
     menuType: data.menuType,
+    menuCategories: normalizeCategories(data.menuCategories),
+    menuItems: data.menuItems || [],
     theme: data.theme || "cafe",
     phone: data.phone,
     whatsapp: data.whatsapp,
@@ -149,6 +212,7 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     wifiName: data.wifiName,
     wifiPassword: data.wifiPassword,
     vodafoneCash: data.vodafoneCash,
+    vodafoneCashExtra: data.vodafoneCashExtra || [],
     instaPay: data.instaPay,
     youtubeUrl: data.youtubeUrl,
     email: data.email,

@@ -2,14 +2,16 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send, Download } from "lucide-react";
+import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send, Download, ListOrdered } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
-import type { Cafe, WorkingHour } from "@/lib/cafe-schema";
+import type { Cafe, WorkingHour, MenuItem, MenuCategory } from "@/lib/cafe-schema";
+import MenuBuilder from "./MenuBuilder";
 
 import { compressImage } from "@/lib/compressImage";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
 import type { CafeTheme } from "@/lib/cafe-themes";
 import { useToast } from "@/components/ui/ToastProvider";
+import { BASE_URL } from "@/lib/constants";
 
 interface CafeFormProps {
   cafe?: Cafe | null;
@@ -24,10 +26,12 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState(cafe?.name || "");
   const [slug, setSlug] = useState(cafe?.slug || "");
-  const [menuType, setMenuType] = useState<"pdf" | "images" | "link">(
+  const [menuType, setMenuType] = useState<"pdf" | "images" | "link" | "web">(
     cafe?.menuType || "pdf"
   );
   const [menuUrl, setMenuUrl] = useState(cafe?.menuUrl || "");
+  const [menuCategories, setMenuCategories] = useState<MenuCategory[]>(cafe?.menuCategories || []);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(cafe?.menuItems || []);
   const [phone, setPhone] = useState(cafe?.phone || "");
   const [whatsapp, setWhatsapp] = useState(cafe?.whatsapp || "");
   const [websiteUrl, setWebsiteUrl] = useState(cafe?.websiteUrl || "");
@@ -44,6 +48,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [wifiName, setWifiName] = useState(cafe?.wifiName || "");
   const [wifiPassword, setWifiPassword] = useState(cafe?.wifiPassword || "");
   const [vodafoneCash, setVodafoneCash] = useState(cafe?.vodafoneCash || "");
+  const [vodafoneCashExtra, setVodafoneCashExtra] = useState<string[]>(cafe?.vodafoneCashExtra || []);
   const [instaPay, setInstaPay] = useState(cafe?.instaPay || "");
   const [theme, setTheme] = useState<CafeTheme>(cafe?.theme || "cafe");
   const [youtubeUrl, setYoutubeUrl] = useState(cafe?.youtubeUrl || "");
@@ -145,9 +150,11 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         name: name.trim(),
         slug: slug.trim(),
         logo: logoUrl,
-        menuUrl: finalMenuUrl,
+        menuUrl: menuType === "web" ? `${BASE_URL}/ar/menu/${slug.trim()}` : finalMenuUrl,
         menuImages: menuType === "images" ? finalMenuImages : [],
         menuType,
+        menuCategories: menuType === "web" ? menuCategories : [],
+        menuItems: menuType === "web" ? menuItems : [],
         theme,
         phone: phone.trim(),
         whatsapp: whatsapp.trim(),
@@ -162,6 +169,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         wifiName: wifiName.trim(),
         wifiPassword: wifiPassword.trim(),
         vodafoneCash: vodafoneCash.trim(),
+        vodafoneCashExtra: vodafoneCashExtra.map((v) => v.trim()).filter(Boolean),
         instaPay: instaPay.trim(),
         youtubeUrl: youtubeUrl.trim(),
         email: email.trim(),
@@ -192,7 +200,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
               menuUrl: finalMenuUrl,
               menuImages: finalMenuImages,
               docId,
-              cafeLink: `https://gotap.vercel.app/ar/cafe/${data.slug}`,
+              cafeLink: `${BASE_URL}/ar/cafe/${data.slug}`,
               submittedAt: new Date().toISOString(),
             }),
           });
@@ -269,7 +277,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
             <div ref={qrRef} className="shrink-0">
               {slug ? (
                 <QRCodeCanvas
-                  value={`https://gotap.vercel.app/ar/cafe/${slug}`}
+                  value={`${BASE_URL}/ar/cafe/${slug}`}
                   size={90}
                   level="H"
                 />
@@ -281,7 +289,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-slate-muted truncate" dir="ltr">
-                https://gotap.vercel.app/ar/cafe/{slug || "..."}
+                https://{BASE_URL.replace("https://", "")}/ar/cafe/{slug || "..."}
               </p>
               <button
                 type="button"
@@ -300,7 +308,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         <div ref={qrPrintRef} className="hidden">
           {slug && (
             <QRCodeCanvas
-              value={`https://gotap.vercel.app/ar/cafe/${slug}`}
+              value={`${BASE_URL}/ar/cafe/${slug}`}
               size={2000}
               level="H"
             />
@@ -331,8 +339,8 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         <div>
           <label className={labelClass}>{t("menuType")}</label>
           <div className="flex gap-3">
-            {(["pdf", "images", "link"] as const).map((type) => {
-              const Icon = type === "pdf" ? FileText : type === "images" ? ImageIcon : LinkIcon;
+            {(["pdf", "images", "link", "web"] as const).map((type) => {
+              const Icon = type === "pdf" ? FileText : type === "images" ? ImageIcon : type === "web" ? ListOrdered : LinkIcon;
               return (
                 <button
                   key={type}
@@ -353,7 +361,20 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         </div>
 
         {/* Menu Upload or Link */}
-        {menuType === "link" ? (
+        {menuType === "web" ? (
+          <div>
+            <label className={labelClass}>عناصر المنيو التفاعلي</label>
+            <p className="text-xs text-slate-muted/60 mb-3">
+              أضف التصنيفات والأصناف — هتظهر في صفحة منيو تفاعلية مع فلتر
+            </p>
+            <MenuBuilder
+              categories={menuCategories}
+              items={menuItems}
+              onCategoriesChange={setMenuCategories}
+              onItemsChange={setMenuItems}
+            />
+          </div>
+        ) : menuType === "link" ? (
           <div>
             <label className={labelClass}>{t("menuLink")}</label>
             <input
@@ -769,9 +790,40 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                 value={vodafoneCash}
                 onChange={(e) => setVodafoneCash(e.target.value)}
                 className={inputClass}
-                placeholder="Vodafone Cash"
+                placeholder="Vodafone Cash (الرقم الأساسي)"
                 dir="ltr"
               />
+              <p className="text-xs text-slate-muted/50 mt-1">الرقم الأساسي (رقم واحد فقط)</p>
+              {vodafoneCashExtra.map((v, i) => (
+                <div key={i} className="flex items-center gap-2 mt-2">
+                  <input
+                    type="text"
+                    value={v}
+                    onChange={(e) => {
+                      const updated = [...vodafoneCashExtra];
+                      updated[i] = e.target.value;
+                      setVodafoneCashExtra(updated);
+                    }}
+                    className={inputClass}
+                    placeholder={`رقم إضافي ${i + 1}`}
+                    dir="ltr"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setVodafoneCashExtra((prev) => prev.filter((_, idx) => idx !== i))}
+                    className="p-2 rounded-lg text-red-400 hover:bg-red-400/10 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setVodafoneCashExtra((prev) => [...prev, ""])}
+                className="mt-2 px-4 py-2 rounded-lg border border-dashed border-white/20 text-sm text-slate-muted hover:text-slate-light hover:border-white/40 transition-all duration-200"
+              >
+                + إضافة رقم فودافون كاش إضافي
+              </button>
             </div>
             <div>
               <input

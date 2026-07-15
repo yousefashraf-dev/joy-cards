@@ -4,7 +4,7 @@ import { getAdminDb } from "@/lib/firebase";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { customerName, displayName, logo, theme, productType, socialLinks, digitalCardsFields, autoTapFields, businessTapFields } = body;
+    const { customerName, displayName, logo, theme, productType, socialLinks, digitalCardsFields, autoTapFields, businessTapFields, weddingCardFields } = body;
 
     const db = getAdminDb();
     const docRef = await db.collection("profiles").add({
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       digitalCardsFields: digitalCardsFields || null,
       autoTapFields: autoTapFields || null,
       businessTapFields: businessTapFields || null,
+      weddingCardFields: weddingCardFields || null,
       createdAt: new Date(),
     });
 

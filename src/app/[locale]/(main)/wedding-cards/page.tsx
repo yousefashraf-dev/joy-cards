@@ -92,15 +92,13 @@ export default function WeddingCardsPage() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="text-center"
         >
-          <a
-            href="https://wa.me/201585599678?text=مرحباً%20GoTap!%20أريد%20طلب%20كارت%20فرح%20إلكتروني"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl bg-gold/20 backdrop-blur-md border border-gold/50 text-gold font-bold text-lg hover:bg-gold/30 hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-300"
+          <Link
+            href="/wedding/order"
+            className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl bg-gold text-matte-dark font-bold text-lg hover:bg-gold-light transition-all duration-300 shadow-[0_0_25px_rgba(212,175,55,0.3)]"
           >
-            <MessageCircle className="w-5 h-5" />
-            {t("cta")}
-          </a>
+            <Heart className="w-5 h-5" />
+            اطلب الآن
+          </Link>
           <p className="text-xs text-slate-muted/50 mt-4">
             {t("badge")} — {tc("egp")}
           </p>

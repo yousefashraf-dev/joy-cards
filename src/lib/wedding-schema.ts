@@ -18,7 +18,9 @@ export interface WeddingCard {
   coupleName2: string;
   slug: string;
   image?: string;
+  happyMoment?: string;
   story?: string;
+  storyImage?: string;
   date: string;
   time: string;
   venue: string;
@@ -26,7 +28,12 @@ export interface WeddingCard {
   dressCode?: string;
   dressCodeHer?: string;
   dressCodeHim?: string;
+  theme?: string;
   active: boolean;
+  source?: "admin" | "order";
+  customerName?: string;
+  customerPhone?: string;
+  customerAddress?: string;
   createdAt?: number;
 }
 
@@ -63,7 +70,9 @@ export async function getAllWeddings(): Promise<WeddingCard[]> {
       coupleName2: data.coupleName2,
       slug: data.slug,
       image: data.image,
+      happyMoment: data.happyMoment,
       story: data.story,
+      storyImage: data.storyImage,
       date: data.date,
       time: data.time,
       venue: data.venue,
@@ -72,6 +81,7 @@ export async function getAllWeddings(): Promise<WeddingCard[]> {
       dressCodeHer: data.dressCodeHer,
       dressCodeHim: data.dressCodeHim,
       active: data.active ?? true,
+      theme: data.theme || "champagne-rose",
       createdAt: data.createdAt?.toMillis() || Date.now(),
     } as WeddingCard;
   });
@@ -90,7 +100,9 @@ export async function getWeddingBySlug(slug: string): Promise<WeddingCard | null
     coupleName2: data.coupleName2,
     slug: data.slug,
     image: data.image,
+    happyMoment: data.happyMoment,
     story: data.story,
+    storyImage: data.storyImage,
     date: data.date,
     time: data.time,
     venue: data.venue,
@@ -99,6 +111,7 @@ export async function getWeddingBySlug(slug: string): Promise<WeddingCard | null
     dressCodeHer: data.dressCodeHer,
     dressCodeHim: data.dressCodeHim,
     active: data.active ?? true,
+    theme: data.theme || "champagne-rose",
     createdAt: data.createdAt?.toMillis() || Date.now(),
   } as WeddingCard;
 }

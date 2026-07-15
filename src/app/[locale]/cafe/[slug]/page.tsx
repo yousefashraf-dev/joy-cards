@@ -21,10 +21,12 @@ import {
   Mail,
   Clock,
   Share2,
+  ChevronRight,
 } from "lucide-react";
 import type { Cafe } from "@/lib/cafe-schema";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
 import type { CafeTheme } from "@/lib/cafe-themes";
+import { BASE_URL } from "@/lib/constants";
 
 function CoffeeCupSvg({ className }: { className?: string }) {
   return (
@@ -95,6 +97,30 @@ function VapeSvg({ className }: { className?: string }) {
   );
 }
 
+function CafeRestaurantSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="65" cy="140" rx="40" ry="8" stroke="currentColor" strokeWidth="1.5" opacity="0.6"/>
+      <path d="M38 72 C38 118, 42 133, 65 133 C88 133, 92 118, 92 72 Z" stroke="currentColor" strokeWidth="1.8" opacity="0.8"/>
+      <ellipse cx="65" cy="72" rx="27" ry="6" stroke="currentColor" strokeWidth="1.5" opacity="0.8"/>
+      <path d="M92 87 C110 87, 110 120, 92 120" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7"/>
+      <ellipse cx="150" cy="135" rx="40" ry="10" stroke="currentColor" strokeWidth="1.5" opacity="0.5"/>
+      <ellipse cx="150" cy="135" rx="28" ry="7" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
+      <ellipse cx="150" cy="135" rx="16" ry="4" stroke="currentColor" strokeWidth="0.8" opacity="0.2"/>
+      <line x1="128" y1="80" x2="128" y2="120" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="120" y1="80" x2="120" y2="72" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="124" y1="80" x2="124" y2="70" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="128" y1="80" x2="128" y2="68" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="132" y1="80" x2="132" y2="70" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="136" y1="80" x2="136" y2="72" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="120" y1="72" x2="136" y2="72" stroke="currentColor" strokeWidth="1.2" opacity="0.6"/>
+      <path d="M160 68 L160 120" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <path d="M155 68 C155 50, 165 50, 165 68" stroke="currentColor" strokeWidth="1.5" opacity="0.7"/>
+      <line x1="155" y1="63" x2="165" y2="63" stroke="currentColor" strokeWidth="1.2" opacity="0.6"/>
+    </svg>
+  );
+}
+
 function to12h(time: string) {
   const [h, m] = time.split(":").map(Number);
   const ap = h >= 12 ? "PM" : "AM";
@@ -112,6 +138,11 @@ const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; pos
     { component: PlateCutlerySvg, position: "left-0 bottom-1/3 -translate-x-1/4 w-52 h-52" },
     { component: PlateCutlerySvg, position: "right-1/4 bottom-1/2 translate-x-1/2 w-40 h-40" },
   ],
+  "cafe-restaurant": [
+    { component: CafeRestaurantSvg, position: "left-0 top-1/4 -translate-x-1/4 w-72 h-72" },
+    { component: CafeRestaurantSvg, position: "right-0 bottom-1/3 translate-x-1/4 w-56 h-56" },
+    { component: CafeRestaurantSvg, position: "left-1/2 bottom-1/2 -translate-x-1/2 w-48 h-48" },
+  ],
   flowers: [
     { component: FlowerSvg, position: "left-0 top-1/4 -translate-x-1/4 w-64 h-64" },
     { component: FlowerSvg, position: "right-0 bottom-1/3 translate-x-1/4 w-52 h-52" },
@@ -123,6 +154,7 @@ const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; pos
     { component: VapeSvg, position: "right-1/4 top-3/4 -translate-y-1/3 w-40 h-40" },
   ],
   standard: [],
+  premium: [],
 };
 
 export default function CafePage() {
@@ -133,6 +165,7 @@ export default function CafePage() {
   const [menuModal, setMenuModal] = useState(false);
   const [wifiModal, setWifiModal] = useState(false);
   const [hoursModal, setHoursModal] = useState(false);
+  const [vodafoneModal, setVodafoneModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [menuImages, setMenuImages] = useState<string[]>([]);
 
@@ -274,17 +307,21 @@ export default function CafePage() {
     },
   ].filter((item) => item.href);
 
-  const hasPayments = cafe.vodafoneCash || cafe.instaPay;
-  const vodafoneLink = cafe.vodafoneCash
-    ? cafe.vodafoneCash.startsWith("http://") || cafe.vodafoneCash.startsWith("https://")
-      ? cafe.vodafoneCash
-      : `tel:%2A9%2A7%2A${cafe.vodafoneCash}%23`
-    : "";
+  const hasPayments = cafe.vodafoneCash || (cafe.vodafoneCashExtra && cafe.vodafoneCashExtra.length > 0) || cafe.instaPay;
+  const allVodafoneNumbers = [
+    cafe.vodafoneCash,
+    ...(cafe.vodafoneCashExtra || []),
+  ].filter(Boolean) as string[];
   const instaPayLink = cafe.instaPay
     ? cafe.instaPay.startsWith("http://") || cafe.instaPay.startsWith("https://")
       ? cafe.instaPay
       : `instapay://payment?to=${cafe.instaPay}`
     : "";
+
+  const makeVodafoneLink = (num: string) =>
+    num.startsWith("http://") || num.startsWith("https://")
+      ? num
+      : `tel:%2A9%2A7%2A${num}%23`;
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: themeCfg.bg }}>
@@ -370,6 +407,19 @@ export default function CafePage() {
                   <span className="text-xl group-hover:scale-110 transition-transform">🔗</span>
                   Menu
                 </button>
+              ) : cafe.menuType === "web" ? (
+                <a
+                  href={`/ar/menu/${slug}`}
+                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl backdrop-blur-md border font-bold text-lg hover:shadow-[0_0_25px_rgba(212,175,55,0.3)] transition-all duration-300 group"
+                  style={{
+                    backgroundColor: isVape ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.1)",
+                    borderColor: `${accentHex}80`,
+                    color: accentHex,
+                  }}
+                >
+                  <span className="text-xl group-hover:scale-110 transition-transform">🔗</span>
+                  Menu
+                </a>
               ) : (
                 <a
                   href={cafe.menuUrl}
@@ -482,26 +532,47 @@ export default function CafePage() {
               <p className="text-xs mb-4 uppercase tracking-widest text-center" style={{ color: `${accentHex}99` }}>
                 Payment Methods
               </p>
-              <div className={`grid gap-4 ${vodafoneLink && instaPayLink ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
-                {vodafoneLink && (
-                  <a
-                    href={vodafoneLink}
-                    className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
-                    style={{
-                      backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
-                      borderColor: `${accentHex}4D`,
-                      color: accentHex,
-                    }}
-                  >
-                    <svg className="w-10 h-10 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
-                      <circle cx="24" cy="24" r="22" fill="#E60000" />
-                      <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
-                      <circle cx="26" cy="16" r="2.5" fill="white" />
-                    </svg>
-                    <span className="text-sm font-bold text-center leading-tight">
-                      Pay via Vodafone Cash
-                    </span>
-                  </a>
+              <div className={`grid gap-4 ${allVodafoneNumbers.length > 0 && instaPayLink ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
+                {allVodafoneNumbers.length > 0 && (
+                  allVodafoneNumbers.length === 1 ? (
+                    <a
+                      href={makeVodafoneLink(allVodafoneNumbers[0])}
+                      className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
+                      style={{
+                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                        borderColor: `${accentHex}4D`,
+                        color: accentHex,
+                      }}
+                    >
+                      <svg className="w-10 h-10 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="22" fill="#E60000" />
+                        <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
+                        <circle cx="26" cy="16" r="2.5" fill="white" />
+                      </svg>
+                      <span className="text-sm font-bold text-center leading-tight">
+                        Pay via Vodafone Cash
+                      </span>
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => setVodafoneModal(true)}
+                      className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
+                      style={{
+                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                        borderColor: `${accentHex}4D`,
+                        color: accentHex,
+                      }}
+                    >
+                      <svg className="w-10 h-10 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="22" fill="#E60000" />
+                        <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
+                        <circle cx="26" cy="16" r="2.5" fill="white" />
+                      </svg>
+                      <span className="text-sm font-bold text-center leading-tight">
+                        Pay via Vodafone Cash
+                      </span>
+                    </button>
+                  )
                 )}
                 {instaPayLink && (
                   <a
@@ -583,7 +654,7 @@ export default function CafePage() {
           >
             Powered by{" "}
             <a
-              href="https://gotap.vercel.app/ar"
+              href={`${BASE_URL}/ar`}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline"
@@ -598,7 +669,7 @@ export default function CafePage() {
         <AnimatePresence>
           {menuModal && (
             <MenuModal
-              menuType={cafe.menuType}
+              menuType={(cafe.menuType === "web" ? undefined : cafe.menuType) as "pdf" | "images" | "link" | undefined}
               menuUrl={cafe.menuUrl}
               menuImages={menuImages}
               onClose={() => setMenuModal(false)}
@@ -696,6 +767,72 @@ export default function CafePage() {
                       <p className="text-xs text-green-400 mt-2">Copied!</p>
                     )}
                   </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Vodafone Cash Selection Modal */}
+        <AnimatePresence>
+          {vodafoneModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 z-50"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setVodafoneModal(false);
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="w-full max-w-sm backdrop-blur-xl border rounded-2xl p-8"
+                style={{
+                  backgroundColor: `${themeCfg.ringOffset}F2`,
+                  borderColor: `${accentHex}4D`,
+                  boxShadow: `0 0 40px ${accentHex}26`,
+                }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" style={{ color: accentHex }}>
+                      <circle cx="24" cy="24" r="22" fill="#E60000" />
+                      <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
+                      <circle cx="26" cy="16" r="2.5" fill="white" />
+                    </svg>
+                    <h3 className="text-lg font-bold" style={{ color: accentHex }}>
+                      Choose Vodafone Cash Number
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setVodafoneModal(false)}
+                    className="text-slate-muted hover:text-slate-light transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {allVodafoneNumbers.map((num, i) => (
+                    <a
+                      key={i}
+                      href={makeVodafoneLink(num)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
+                      style={{
+                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                        borderColor: `${accentHex}4D`,
+                        color: accentHex,
+                      }}
+                    >
+                      <span className="text-sm font-bold">{i === 0 ? "رقم 1" : `رقم ${i + 1}`}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </a>
+                  ))}
                 </div>
               </motion.div>
             </motion.div>

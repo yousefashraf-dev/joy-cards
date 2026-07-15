@@ -10,6 +10,8 @@ export const WHATSAPP_ORDERS_LINK = `https://wa.me/${WHATSAPP_ORDERS_NUMBER}`;
 export const WHATSAPP_BUSINESS_MSG = `https://wa.me/${WHATSAPP_ORDERS_NUMBER}?text=${encodeURIComponent("السلام عليكم جو تابل، كنت محتاج أستفسر عن خدمة الكافيهات والمطاعم")}`;
 export const GAS_CAFE_URL = process.env.NEXT_PUBLIC_GAS_CAFE_URL || GAS_URL;
 
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://gotap.vercel.app";
+
 export const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dliaxor9r";
 
 export const PRICES = {

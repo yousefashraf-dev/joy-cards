@@ -1,6 +1,6 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { Inter, Noto_Kufi_Arabic, Dancing_Script, Playfair_Display } from "next/font/google";
+import { Inter, Noto_Kufi_Arabic, Dancing_Script, Playfair_Display, Cairo, Outfit } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 
@@ -25,6 +25,18 @@ const dancingScript = Dancing_Script({
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-heading",
+  display: "swap",
+});
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  variable: "--font-cairo",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -60,7 +72,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`${inter.variable} ${notoKufi.variable} ${dancingScript.variable} ${playfairDisplay.variable} h-full antialiased`}
+      className={`${inter.variable} ${notoKufi.variable} ${dancingScript.variable} ${playfairDisplay.variable} ${cairo.variable} ${outfit.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-matte-black text-slate-light font-sans" suppressHydrationWarning>

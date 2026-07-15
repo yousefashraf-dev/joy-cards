@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Edit3, Trash2, Copy, Check, ExternalLink, Download } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import type { Cafe } from "@/lib/cafe-schema";
+import { BASE_URL } from "@/lib/constants";
 
 
 interface CafeTableProps {
@@ -24,7 +25,7 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
   const hiddenQrRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadQR = useCallback((slug: string) => {
-    const link = `https://gotap.vercel.app/${locale}/cafe/${slug}`;
+    const link = `${BASE_URL}/${locale}/cafe/${slug}`;
     setQrTarget(link);
     setTimeout(() => {
       const canvas = hiddenQrRef.current?.querySelector("canvas");
@@ -55,7 +56,7 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
   );
 
   const handleCopyLink = useCallback(async (slug: string, id: string) => {
-    const link = `https://gotap.vercel.app/${locale}/cafe/${slug}`;
+    const link = `${BASE_URL}/${locale}/cafe/${slug}`;
     try {
       await navigator.clipboard.writeText(link);
       setCopiedId(id);
@@ -146,7 +147,7 @@ export default function CafeTable({ cafes, onEdit, onRefresh }: CafeTableProps) 
                     )}
                   </button>
                   <a
-                    href={`https://gotap.vercel.app/${locale}/cafe/${cafe.slug}`}
+                    href={`${BASE_URL}/${locale}/cafe/${cafe.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-xs text-slate-muted/50 hover:text-slate-muted ml-2 transition-colors"

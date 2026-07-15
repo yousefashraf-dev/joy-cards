@@ -1,37 +1,23 @@
 import { notFound } from "next/navigation";
 import WeddingPreview from "@/components/wedding/WeddingPreview";
-import { getAdminDb } from "@/lib/firebase";
 
 interface Props {
   params: Promise<{ slug: string; locale: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 async function getWedding(slug: string) {
-  const db = getAdminDb();
-  const snapshot = await db
-    .collection("weddings")
-    .where("slug", "==", slug)
-    .get();
-  if (snapshot.empty) return null;
-  const doc = snapshot.docs[0];
-  const data = doc.data();
-  return {
-    id: doc.id,
-    coupleName1: data.coupleName1,
-    coupleName2: data.coupleName2,
-    slug: data.slug,
-    image: data.image,
-    story: data.story,
-    date: data.date,
-    time: data.time,
-    venue: data.venue,
-    venueMapsLink: data.venueMapsLink,
-    dressCode: data.dressCode,
-    dressCodeHer: data.dressCodeHer,
-    dressCodeHim: data.dressCodeHim,
-    active: data.active ?? true,
-    createdAt: data.createdAt?.toMillis() || Date.now(),
-  };
+  try {
+    const origin = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${origin}/api/weddings?slug=${slug}`, {
+      next: { revalidate: 0 },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }: Props) {

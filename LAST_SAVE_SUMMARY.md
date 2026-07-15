@@ -1,4 +1,4 @@
-# جلسة 23 يوليو 2026 — Tree Theme: 3D Coverflow Carousel + إعادة هيكلة المجموعات
+# جلسة 23 يوليو 2026 — Tree Theme: 3D Coverflow Carousel + إعادة هيكلة المجموعات + ديناميك الثيمات لكل المنيوهات
 
 ## التعديلات
 
@@ -29,7 +29,14 @@
 - دمج "أطباق آسيوية" (ASIAN APPETIZER + ASIAN SOUP) داخل مجموعة SUSHI
 - تحديث `CAROUSEL_ORDER` في TreeCarousel
 
-### 6. تحديثات إضافية
+### 6. ديناميك الثيمات لكل المنيوهات (fix session)
+- **الملف:** `src/app/[locale]/menu/[slug]/page.tsx`
+- `bgColor` بقى يقرأ من `themeConfig?.bgLoading` لكل الثيمات (مش بس Tree)
+- `bgGradient` جديد بياخد `themeConfig?.bg` لدعم gradient backgrounds
+- الحاوية الرئيسية بقت `background: bgGradient` بدل `backgroundColor`
+- صفحة "مش موجود" بتستخدم bgColor الديناميكي
+
+### 7. تحديثات إضافية
 - **الملف:** `src/app/[locale]/cafe/[slug]/page.tsx` — إضافة `tree: []` إلى `THEME_DECORATIONS`
 - **MenuForm:** ثيم Tree بيظهر تلقائياً في خيارات الثيم (لأنه بيقرأ `CAFE_THEMES`)
 
@@ -45,5 +52,5 @@
 
 ```bash
 git log --oneline -1
-522e429 docs: update last save summary with Session 22
+f854ee5 feat: Tree theme menu + dynamic theming for all themes + menu groups restructure
 ```

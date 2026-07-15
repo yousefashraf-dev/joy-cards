@@ -155,6 +155,7 @@ const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; pos
   ],
   standard: [],
   premium: [],
+  tree: [],
 };
 
 export default function CafePage() {

@@ -1,4 +1,4 @@
-export type CafeTheme = "cafe" | "restaurant" | "cafe-restaurant" | "flowers" | "vape" | "standard" | "premium";
+export type CafeTheme = "cafe" | "restaurant" | "cafe-restaurant" | "flowers" | "vape" | "standard" | "premium" | "tree";
 
 export interface CafeThemeConfig {
   label: { ar: string; en: string };
@@ -68,5 +68,14 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     accent: "#D4985C",
     ringOffset: "#0F0D0A",
     decorationColor: "#D4985C",
+  },
+  tree: {
+    label: { ar: "غابة", en: "Tree" },
+    icon: "🌳",
+    bg: "linear-gradient(to bottom, #0D0D0D, #080808, #030303)",
+    bgLoading: "#0D0D0D",
+    accent: "#3D8B7A",
+    ringOffset: "#0D0D0D",
+    decorationColor: "#2D6B5A",
   },
 };

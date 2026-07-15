@@ -1,35 +1,37 @@
-# جلسة 22 يوليو 2026 — Feature Section للمطاعم + تصحيح أزرار كروت الفرح
+# جلسة 23 يوليو 2026 — Tree Theme: 3D Coverflow Carousel + إعادة هيكلة المجموعات
 
 ## التعديلات
 
-### 1. Feature Section في صفحة business-tap
-- **الملف:** `src/app/[locale]/(main)/business-tap/page.tsx`
-- إضافة 3 أعمدة: QR+NFC اتصال ذكي | صفحة روابط ودفع (Mockup) | قائمة طعام رقمية بدون أسعار (Mockup)
-- تصميم داكن فاخر متماشي مع الهوية، أيقونات متحركة، متجاوب بالكامل
-- إضافة keys ترجمة جديدة `featureSection` في `ar.json` / `en.json`
+### 1. ثيم Tree الجديد للمنيو الرقمي
+- **الملف:** `src/lib/cafe-themes.ts`
+- إضافة `"tree"` إلى `CafeTheme` + كونفيج (accent: `#3D8B7A` مينت جرين، bg داكن)
 
-### 2. تصحيح زر "اطلب الآن" في wedding-cards
-- **الملف:** `src/app/[locale]/(main)/wedding-cards/page.tsx`
-- إزالة زر الواتساب الثاني (كان بيظهر جنب زر الفورم وكلاهما "اطلب الآن")
-- إبقاء الزر الذهبي فقط → `/wedding/order`
+### 2. كاروسيل تفاعلي 3D Coverflow
+- **ملف جديد:** `src/components/menu/TreeCarousel.tsx`
+- تأثير 3D Coverflow: الكارت النشط scale 1.15 + توهج نيون، والجوانبية scale 0.55–0.8 + rotateY + opacity
+- سحب باللمس (Pointer Events) + أزرار تنقل + نقاط indicators
+- Spring animations من Framer Motion
 
-### 3. إعادة تصميم المنيو الرقمي (جلسة 21)
-- **صفحة المنيو:** Parent Tabs + Sub Tabs + Items بدون أسعار
-- **MenuBuilder:** إضافة `size` لكل صنف
-- **CSV Import:** رفع CSV + معاينة جدولية قبل الحفظ
-- **Menu Groups:** 7 مجموعات رئيسية (سوشي، آسيوي، مشروبات باردة/ساخنة، غربي، حلويات، إضافات)
-- **خطوط:** Cairo + Outfit في `layout.tsx` و `globals.css`
+### 3. أيقونات 2D Line Art
+- **ملف جديد:** `src/components/menu/LineArtIcons.tsx`
+- 18 أيقونة SVG برسومات بيضاء خط رفيع (سوشي، سلطة، شوربة، بيتزا، باستا، برجر، لحوم، دجاج، فاهيتا، مشروبات، حلويات، إضافات...)
 
-### 4. نظام طلبات كروت الفرح (جلسات 19-20)
-- **WeddingOrderForm:** 8 خطوات (Couple → Date → HappyMoment → Story → DressCode → Venue → Theme → Review)
-- **WeddingPreview:** إعادة تصميم كاملة + 4 ثيمات (Champagne Rose, Sage Emerald, Navy Silver, Blush Lilac)
-- **CountdownTimer:** أرقام كبيرة + fallback لتاريخ فارغ
-- **Navbar:** ثابت أعلى صفحة الكارت
+### 4. إعادة تصميم صفحة المنيو
+- **الملف:** `src/app/[locale]/menu/[slug]/page.tsx`
+- ألوان ديناميكية حسب `menu.theme` (accent, bg)
+- `LeafDecorations` — 17 رسالة ورق شجر (blur كبير + small crisp leaves) في الخلفية
+- تبويبات `ParentTabs` مخفية أول ما الصفحة تفتح — بتظهر بعد اختيار قسم من الكاروسيل
+- الكاروسيل يظهر فقط مع ثيم Tree، باقي الثيمات شغالة عادي
 
-### 5. تحسينات الكافيه (جلسة 19)
-- **VodafoneCashExtra:** أرقام دفع متعددة + Modal اختيار
-- **Bio + YouTube + Email + Working Hours:** حقول جديدة
-- **QR Code:** معاينة + تحميل 2000px
+### 5. تفكيك "المطبخ الغربي" إلى مجموعات فردية
+- **الملف:** `src/lib/menu-groups.ts`
+- إزالة WESTERN FOOD — كل sub-category بقى مجموعة لوحدها: سلطة، شوربة، مقبلات، بيتزا، باستا، برجر، لحوم، دجاج، فاهيتا، دجاج مقلي، كويساديلا
+- دمج "أطباق آسيوية" (ASIAN APPETIZER + ASIAN SOUP) داخل مجموعة SUSHI
+- تحديث `CAROUSEL_ORDER` في TreeCarousel
+
+### 6. تحديثات إضافية
+- **الملف:** `src/app/[locale]/cafe/[slug]/page.tsx` — إضافة `tree: []` إلى `THEME_DECORATIONS`
+- **MenuForm:** ثيم Tree بيظهر تلقائياً في خيارات الثيم (لأنه بيقرأ `CAFE_THEMES`)
 
 ---
 
@@ -40,9 +42,8 @@
 | `npx tsc --noEmit` | ✅ 0 errors |
 | `en.json` braces | ✅ 73/73 |
 | `ar.json` braces | ✅ 73/73 |
-| `git push` | ✅ `production-release` |
 
 ```bash
 git log --oneline -1
-58cfcd2 feat: business-tap feature section + wedding-cards single CTA + menu redesign
+522e429 docs: update last save summary with Session 22
 ```

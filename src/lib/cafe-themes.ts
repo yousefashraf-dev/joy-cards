@@ -8,6 +8,7 @@ export interface CafeThemeConfig {
   accent: string;
   ringOffset: string;
   decorationColor?: string;
+  priceAccent?: string;
 }
 
 export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
@@ -72,10 +73,11 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
   tree: {
     label: { ar: "غابة", en: "Tree" },
     icon: "🌳",
-    bg: "linear-gradient(to bottom, #0D0D0D, #080808, #030303)",
-    bgLoading: "#0D0D0D",
-    accent: "#3D8B7A",
-    ringOffset: "#0D0D0D",
-    decorationColor: "#2D6B5A",
+    bg: "linear-gradient(to bottom, #1A0F0A, #1E110B, #140B07)",
+    bgLoading: "#1A0F0A",
+    accent: "#E5C158",
+    ringOffset: "#1A0F0A",
+    decorationColor: "#E5C158",
+    priceAccent: "#4CAF50",
   },
 };

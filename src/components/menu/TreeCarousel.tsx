@@ -6,7 +6,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getGroupIcon } from "./LineArtIcons";
 import type { MenuGroup } from "@/lib/menu-groups";
 
-const MINT = "#3D8B7A";
+const GOLD = "#E5C158";
+const GREEN = "#4CAF50";
 
 const CAROUSEL_ORDER: Record<string, number> = {
   SUSHI: 1,
@@ -24,7 +25,6 @@ const CAROUSEL_ORDER: Record<string, number> = {
   "COLD DRINKS": 13,
   "HOT DRINKS": 14,
   DESSERTS: 15,
-  "EXTRAS & BEANS": 16,
 };
 
 interface TreeCarouselProps {
@@ -79,7 +79,7 @@ export default function TreeCarousel({ groups, onGroupChange }: TreeCarouselProp
   if (sorted.length === 0) return null;
 
   return (
-    <div className="relative w-full select-none" style={{ height: "340px" }}>
+    <div className="relative w-full select-none" style={{ height: "360px" }}>
       <div
         className="absolute inset-0 flex items-center justify-center"
         onPointerDown={handlePointerDown}
@@ -130,29 +130,45 @@ export default function TreeCarousel({ groups, onGroupChange }: TreeCarouselProp
               }}
             >
               <div
-                className="flex flex-col items-center justify-center"
-                style={{ width: "180px", height: "240px" }}
+                className="flex flex-col items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-300"
+                style={{
+                  width: "186px",
+                  height: "250px",
+                  background: isActive
+                    ? "linear-gradient(145deg, rgba(42,24,18,0.9), rgba(30,17,11,0.95))"
+                    : "linear-gradient(145deg, rgba(42,24,18,0.6), rgba(30,17,11,0.7))",
+                  border: isActive
+                    ? "1px solid rgba(229,193,88,0.25)"
+                    : "1px solid rgba(229,193,88,0.06)",
+                  boxShadow: isActive
+                    ? "0 8px 32px rgba(229,193,88,0.08), 0 0 60px rgba(229,193,88,0.04)"
+                    : "none",
+                }}
               >
                 <div
-                  className="w-[88px] h-[88px] flex items-center justify-center text-white transition-all duration-300"
+                  className="w-[80px] h-[80px] flex items-center justify-center transition-all duration-300"
                   style={{
+                    color: isActive ? GOLD : "rgba(226,232,240,0.25)",
                     filter: isActive
-                      ? "drop-shadow(0 0 20px rgba(61,139,122,0.45))"
+                      ? "drop-shadow(0 0 20px rgba(229,193,88,0.3))"
                       : "none",
                   }}
                 >
                   {getGroupIcon(group.labelEn, "w-full h-full")}
                 </div>
-                <div className="text-center mt-6 px-2">
+                <div className="text-center mt-5 px-3">
                   <p
                     className="text-sm font-black tracking-[0.15em] uppercase"
-                    style={{ color: MINT }}
+                    style={{ color: isActive ? GOLD : "rgba(226,232,240,0.25)" }}
                   >
                     {group.labelEn}
                   </p>
                   <p
-                    className="text-[11px] text-white/35 mt-1 leading-tight line-clamp-1"
-                    style={{ fontFamily: "var(--font-cairo), sans-serif" }}
+                    className="text-[11px] mt-1.5 leading-tight line-clamp-1"
+                    style={{
+                      color: isActive ? "rgba(226,232,240,0.6)" : "rgba(226,232,240,0.2)",
+                      fontFamily: "var(--font-cairo), sans-serif",
+                    }}
                   >
                     {group.label}
                   </p>
@@ -167,7 +183,12 @@ export default function TreeCarousel({ groups, onGroupChange }: TreeCarouselProp
       {activeIndex > 0 && (
         <button
           onClick={(e) => { e.stopPropagation(); goPrev(); }}
-          className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 z-50 w-9 h-9 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/15 transition-all backdrop-blur-sm"
+          className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 z-50 w-9 h-9 rounded-full flex items-center justify-center transition-all backdrop-blur-sm hover:-translate-y-1/2 hover:scale-105"
+          style={{
+            background: "rgba(229,193,88,0.08)",
+            border: "1px solid rgba(229,193,88,0.15)",
+            color: GOLD,
+          }}
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -175,7 +196,12 @@ export default function TreeCarousel({ groups, onGroupChange }: TreeCarouselProp
       {activeIndex < sorted.length - 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); goNext(); }}
-          className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 z-50 w-9 h-9 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/15 transition-all backdrop-blur-sm"
+          className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 z-50 w-9 h-9 rounded-full flex items-center justify-center transition-all backdrop-blur-sm hover:-translate-y-1/2 hover:scale-105"
+          style={{
+            background: "rgba(229,193,88,0.08)",
+            border: "1px solid rgba(229,193,88,0.15)",
+            color: GOLD,
+          }}
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -191,7 +217,7 @@ export default function TreeCarousel({ groups, onGroupChange }: TreeCarouselProp
             style={{
               width: i === activeIndex ? 20 : 6,
               height: 6,
-              backgroundColor: i === activeIndex ? MINT : "rgba(255,255,255,0.12)",
+              backgroundColor: i === activeIndex ? GOLD : "rgba(229,193,88,0.12)",
             }}
           />
         ))}

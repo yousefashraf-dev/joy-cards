@@ -121,6 +121,26 @@ function CafeRestaurantSvg({ className }: { className?: string }) {
   );
 }
 
+function TreeBranchSvg({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 180 C40 160, 60 140, 80 120 C100 100, 130 80, 160 60 C170 50, 180 40, 185 30" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
+      <path d="M60 140 L45 125" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.35"/>
+      <path d="M80 120 L65 105" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.35"/>
+      <path d="M110 92 L95 78" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3"/>
+      <path d="M135 72 L120 58" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3"/>
+      <path d="M160 60 L148 48" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.25"/>
+      <path d="M65 60 C55 55, 45 65, 50 75" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.2"/>
+      <ellipse cx="52" cy="68" rx="4" ry="3" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
+      <circle cx="170" cy="48" r="2.5" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
+      <circle cx="145" cy="68" r="2" stroke="currentColor" strokeWidth="0.8" opacity="0.15"/>
+      <circle cx="100" cy="110" r="2" stroke="currentColor" strokeWidth="0.8" opacity="0.12"/>
+      <path d="M20 180 C15 165, 10 155, 5 145" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3"/>
+      <path d="M25 175 C25 160, 30 150, 35 140" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.25"/>
+    </svg>
+  );
+}
+
 function to12h(time: string) {
   const [h, m] = time.split(":").map(Number);
   const ap = h >= 12 ? "PM" : "AM";
@@ -155,7 +175,11 @@ const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; pos
   ],
   standard: [],
   premium: [],
-  tree: [],
+  tree: [
+    { component: TreeBranchSvg, position: "left-0 top-1/4 -translate-x-1/4 w-72 h-72" },
+    { component: TreeBranchSvg, position: "right-0 bottom-1/3 translate-x-1/4 w-56 h-56" },
+    { component: TreeBranchSvg, position: "left-1/2 bottom-1/4 -translate-x-1/2 w-48 h-48" },
+  ],
 };
 
 export default function CafePage() {

@@ -243,6 +243,40 @@ export function DessertsIcon({ className }: { className?: string }) {
   );
 }
 
+export function TreeClassicsIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <ellipse cx="40" cy="56" rx="24" ry="6" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M19 32 C19 50, 21 54, 40 54 C59 54, 61 50, 61 32Z" stroke="currentColor" strokeWidth="1.3" fill="none" />
+      <ellipse cx="40" cy="32" rx="21" ry="7" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M61 42 C70 42, 70 52, 61 52" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      <path d="M30 20 L32 16" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
+      <path d="M40 18 L40 14" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+      <path d="M50 20 L48 16" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.35" />
+      <path d="M32 42 Q40 46, 48 42" stroke="currentColor" strokeWidth="0.7" opacity="0.25" fill="none" />
+      <circle cx="32" cy="36" r="1.5" stroke="currentColor" strokeWidth="0.6" opacity="0.2" />
+      <circle cx="48" cy="36" r="1.5" stroke="currentColor" strokeWidth="0.6" opacity="0.2" />
+    </svg>
+  );
+}
+
+export function SpecialCoffeeIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <ellipse cx="40" cy="52" rx="30" ry="8" stroke="currentColor" strokeWidth="1.3" opacity="0.5" />
+      <ellipse cx="40" cy="52" rx="20" ry="5" stroke="currentColor" strokeWidth="1" opacity="0.3" />
+      <path d="M28 28 L22 46 L58 46 L52 28Z" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinejoin="round" />
+      <path d="M28 28 C28 20, 52 20, 52 28" stroke="currentColor" strokeWidth="1.3" fill="none" />
+      <path d="M36 18 L38 28" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+      <path d="M44 18 L42 28" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.3" />
+      <path d="M40 16 L40 26" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.25" />
+      <path d="M32 36 Q40 40, 48 36" stroke="currentColor" strokeWidth="0.7" opacity="0.25" fill="none" />
+      <circle cx="34" cy="38" r="1.5" stroke="currentColor" strokeWidth="0.6" opacity="0.15" />
+      <circle cx="46" cy="38" r="1.5" stroke="currentColor" strokeWidth="0.6" opacity="0.15" />
+    </svg>
+  );
+}
+
 export function ExtrasIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -293,6 +327,10 @@ export function getGroupIcon(groupEn: string, className?: string) {
       return <ColdDrinksIcon {...props} />;
     case "HOT DRINKS":
       return <HotDrinksIcon {...props} />;
+    case "TREE CLASSICS":
+      return <TreeClassicsIcon {...props} />;
+    case "TREE SPECIAL COFFEE":
+      return <SpecialCoffeeIcon {...props} />;
     case "DESSERTS":
       return <DessertsIcon {...props} />;
     case "EXTRAS & BEANS":

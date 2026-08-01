@@ -23,7 +23,7 @@ export default function PrimaryButton({
   href,
 }: PrimaryButtonProps) {
   const baseClasses =
-    "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm tracking-wide text-matte-black bg-gradient-silver hover:opacity-90 transition-all duration-300 glow-silver disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm tracking-wide text-matte-black bg-gradient-gold hover:opacity-90 transition-all duration-300 glow-gold disabled:opacity-50 disabled:cursor-not-allowed";
 
   if (href) {
     return (

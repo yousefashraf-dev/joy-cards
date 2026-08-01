@@ -19,7 +19,7 @@ export default function Footer() {
               href="https://www.instagram.com/gotap_eg?igsh=bW1pdGN4ZGZ0N2E5&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-muted hover:text-[#E4405F] transition-colors duration-200"
+              className="text-slate-muted hover:text-gold transition-colors duration-200"
               aria-label={t("instagram")}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -33,7 +33,7 @@ export default function Footer() {
               href="https://www.tiktok.com/@go.tap.eg?_r=1&_t=ZS-97QgVchctJU"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-muted hover:text-white transition-colors duration-200"
+              className="text-slate-muted hover:text-gold-light transition-colors duration-200"
               aria-label={t("tiktok")}
             >
               <Music2 className="w-5 h-5" />

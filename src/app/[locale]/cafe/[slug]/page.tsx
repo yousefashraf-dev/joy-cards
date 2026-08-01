@@ -422,7 +422,7 @@ export default function CafePage() {
               {cafe.menuType === "pdf" || cafe.menuType === "images" ? (
                 <button
                   onClick={() => setMenuModal(true)}
-                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl backdrop-blur-md border font-bold text-lg hover:shadow-[0_0_25px_rgba(212,175,55,0.3)] transition-all duration-300 group"
+                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl backdrop-blur-md border font-bold text-lg hover:shadow-[0_0_25px_rgba(198,165,104,0.3)] transition-all duration-300 group"
                   style={{
                     backgroundColor: isVape ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.1)",
                     borderColor: `${accentHex}80`,
@@ -435,7 +435,7 @@ export default function CafePage() {
               ) : cafe.menuType === "web" ? (
                 <a
                   href={`/ar/menu/${slug}`}
-                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl backdrop-blur-md border font-bold text-lg hover:shadow-[0_0_25px_rgba(212,175,55,0.3)] transition-all duration-300 group"
+                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl backdrop-blur-md border font-bold text-lg hover:shadow-[0_0_25px_rgba(198,165,104,0.3)] transition-all duration-300 group"
                   style={{
                     backgroundColor: isVape ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.1)",
                     borderColor: `${accentHex}80`,
@@ -450,7 +450,7 @@ export default function CafePage() {
                   href={cafe.menuUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl backdrop-blur-md border font-bold text-lg hover:shadow-[0_0_25px_rgba(212,175,55,0.3)] transition-all duration-300 group"
+                  className="w-full flex items-center justify-center gap-3 py-5 rounded-2xl backdrop-blur-md border font-bold text-lg hover:shadow-[0_0_25px_rgba(198,165,104,0.3)] transition-all duration-300 group"
                   style={{
                     backgroundColor: isVape ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.1)",
                     borderColor: `${accentHex}80`,

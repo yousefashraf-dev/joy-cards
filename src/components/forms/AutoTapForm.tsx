@@ -358,9 +358,9 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             {/* Live Name Preview */}
             <div className="flex items-center gap-5 p-5 rounded-2xl bg-white/[0.03] backdrop-blur-sm border border-gold/20">
               <div className="shrink-0">
-                <div className="w-20 h-20 rounded-full ring-2 ring-gold/40 ring-offset-2 ring-offset-navy flex items-center justify-center bg-gradient-to-br from-gold/20 to-navy-light shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+                <div className="w-20 h-20 rounded-full ring-2 ring-gold/40 ring-offset-2 ring-offset-navy flex items-center justify-center bg-gradient-to-br from-gold/20 to-navy-light shadow-[0_0_20px_rgba(198,165,104,0.15)]">
                   {data.displayName.trim() ? (
-                    <span className="text-2xl font-bold text-gold drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]">
+                    <span className="text-2xl font-bold text-gold drop-shadow-[0_0_8px_rgba(198,165,104,0.4)]">
                       {data.displayName.trim().charAt(0).toUpperCase()}
                     </span>
                   ) : (
@@ -424,7 +424,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                   <div
                     onClick={() => logoInputRef.current?.click()}
                     className={`w-28 h-28 rounded-full bg-gradient-to-br from-gold/10 to-navy-light border-2 border-dashed flex items-center justify-center cursor-pointer transition-all duration-300 overflow-hidden ${
-                      uploading ? "border-gold animate-pulse" : data.logo ? "border-gold/70 shadow-[0_0_20px_rgba(212,175,55,0.2)]" : "border-gold/40 hover:border-gold/70 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)]"
+                      uploading ? "border-gold animate-pulse" : data.logo ? "border-gold/70 shadow-[0_0_20px_rgba(198,165,104,0.2)]" : "border-gold/40 hover:border-gold/70 hover:shadow-[0_0_25px_rgba(198,165,104,0.2)]"
                     }`}
                   >
                     {uploading ? (
@@ -500,7 +500,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                     onClick={() => handleFieldChange("logoWidthCm", size)}
                     className={`flex flex-col items-center gap-1 p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${
                       data.logoWidthCm === size
-                        ? "border-gold bg-gold/10 text-gold shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                        ? "border-gold bg-gold/10 text-gold shadow-[0_0_20px_rgba(198,165,104,0.2)]"
                         : "border-white/10 bg-dark-card/50 text-slate-body hover:border-gold/40 hover:bg-gold/5"
                     }`}
                     whileHover={{ scale: 1.05 }}

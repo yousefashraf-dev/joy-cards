@@ -6,20 +6,20 @@ import { motion } from "framer-motion";
 import {
   Utensils, Star, Wifi, Globe, MessageCircle,
   QrCode, Smartphone, MapPin,
-  CreditCard, ChevronRight, List, Camera, ThumbsUp,
+  CreditCard, ChevronRight, List, Camera, ThumbsUp, Sparkles,
 } from "lucide-react";
 import { WHATSAPP_BUSINESS_MSG } from "@/lib/constants";
 
 function NfcWaves() {
   return (
     <svg viewBox="0 0 120 120" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="60" cy="60" r="50" stroke="#2DD4BF" strokeWidth="1.5" opacity="0.15" />
-      <circle cx="60" cy="60" r="38" stroke="#2DD4BF" strokeWidth="1.5" opacity="0.25" />
-      <circle cx="60" cy="60" r="26" stroke="#2DD4BF" strokeWidth="1.5" opacity="0.4" />
-      <circle cx="60" cy="60" r="14" stroke="#2DD4BF" strokeWidth="2" opacity="0.6" />
-      <circle cx="60" cy="60" r="6" fill="#2DD4BF" opacity="0.8" />
-      <path d="M60 10 C60 10 60 110 60 110" stroke="#2DD4BF" strokeWidth="0.8" opacity="0.2" />
-      <path d="M10 60 C10 60 110 60 110 60" stroke="#2DD4BF" strokeWidth="0.8" opacity="0.2" />
+      <circle cx="60" cy="60" r="50" stroke="#D4AF37" strokeWidth="1.5" opacity="0.15" />
+      <circle cx="60" cy="60" r="38" stroke="#D4AF37" strokeWidth="1.5" opacity="0.25" />
+      <circle cx="60" cy="60" r="26" stroke="#D4AF37" strokeWidth="1.5" opacity="0.4" />
+      <circle cx="60" cy="60" r="14" stroke="#D4AF37" strokeWidth="2" opacity="0.6" />
+      <circle cx="60" cy="60" r="6" fill="#D4AF37" opacity="0.8" />
+      <path d="M60 10 C60 10 60 110 60 110" stroke="#D4AF37" strokeWidth="0.8" opacity="0.2" />
+      <path d="M10 60 C10 60 110 60 110 60" stroke="#D4AF37" strokeWidth="0.8" opacity="0.2" />
     </svg>
   );
 }
@@ -27,30 +27,30 @@ function NfcWaves() {
 function SocialLinksMockup() {
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-lg font-black shadow-lg shadow-emerald-500/20">
+      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-matte-dark text-lg font-black shadow-lg shadow-gold/30">
         R
       </div>
       <p className="text-sm font-bold text-slate-light">كافيه روما</p>
       <p className="text-[10px] text-slate-muted/50 -mt-1">Cafe Roma</p>
       <div className="flex gap-2.5 mt-1">
         {[
-          { icon: Camera, color: "text-pink-400" },
-          { icon: ThumbsUp, color: "text-blue-400" },
-          { icon: MapPin, color: "text-red-400" },
-          { icon: MessageCircle, color: "text-green-400" },
+          { icon: Camera, color: "text-gold" },
+          { icon: ThumbsUp, color: "text-gold" },
+          { icon: MapPin, color: "text-gold/70" },
+          { icon: MessageCircle, color: "text-gold" },
         ].map(({ icon: Icon, color }, i) => (
-          <div key={i} className={`w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center ${color}`}>
+          <div key={i} className={`w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center ${color}`}>
             <Icon className="w-4 h-4" />
           </div>
         ))}
       </div>
       <div className="w-full mt-2 space-y-1.5">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-          <CreditCard className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="text-[10px] text-emerald-300 font-semibold">InstaPay · 010xxxxxxx</span>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gold/10 border border-gold/20">
+          <CreditCard className="w-3.5 h-3.5 text-gold" />
+          <span className="text-[10px] text-gold font-semibold">InstaPay · 010xxxxxxx</span>
         </div>
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
-          <MapPin className="w-3.5 h-3.5 text-red-400" />
+          <MapPin className="w-3.5 h-3.5 text-gold/60" />
           <span className="text-[10px] text-slate-muted">رئيسي · القاهرة</span>
         </div>
       </div>
@@ -69,9 +69,9 @@ function MenuMockup() {
       {sections.map((sec, i) => (
         <div key={i}>
           <div className="flex items-center gap-2 mb-1.5">
-            <ChevronRight className="w-3 h-3 text-emerald-400" />
-            <span className="text-[11px] font-bold text-emerald-400 tracking-wider uppercase">{sec.name}</span>
-            <div className="h-px flex-1 bg-white/5" />
+            <ChevronRight className="w-3 h-3 text-gold" />
+            <span className="text-[11px] font-bold text-gold tracking-wider uppercase">{sec.name}</span>
+            <div className="h-px flex-1 bg-gold/20" />
           </div>
           <div className="space-y-1">
             {sec.items.map((item, j) => (
@@ -106,7 +106,7 @@ export default function BusinessTapPage() {
 
   return (
     <>
-      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 bg-gradient-to-b from-neon-green/5 via-matte-black to-matte-black overflow-hidden">
+      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-28 bg-gradient-to-b from-gold/5 via-matte-black to-matte-black overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
             <motion.div
@@ -114,7 +114,7 @@ export default function BusinessTapPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon-green/10 border border-neon-green/20 text-neon-green text-xs mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs mb-8">
                 <span>{t("badge")}</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-light mb-6 leading-tight">
@@ -131,10 +131,10 @@ export default function BusinessTapPage() {
                     initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-                    className="group glass bg-dark-card/40 border border-white/5 rounded-2xl p-6 hover:border-neon-green/20 hover:bg-dark-card/60 transition-all duration-500"
+                    className="group glass-card rounded-2xl p-6 hover:border-gold/30 transition-all duration-500"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-neon-green/10 flex items-center justify-center mb-5 group-hover:bg-neon-green/20 transition-colors duration-300">
-                      <Icon className="w-6 h-6 text-neon-green" />
+                    <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center mb-5 group-hover:bg-gold/20 transition-colors duration-300">
+                      <Icon className="w-6 h-6 text-gold" />
                     </div>
                     <h3 className="text-lg font-semibold text-slate-light mb-3">
                       {t(`services.${key}`)}
@@ -154,7 +154,7 @@ export default function BusinessTapPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <div className="relative w-80 h-96">
-                <div className="absolute inset-0 bg-gradient-to-br from-neon-green/20 to-neon-green/5 rounded-3xl rotate-6" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-gold/5 rounded-3xl rotate-6" />
                 <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/10">
                   <Image
                     src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=80"
@@ -196,19 +196,19 @@ export default function BusinessTapPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="group glass bg-dark-card/40 border border-white/5 rounded-2xl p-6 lg:p-8 hover:border-neon-green/20 hover:bg-dark-card/60 transition-all duration-500 flex flex-col"
+              className="group glass-card rounded-2xl p-6 lg:p-8 hover:border-gold/30 transition-all duration-500 flex flex-col"
             >
               <div className="flex items-center gap-4 mb-5">
                 <div className="relative w-16 h-16 shrink-0">
-                  <div className="absolute inset-0 bg-neon-green/10 rounded-xl group-hover:bg-neon-green/20 transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-gold/10 rounded-xl group-hover:bg-gold/20 transition-colors duration-300" />
                   <div className="relative w-full h-full flex items-center justify-center">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <NfcWaves />
                     </div>
-                    <QrCode className="w-6 h-6 text-neon-green relative z-10" />
+                    <QrCode className="w-6 h-6 text-gold relative z-10" />
                   </div>
                 </div>
-                <Smartphone className="w-7 h-7 text-neon-green/40" />
+                <Smartphone className="w-7 h-7 text-gold/40" />
               </div>
               <h3 className="text-lg font-bold text-slate-light mb-3">
                 {t("featureSection.step1Title")}
@@ -224,22 +224,22 @@ export default function BusinessTapPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="group glass bg-dark-card/40 border border-white/5 rounded-2xl p-6 lg:p-8 hover:border-neon-green/20 hover:bg-dark-card/60 transition-all duration-500 flex flex-col"
+              className="group glass-card rounded-2xl p-6 lg:p-8 hover:border-gold/30 transition-all duration-500 flex flex-col"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="flex -space-x-2">
-                  <div className="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center">
-                    <Camera className="w-4 h-4 text-pink-400" />
+                  <div className="w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center">
+                    <Camera className="w-4 h-4 text-gold" />
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                    <ThumbsUp className="w-4 h-4 text-blue-400" />
+                  <div className="w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center">
+                    <ThumbsUp className="w-4 h-4 text-gold" />
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                    <CreditCard className="w-4 h-4 text-emerald-400" />
+                  <div className="w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center">
+                    <CreditCard className="w-4 h-4 text-gold" />
                   </div>
                 </div>
-                <div className="h-px flex-1 bg-white/5" />
-                <Globe className="w-5 h-5 text-neon-green/40" />
+                <div className="h-px flex-1 bg-gold/20" />
+                <Globe className="w-5 h-5 text-gold/40" />
               </div>
               <h3 className="text-lg font-bold text-slate-light mb-3">
                 {t("featureSection.step2Title")}
@@ -260,14 +260,14 @@ export default function BusinessTapPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="group glass bg-dark-card/40 border border-white/5 rounded-2xl p-6 lg:p-8 hover:border-neon-green/20 hover:bg-dark-card/60 transition-all duration-500 flex flex-col"
+              className="group glass-card rounded-2xl p-6 lg:p-8 hover:border-gold/30 transition-all duration-500 flex flex-col"
             >
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                  <List className="w-6 h-6 text-emerald-400" />
+                <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center">
+                  <List className="w-6 h-6 text-gold" />
                 </div>
-                <div className="h-px flex-1 bg-white/5" />
-                <Utensils className="w-5 h-5 text-neon-green/40" />
+                <div className="h-px flex-1 bg-gold/20" />
+                <Utensils className="w-5 h-5 text-gold/40" />
               </div>
               <h3 className="text-lg font-bold text-slate-light mb-3">
                 {t("featureSection.step3Title")}
@@ -294,7 +294,7 @@ export default function BusinessTapPage() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <div className="glass bg-dark-card/60 border border-neon-green/20 rounded-3xl p-12 lg:p-16 max-w-2xl mx-auto">
+            <div className="glass bg-dark-card/60 border border-gold/20 rounded-3xl p-12 lg:p-16 max-w-2xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-light mb-6">
                 {t("title")}
               </h2>
@@ -305,7 +305,7 @@ export default function BusinessTapPage() {
                 href={WHATSAPP_BUSINESS_MSG}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-10 py-4 rounded-full bg-gradient-to-r from-neon-green to-emerald-500 text-matte-dark font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-200 shadow-[0_0_30px_rgba(45,212,191,0.4)] hover:shadow-[0_0_50px_rgba(45,212,191,0.6)]"
+                className="inline-flex items-center gap-3 px-10 py-4 rounded-full bg-gradient-gold text-matte-dark font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-200 glow-gold hover:glow-gold-strong"
               >
                 <MessageCircle className="w-6 h-6" />
                 <span>{t("cta")}</span>

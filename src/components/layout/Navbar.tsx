@@ -18,7 +18,6 @@ export default function Navbar() {
     { href: "/digital-cards", label: t("digitalCards") },
     { href: "/auto-tap", label: t("autoTap") },
     { href: "/business-tap", label: t("businessTap") },
-    { href: "/wedding-cards", label: t("weddingCards") },
     { href: "/shop", label: t("shop") },
   ];
 
@@ -37,10 +36,10 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-silver flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gradient-gold flex items-center justify-center">
               <span className="text-matte-dark font-bold text-sm">G</span>
             </div>
-            <span className="text-xl font-bold text-gradient-silver">GoTap</span>
+            <span className="text-xl font-bold text-gradient-gold">GoTap</span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-8">
@@ -50,8 +49,8 @@ export default function Navbar() {
                 href={link.href}
                  className={`text-sm font-medium transition-colors duration-200 ${
                    isActive(link.href)
-                     ? "text-nardo"
-                     : "text-slate-muted hover:text-slate-light"
+                     ? "text-gold"
+                     : "text-slate-muted hover:text-gold"
                  }`}
                >
                  {link.label}
@@ -59,7 +58,7 @@ export default function Navbar() {
              ))}
               <button
                 onClick={toggleLocale}
-                className="w-10 h-10 rounded-full glass bg-dark-card/80 border border-white/10 flex items-center justify-center gap-1 text-xs font-bold text-slate-muted hover:text-nardo hover:border-nardo/50 transition-all duration-200"
+                className="w-10 h-10 rounded-full glass bg-dark-card/80 border border-gold/20 flex items-center justify-center gap-1 text-xs font-bold text-gold hover:text-gold-light hover:border-gold/50 transition-all duration-200"
                 aria-label={t("toggleLanguage")}
               >
                 <Globe className="w-3.5 h-3.5" />
@@ -70,7 +69,7 @@ export default function Navbar() {
           <div className="lg:hidden flex items-center gap-2">
             <button
               onClick={toggleLocale}
-              className="w-9 h-9 rounded-full glass bg-dark-card/80 border border-white/10 flex items-center justify-center gap-0.5 text-[10px] font-bold text-slate-muted hover:text-nardo hover:border-nardo/50 transition-all duration-200"
+              className="w-9 h-9 rounded-full glass bg-dark-card/80 border border-gold/20 flex items-center justify-center gap-0.5 text-[10px] font-bold text-gold hover:text-gold-light hover:border-gold/50 transition-all duration-200"
               aria-label={t("toggleLanguage")}
             >
               <Globe className="w-3.5 h-3.5" />
@@ -97,8 +96,8 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                  className={`text-center text-lg font-medium py-3 px-4 rounded-xl transition-colors ${
                    isActive(link.href)
-                     ? "text-nardo bg-nardo/10"
-                     : "text-slate-muted hover:text-slate-light hover:bg-white/5"
+                     ? "text-gold bg-gold/10"
+                     : "text-slate-muted hover:text-gold hover:bg-gold/5"
                  }`}
                >
                  {link.label}
@@ -106,7 +105,7 @@ export default function Navbar() {
              ))}
               <button
                 onClick={toggleLocale}
-                className="flex items-center justify-center gap-2 text-lg text-slate-muted hover:text-nardo transition-colors mt-4 py-3 px-4 rounded-xl hover:bg-white/5"
+                className="flex items-center justify-center gap-2 text-lg text-slate-muted hover:text-gold transition-colors mt-4 py-3 px-4 rounded-xl hover:bg-gold/5"
               >
                 <Globe className="w-5 h-5" />
                 <span>{locale === "en" ? "AR" : "EN"}</span>

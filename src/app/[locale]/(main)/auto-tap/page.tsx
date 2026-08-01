@@ -49,9 +49,9 @@ export default function AutoTapPage() {
     <>
       {/* Hero Section */}
       <section className="relative pt-28 pb-12 lg:pt-36 lg:pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-navy/40 via-matte-black to-matte-black" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-nardo/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-b from-gold/5 via-matte-black to-matte-black" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gold/10 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -94,7 +94,7 @@ export default function AutoTapPage() {
             >
               <div className="relative w-72 h-96">
                 <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-gold/5 rounded-3xl rotate-6" />
-                <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(212,175,55,0.15)]">
+                <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(198,165,104,0.15)]">
                   <Image
                     src="/nfc-cafe.png"
                     alt="Luxury car with NFC sticker"

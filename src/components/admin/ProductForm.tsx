@@ -21,6 +21,7 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
   const [price, setPrice] = useState(product?.price?.toString() || "");
   const [category, setCategory] = useState(product?.category || "");
   const [description, setDescription] = useState(product?.description || "");
+  const [type, setType] = useState<"nfc" | "regular">(product?.type || "nfc");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(product?.images || []);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -55,6 +56,7 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
         price: Number(price),
         category: category.trim(),
         description: description.trim(),
+        type,
         images: allImages,
       };
 
@@ -100,6 +102,34 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
         <div>
           <label className={labelClass}>{t("form.price")}</label>
           <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className={inputClass} placeholder="200" required />
+        </div>
+
+        <div>
+          <label className={labelClass}>{t("form.productType")}</label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setType("nfc")}
+              className={`px-4 py-3 rounded-xl border text-sm font-semibold transition-all duration-200 ${
+                type === "nfc"
+                  ? "bg-gold/20 text-gold border-gold/50 shadow-[0_0_15px_rgba(198,165,104,0.15)]"
+                  : "bg-white/5 text-slate-muted border-white/10 hover:bg-white/10"
+              }`}
+            >
+              NFC
+            </button>
+            <button
+              type="button"
+              onClick={() => setType("regular")}
+              className={`px-4 py-3 rounded-xl border text-sm font-semibold transition-all duration-200 ${
+                type === "regular"
+                  ? "bg-gold/20 text-gold border-gold/50 shadow-[0_0_15px_rgba(198,165,104,0.15)]"
+                  : "bg-white/5 text-slate-muted border-white/10 hover:bg-white/10"
+              }`}
+            >
+              {t("form.regularType")}
+            </button>
+          </div>
         </div>
 
         <div>

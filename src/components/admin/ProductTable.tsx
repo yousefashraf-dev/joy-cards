@@ -107,6 +107,13 @@ export default function ProductTable({ products, onEdit, onRefresh }: ProductTab
                 {product.category}
               </span>
             )}
+            <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] border ${
+              product.type === "regular"
+                ? "bg-white/5 text-slate-muted border-white/10"
+                : "bg-gold/15 text-gold border-gold/30"
+            }`}>
+              {product.type === "regular" ? t("form.regularType") : "NFC"}
+            </span>
 
             <div className="flex items-center gap-2 pt-2">
               <input

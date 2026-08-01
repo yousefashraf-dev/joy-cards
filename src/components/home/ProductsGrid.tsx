@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CreditCard, Car, Store, Heart } from "lucide-react";
+import { CreditCard, Car, Store } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import ProductCard from "@/components/ui/ProductCard";
 
@@ -12,26 +12,20 @@ export default function ProductsGrid() {
     {
       key: "digitalCards",
       href: "/digital-cards",
-      gradient: "bg-gradient-to-br from-nardo/20 via-nardo/5 to-transparent",
-      icon: <CreditCard className="w-7 h-7 text-nardo" />,
+      gradient: "bg-gradient-to-br from-gold/20 via-gold/5 to-transparent",
+      icon: <CreditCard className="w-7 h-7 text-gold" />,
     },
     {
       key: "autoTap",
       href: "/auto-tap",
-      gradient: "bg-gradient-to-br from-neon-green/20 via-neon-green/5 to-transparent",
-      icon: <Car className="w-7 h-7 text-neon-green" />,
+      gradient: "bg-gradient-to-br from-gold/20 via-gold/5 to-transparent",
+      icon: <Car className="w-7 h-7 text-gold" />,
     },
     {
       key: "businessTap",
       href: "/business-tap",
-      gradient: "bg-gradient-to-br from-blue-400/20 via-blue-400/5 to-transparent",
-      icon: <Store className="w-7 h-7 text-blue-400" />,
-    },
-    {
-      key: "weddingCards",
-      href: "/wedding-cards",
-      gradient: "bg-gradient-to-br from-pink-400/20 via-pink-400/5 to-transparent",
-      icon: <Heart className="w-7 h-7 text-pink-400" />,
+      gradient: "bg-gradient-to-br from-gold/20 via-gold/5 to-transparent",
+      icon: <Store className="w-7 h-7 text-gold" />,
     },
   ];
 

@@ -19,7 +19,7 @@ export default function DigitalCardsPage() {
 
   return (
     <>
-      <section className="relative pt-28 pb-16 lg:pt-36 lg:pb-20 bg-gradient-to-b from-nardo/5 via-matte-black to-matte-black overflow-hidden">
+      <section className="relative pt-28 pb-16 lg:pt-36 lg:pb-20 bg-gradient-to-b from-gold/5 via-matte-black to-matte-black overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -27,7 +27,7 @@ export default function DigitalCardsPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-nardo/10 border border-nardo/20 text-nardo text-xs mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs mb-6">
                 <CreditCard className="w-4 h-4" />
                 <span>{t("badge")}</span>
               </div>
@@ -37,7 +37,7 @@ export default function DigitalCardsPage() {
               <p className="text-slate-muted text-base md:text-lg leading-relaxed mb-4">
                 {t("desc")}
               </p>
-              <p className="text-sm text-slate-muted/70 mb-8 border-s-2 border-nardo/30 ps-4">
+              <p className="text-sm text-slate-muted/70 mb-8 border-s-2 border-gold/30 ps-4">
                 {t("premiumDesc")}
               </p>
             </motion.div>
@@ -49,7 +49,7 @@ export default function DigitalCardsPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <div className="relative w-80 h-96">
-                <div className="absolute inset-0 bg-gradient-to-br from-nardo/20 to-nardo/5 rounded-3xl rotate-6" />
+                <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-gold/5 rounded-3xl rotate-6" />
                 <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/10 flex items-center justify-center bg-gradient-to-br from-matte-black/80 to-dark-card/80">
                   <svg viewBox="0 0 320 380" className="w-full h-full p-4" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -193,7 +193,7 @@ export default function DigitalCardsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="glass bg-dark-card/40 border border-white/5 rounded-3xl p-8 lg:p-12"
+            className="glass-card rounded-3xl p-8 lg:p-12"
           >
             <h2 className="text-2xl md:text-3xl font-bold text-slate-light mb-8 text-center">
               {locale === "ar" ? "إيه اللي تقدر تضيفه على الكارت؟" : "What can you add to the card?"}
@@ -201,8 +201,8 @@ export default function DigitalCardsPage() {
             <div className="grid md:grid-cols-2 gap-4">
               {canAddItems.map((item, i) => (
                 <div key={i} className="flex items-start gap-3 p-3">
-                  <div className="w-6 h-6 rounded-full bg-nardo/15 flex items-center justify-center shrink-0 mt-0.5">
-                    <Check className="w-3.5 h-3.5 text-nardo" />
+                  <div className="w-6 h-6 rounded-full bg-gold/15 flex items-center justify-center shrink-0 mt-0.5">
+                    <Check className="w-3.5 h-3.5 text-gold" />
                   </div>
                   <span className="text-sm text-slate-muted leading-relaxed">{item}</span>
                 </div>
@@ -222,7 +222,7 @@ export default function DigitalCardsPage() {
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <div className="glass bg-dark-card/60 border border-nardo/20 rounded-3xl p-10 lg:p-14 max-w-xl mx-auto">
+            <div className="glass bg-dark-card/60 border border-gold/20 rounded-3xl p-10 lg:p-14 max-w-xl mx-auto">
               <h2 className="text-2xl md:text-3xl font-bold text-slate-light mb-4">
                 {t("ctaTitle")}
               </h2>
@@ -233,7 +233,7 @@ export default function DigitalCardsPage() {
                 href={WHATSAPP_DIGITAL_CARD_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-nardo to-nardo-light text-matte-dark font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-200 shadow-[0_0_30px_rgba(122,122,122,0.4)] hover:shadow-[0_0_50px_rgba(122,122,122,0.6)]"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-gold text-matte-dark font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-200 glow-gold hover:glow-gold-strong"
               >
                 <MessageCircle className="w-6 h-6" />
                 <span>{t("cta")}</span>

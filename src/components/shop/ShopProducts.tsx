@@ -40,7 +40,7 @@ export default function ShopProducts() {
             >
               <div
                 onClick={() => setSelected(product)}
-                className="group cursor-pointer glass bg-white/5 backdrop-blur-md border border-gold/30 rounded-2xl overflow-hidden hover:bg-white/10 hover:border-gold/70 hover:shadow-[0_0_25px_rgba(212,175,55,0.25)] transition-all duration-300 h-full flex flex-col"
+                className="group cursor-pointer glass bg-white/5 backdrop-blur-md border border-gold/30 rounded-2xl overflow-hidden hover:bg-white/10 hover:border-gold/70 hover:shadow-[0_0_25px_rgba(198,165,104,0.25)] transition-all duration-300 h-full flex flex-col"
               >
                 <div className="relative h-48 overflow-hidden bg-matte-dark">
                   {product.images?.[0] ? (
@@ -85,7 +85,7 @@ export default function ShopProducts() {
         >
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl glass bg-white/5 backdrop-blur-md border border-gold/40 text-gold font-semibold hover:bg-gold/10 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl glass bg-white/5 backdrop-blur-md border border-gold/40 text-gold font-semibold hover:bg-gold/10 hover:shadow-[0_0_25px_rgba(198,165,104,0.2)] transition-all duration-300"
           >
             {t("browseAll")}
             <ArrowRight className="w-4 h-4" />

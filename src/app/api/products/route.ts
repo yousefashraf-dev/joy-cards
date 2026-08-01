@@ -37,6 +37,7 @@ export async function GET() {
         category: data.category,
         description: data.description,
         images: data.images || [],
+        type: data.type === "regular" ? "regular" : "nfc",
         createdAt: data.createdAt?.toMillis() || Date.now(),
       };
     });

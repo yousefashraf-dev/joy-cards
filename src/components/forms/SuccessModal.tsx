@@ -30,7 +30,6 @@ export default function SuccessModal({ isOpen, onClose, onWhatsappClick, orderDe
     "auto-tap": "autoTap",
     "digital-cards": "digitalCards",
     "business-tap": "businessTap",
-    "wedding": "weddingCards",
   };
 
   const productLabel = orderDetails

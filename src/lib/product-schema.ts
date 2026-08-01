@@ -19,6 +19,7 @@ export interface Product {
   category: string;
   description: string;
   images: string[];
+  type: "nfc" | "regular";
   createdAt?: number;
 }
 
@@ -57,6 +58,7 @@ export async function getAllProducts(): Promise<Product[]> {
       category: data.category,
       description: data.description,
       images: data.images || [],
+      type: data.type === "regular" ? "regular" : "nfc",
       createdAt: data.createdAt?.toMillis() || Date.now(),
     } as Product;
   });
@@ -82,6 +84,7 @@ export async function getProducts(limitCount?: number): Promise<Product[]> {
       category: data.category,
       description: data.description,
       images: data.images || [],
+      type: data.type === "regular" ? "regular" : "nfc",
       createdAt: data.createdAt?.toMillis() || Date.now(),
     } as Product;
   });

@@ -38,11 +38,6 @@ function buildProductDetails(data: OrderPayload): string {
   } else if (data.businessTapFields) {
     details.push(`المنشأة: ${data.businessTapFields.establishmentName}`);
     details.push(`الكمية: ${data.businessTapFields.quantity}`);
-  } else if (data.weddingCardFields) {
-    details.push(`العروسان: ${data.weddingCardFields.coupleName1} & ${data.weddingCardFields.coupleName2}`);
-    details.push(`التاريخ: ${data.weddingCardFields.date}`);
-    details.push(`المكان: ${data.weddingCardFields.venue}`);
-    if (data.weddingCardFields.story) details.push(`قصة الحب: ${data.weddingCardFields.story.slice(0, 50)}...`);
   }
   return details.join(" | ");
 }

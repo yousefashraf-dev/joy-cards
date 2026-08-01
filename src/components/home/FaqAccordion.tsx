@@ -22,7 +22,7 @@ export default function FaqAccordion() {
           {faqIndices.map((idx, i) => (
             <div
               key={i}
-              className="bg-dark-card border border-white/5 rounded-xl overflow-hidden"
+              className="glass-card rounded-xl overflow-hidden"
             >
               <button
                 onClick={() => toggle(i)}
@@ -30,7 +30,7 @@ export default function FaqAccordion() {
               >
                 <span>{t(`q${idx}`)}</span>
                 <ChevronDown
-                  className={`w-5 h-5 text-slate-muted transition-transform duration-300 ${
+                  className={`w-5 h-5 text-gold transition-transform duration-300 ${
                     openIndex === i ? "rotate-180" : ""
                   }`}
                 />

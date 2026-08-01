@@ -42,7 +42,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="w-full max-w-lg bg-navy/95 backdrop-blur-xl border border-gold/30 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(212,175,55,0.2)]"
+            className="w-full max-w-lg bg-navy/95 backdrop-blur-xl border border-gold/30 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(198,165,104,0.2)]"
           >
             <button onClick={onClose} className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white/70 hover:text-white transition-colors">
               <X className="w-4 h-4" />
@@ -121,7 +121,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
               <button
                 onClick={() => handleWhatsApp(product)}
-                className="w-full py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-gold/50 text-gold font-bold text-lg hover:bg-white/20 hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] transition-all duration-300"
+                className="w-full py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-gold/50 text-gold font-bold text-lg hover:bg-white/20 hover:shadow-[0_0_30px_rgba(198,165,104,0.3)] transition-all duration-300"
               >
                 {t("orderNow")}
               </button>

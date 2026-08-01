@@ -25,7 +25,7 @@ export default function SectionHeading({ title, subtitle, className = "" }: Sect
           {subtitle}
         </p>
       )}
-      <div className="mt-4 mx-auto w-20 h-1 bg-gradient-silver rounded-full" />
+      <div className="mt-4 mx-auto w-20 h-1 bg-gradient-gold rounded-full" />
     </motion.div>
   );
 }

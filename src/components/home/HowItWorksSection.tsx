@@ -31,8 +31,8 @@ export default function HowItWorksSection() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.2 }}
               >
-                <div className="w-20 h-20 rounded-2xl bg-dark-card border border-white/5 flex items-center justify-center mx-auto mb-6">
-                  <Icon className="w-10 h-10 text-nardo" />
+                <div className="w-20 h-20 rounded-2xl glass-card flex items-center justify-center mx-auto mb-6">
+                  <Icon className="w-10 h-10 text-gold" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-light mb-3">
                   {t(`${step.key}`)}
@@ -41,7 +41,7 @@ export default function HowItWorksSection() {
                   {t(`${step.key}Desc`)}
                 </p>
                 {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-10 left-[60%] w-[60%] h-px bg-gradient-to-r from-nardo/20 to-transparent" />
+                  <div className="hidden md:block absolute top-10 left-[60%] w-[60%] h-px bg-gradient-to-r from-gold/30 to-transparent" />
                 )}
               </motion.div>
             );

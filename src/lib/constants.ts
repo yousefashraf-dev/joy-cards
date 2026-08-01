@@ -84,7 +84,6 @@ export const PRODUCT_THEMES: Record<ProductType, Theme[]> = {
   "auto-tap": ["batman", "spiderman", "energy-power", "game-of-thrones", "stitch", "batreq", "yellow-pokemon", "cyber-cyan-drift", "terminal-dark-glow"],
   "business-tap": ["modern-bistro", "luxury-lounge", "cyber-cafe"],
   "digital-cards": ["classic-executive", "minimal-glass", "midnight-slate"],
-  "wedding": ["classic-executive", "minimal-glass", "midnight-slate"],
 };
 
 export const THEME_ARCHETYPE: Record<string, ThemeArchetype> = {

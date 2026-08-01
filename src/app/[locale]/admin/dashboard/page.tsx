@@ -4,20 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, Heart, ClipboardList, NotebookText, Upload } from "lucide-react";
+import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, NotebookText, Upload } from "lucide-react";
 import CafeForm from "@/components/admin/CafeForm";
 import CafeTable from "@/components/admin/CafeTable";
 import ProductForm from "@/components/admin/ProductForm";
 import ProductTable from "@/components/admin/ProductTable";
-import WeddingForm from "@/components/admin/WeddingForm";
-import WeddingTable from "@/components/admin/WeddingTable";
-import WeddingOrdersTable from "@/components/admin/WeddingOrdersTable";
 import MenuForm from "@/components/admin/MenuForm";
 import MenuTable from "@/components/admin/MenuTable";
 import CsvImport from "@/components/admin/CsvImport";
 import type { Cafe } from "@/lib/cafe-schema";
 import type { Product } from "@/lib/product-schema";
-import type { WeddingCard } from "@/lib/wedding-schema";
 import type { MenuDocument } from "@/lib/menu-schema";
 
 const ADMIN_PASSWORD = "oreo2552000";
@@ -26,7 +22,7 @@ export default function AdminDashboardPage() {
   const t = useTranslations("admin");
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<"cafes" | "products" | "menus" | "weddings" | "wedding-orders" | "import-csv">("cafes");
+  const [activeTab, setActiveTab] = useState<"cafes" | "products" | "menus" | "import-csv">("cafes");
 
   useEffect(() => {
     setAuthenticated(sessionStorage.getItem("admin_auth") === "true");
@@ -37,12 +33,10 @@ export default function AdminDashboardPage() {
   const [cafes, setCafes] = useState<Cafe[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [menus, setMenus] = useState<MenuDocument[]>([]);
-  const [weddings, setWeddings] = useState<WeddingCard[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCafe, setEditingCafe] = useState<Cafe | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingMenu, setEditingMenu] = useState<MenuDocument | null>(null);
-  const [editingWedding, setEditingWedding] = useState<WeddingCard | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -60,12 +54,6 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     if (authenticated && activeTab === "menus") {
       fetch("/api/menus").then((r) => r.ok ? r.json() : []).then(setMenus).catch(console.error);
-    }
-  }, [authenticated, activeTab, refreshKey]);
-
-  useEffect(() => {
-    if (authenticated && (activeTab === "weddings" || activeTab === "wedding-orders")) {
-      fetch("/api/weddings").then((r) => r.ok ? r.json() : []).then(setWeddings).catch(console.error);
     }
   }, [authenticated, activeTab, refreshKey]);
 
@@ -94,22 +82,12 @@ export default function AdminDashboardPage() {
   const handleEditCafe = useCallback((cafe: Cafe) => {
     setEditingCafe(cafe);
     setEditingProduct(null);
-    setEditingWedding(null);
     setShowForm(true);
   }, []);
 
   const handleEditProduct = useCallback((product: Product) => {
     setEditingProduct(product);
     setEditingCafe(null);
-    setEditingWedding(null);
-    setShowForm(true);
-  }, []);
-
-  const handleEditWedding = useCallback((wedding: WeddingCard) => {
-    setEditingWedding(wedding);
-    setEditingCafe(null);
-    setEditingProduct(null);
-    setEditingMenu(null);
     setShowForm(true);
   }, []);
 
@@ -117,7 +95,6 @@ export default function AdminDashboardPage() {
     setEditingMenu(menu);
     setEditingCafe(null);
     setEditingProduct(null);
-    setEditingWedding(null);
     setShowForm(true);
   }, []);
 
@@ -126,7 +103,6 @@ export default function AdminDashboardPage() {
     setEditingCafe(null);
     setEditingProduct(null);
     setEditingMenu(null);
-    setEditingWedding(null);
   }, []);
 
   const handleFormSuccess = useCallback(() => {
@@ -134,7 +110,6 @@ export default function AdminDashboardPage() {
     setEditingCafe(null);
     setEditingProduct(null);
     setEditingMenu(null);
-    setEditingWedding(null);
     setRefreshKey((k) => k + 1);
   }, []);
 
@@ -196,13 +171,12 @@ export default function AdminDashboardPage() {
               onClick={() => {
                 setEditingCafe(null);
                 setEditingProduct(null);
-                setEditingWedding(null);
                 setShowForm(true);
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gold text-matte-dark font-semibold hover:bg-gold-light transition-colors duration-200 text-sm"
             >
               <Plus className="w-4 h-4" />
-              {activeTab === "cafes" ? t("addCafe") : activeTab === "menus" ? "إضافة منيو" : activeTab === "weddings" ? t("addWedding") : t("addProduct")}
+              {activeTab === "cafes" ? t("addCafe") : activeTab === "menus" ? "إضافة منيو" : t("addProduct")}
             </button>
             <button
               onClick={handleLogout}
@@ -219,7 +193,7 @@ export default function AdminDashboardPage() {
             onClick={() => setActiveTab("cafes")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
               activeTab === "cafes"
-                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(198,165,104,0.15)]"
                 : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
             }`}
           >
@@ -230,7 +204,7 @@ export default function AdminDashboardPage() {
             onClick={() => setActiveTab("products")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
               activeTab === "products"
-                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(198,165,104,0.15)]"
                 : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
             }`}
           >
@@ -241,34 +215,12 @@ export default function AdminDashboardPage() {
             onClick={() => setActiveTab("menus")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
               activeTab === "menus"
-                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(198,165,104,0.15)]"
                 : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
             }`}
           >
             <NotebookText className="w-4 h-4" />
             المنيو الرقمي
-          </button>
-          <button
-            onClick={() => setActiveTab("weddings")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-              activeTab === "weddings"
-                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
-                : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
-            }`}
-          >
-            <Heart className="w-4 h-4" />
-            {t("weddingsTab")}
-          </button>
-          <button
-            onClick={() => setActiveTab("wedding-orders")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
-              activeTab === "wedding-orders"
-                ? "bg-pink-500/20 text-pink-400 border border-pink-500/40 shadow-[0_0_15px_rgba(236,72,153,0.15)]"
-                : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
-            }`}
-          >
-            <ClipboardList className="w-4 h-4" />
-            طلبات كروت الفرح
           </button>
           <button
             onClick={() => setActiveTab("import-csv")}
@@ -301,19 +253,13 @@ export default function AdminDashboardPage() {
                 exit={{ opacity: 0, y: 20 }}
                 className="w-full max-w-2xl mt-8 mb-8"
               >
-                {editingCafe || (activeTab === "cafes" && !editingProduct && !editingMenu && !editingWedding) ? (
+                {editingCafe || (activeTab === "cafes" && !editingProduct && !editingMenu) ? (
                   <CafeForm
                     cafe={editingCafe}
                     onSuccess={handleFormSuccess}
                     onCancel={handleFormClose}
                   />
-                ) : editingWedding || (activeTab === "weddings" && !editingCafe && !editingProduct && !editingMenu) ? (
-                  <WeddingForm
-                    wedding={editingWedding}
-                    onSuccess={handleFormSuccess}
-                    onCancel={handleFormClose}
-                  />
-                ) : editingMenu || (activeTab === "menus" && !editingCafe && !editingProduct && !editingWedding) ? (
+                ) : editingMenu || (activeTab === "menus" && !editingCafe && !editingProduct) ? (
                   <MenuForm
                     menu={editingMenu}
                     onSuccess={handleFormSuccess}
@@ -342,18 +288,6 @@ export default function AdminDashboardPage() {
           <MenuTable
             menus={menus}
             onEdit={handleEditMenu}
-            onRefresh={() => setRefreshKey((k) => k + 1)}
-          />
-        ) : activeTab === "weddings" ? (
-          <WeddingTable
-            weddings={weddings}
-            onEdit={handleEditWedding}
-            onRefresh={() => setRefreshKey((k) => k + 1)}
-          />
-        ) : activeTab === "wedding-orders" ? (
-          <WeddingOrdersTable
-            weddings={weddings}
-            onEdit={handleEditWedding}
             onRefresh={() => setRefreshKey((k) => k + 1)}
           />
         ) : activeTab === "import-csv" ? (

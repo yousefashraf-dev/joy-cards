@@ -31,19 +31,19 @@ export default function ProductCard({
       transition={{ duration: 0.5, delay: index * 0.15 }}
     >
       <Link href={href}>
-        <div className="group relative glass bg-dark-card border border-white/5 rounded-2xl p-8 h-full hover:border-nardo/30 transition-all duration-500 overflow-hidden">
+        <div className="group relative glass-card rounded-2xl p-8 h-full hover:border-gold/30 transition-all duration-500 overflow-hidden">
           <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 ${gradient}`} />
           <div className="relative z-10 flex flex-col h-full">
-            <div className="w-14 h-14 rounded-xl bg-matte-black border border-white/5 flex items-center justify-center mb-6 group-hover:border-nardo/30 transition-colors duration-300">
+            <div className="w-14 h-14 rounded-xl bg-matte-black border border-gold/10 flex items-center justify-center mb-6 group-hover:border-gold/30 transition-colors duration-300">
               {icon}
             </div>
-            <h3 className="text-xl font-bold text-slate-light mb-3 group-hover:text-nardo transition-colors duration-300">
+            <h3 className="text-xl font-bold text-slate-light mb-3 group-hover:text-gold transition-colors duration-300">
               {title}
             </h3>
             <p className="text-slate-muted text-sm leading-relaxed mb-6 flex-1">
               {description}
             </p>
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-light/90 text-matte-dark font-semibold text-sm hover:bg-slate-light group-hover:shadow-lg transition-all duration-300">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-gold text-matte-dark font-semibold text-sm hover:opacity-90 group-hover:shadow-[0_0_30px_rgba(198,165,104,0.3)] transition-all duration-300">
               <span>{cta}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
             </div>

@@ -17,7 +17,7 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     icon: "☕",
     bg: "linear-gradient(to bottom, #1A1A1A, #1A1A1A, #0D0D0D)",
     bgLoading: "#1A1A1A",
-    accent: "#D4AF37",
+    accent: "#C6A568",
     ringOffset: "#1A1A1A",
   },
   restaurant: {
@@ -25,7 +25,7 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     icon: "🍽️",
     bg: "linear-gradient(to bottom, #1C1510, #15100D, #0D0A08)",
     bgLoading: "#1C1510",
-    accent: "#D4AF37",
+    accent: "#C6A568",
     ringOffset: "#1C1510",
   },
   "cafe-restaurant": {
@@ -42,7 +42,7 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     icon: "🌹",
     bg: "linear-gradient(to bottom, #0D0A0A, #140A0A, #0D0505)",
     bgLoading: "#0D0A0A",
-    accent: "#D4AF37",
+    accent: "#C6A568",
     ringOffset: "#0D0A0A",
   },
   vape: {

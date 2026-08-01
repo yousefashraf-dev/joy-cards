@@ -6,7 +6,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { UtensilsCrossed, Share2, ArrowUp, ShoppingBag } from "lucide-react";
+import { UtensilsCrossed, Share2, ArrowUp, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import type { MenuDocument } from "@/lib/menu-schema";
 import { MENU_GROUPS, getGroupByLabel, getBadgeText, type MenuGroup } from "@/lib/menu-groups";
 import { CAFE_THEMES, type CafeTheme } from "@/lib/cafe-themes";
@@ -426,9 +426,72 @@ export default function MenuPage() {
 
   const activeGroupConfig = activeGroup === "all" ? null : getGroupByLabel(activeGroup);
 
+  const parentGroups = useMemo(() => {
+    return MENU_GROUPS.filter((g) =>
+      g.children.some((child) => categories.some((c) => c.name === child))
+    );
+  }, [categories]);
+
   const handleGroupChange = useCallback((g: string) => {
     setActiveGroup(g);
     setActiveSub("all");
+  }, []);
+
+  const navigateBySwipe = useCallback(
+    (dir: 1 | -1) => {
+      if (parentGroups.length === 0) return;
+      if (activeGroup === "all") {
+        handleGroupChange(dir === 1 ? parentGroups[0].labelEn : parentGroups[parentGroups.length - 1].labelEn);
+        return;
+      }
+      const idx = parentGroups.findIndex((g) => g.labelEn === activeGroup);
+      if (idx === -1) return;
+      const nextIdx = (idx + dir + parentGroups.length) % parentGroups.length;
+      handleGroupChange(parentGroups[nextIdx].labelEn);
+    },
+    [activeGroup, parentGroups, handleGroupChange]
+  );
+
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
+  const swiping = useRef(false);
+
+  const onSwipePointerDown = useCallback((e: React.PointerEvent) => {
+    swipeStart.current = { x: e.clientX, y: e.clientY };
+    swiping.current = false;
+  }, []);
+
+  const onSwipePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!swipeStart.current) return;
+    const dx = e.clientX - swipeStart.current.x;
+    const dy = e.clientY - swipeStart.current.y;
+    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) swiping.current = true;
+  }, []);
+
+  const onSwipePointerEnd = useCallback(
+    (e: React.PointerEvent) => {
+      if (!swipeStart.current) return;
+      const dx = e.clientX - swipeStart.current.x;
+      const dy = e.clientY - swipeStart.current.y;
+      if (swiping.current && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        if (dx < 0) navigateBySwipe(1);
+        else navigateBySwipe(-1);
+      }
+      swipeStart.current = null;
+      swiping.current = false;
+    },
+    [navigateBySwipe]
+  );
+
+  const onSwipePointerCancel = useCallback(() => {
+    swipeStart.current = null;
+    swiping.current = false;
+  }, []);
+
+  const [showSwipeHint, setShowSwipeHint] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSwipeHint(false), 4000);
+    return () => clearTimeout(timer);
   }, []);
 
   const filteredByGroup = useMemo(() => {
@@ -466,12 +529,6 @@ export default function MenuPage() {
       }))
       .filter((g) => g.items.length > 0);
   }, [activeGroup, activeSub, availableSubs, categories, filteredBySub]);
-
-  const parentGroups = useMemo(() => {
-    return MENU_GROUPS.filter((g) =>
-      g.children.some((child) => categories.some((c) => c.name === child))
-    );
-  }, [categories]);
 
   useEffect(() => {
     if (!slug) return;
@@ -522,7 +579,14 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen relative" style={{ background: bgGradient }}>
+    <div
+      className="min-h-screen relative"
+      style={{
+        background: bgGradient,
+        overscrollBehaviorY: "contain",
+        WebkitTapHighlightColor: "transparent",
+      }}
+    >
       {isTreeTheme && <LuxuryDecorations />}
       <div className="relative z-10">
         <div className="max-w-lg mx-auto px-4 md:px-5 py-8 md:py-12">
@@ -565,23 +629,30 @@ export default function MenuPage() {
             </div>
           </motion.div>
 
-          {/* Parent Category Tabs — hidden when carousel is showing */}
+          {/* Sticky Tabs — always visible while scrolling (app-like) */}
           {(!isTreeTheme || activeGroup !== "all") && parentGroups.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-              <ParentTabs groups={parentGroups} activeGroup={activeGroup} onGroupChange={handleGroupChange} accent={accent} isTreeTheme={isTreeTheme} />
-            </motion.div>
-          )}
-
-          {/* Sub-category Tabs */}
-          {activeGroup !== "all" && availableSubs.length > 1 && (
-            <motion.div
-              key={activeGroup}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
+            <div
+              className="sticky top-0 z-40 -mx-4 md:-mx-5 px-4 md:px-5 pt-3 pb-1 backdrop-blur-xl"
+              style={{
+                backgroundColor: isTreeTheme ? "rgba(20,12,7,0.85)" : "rgba(13,13,13,0.85)",
+                borderBottom: isTreeTheme ? "1px solid rgba(229,193,88,0.08)" : "1px solid rgba(255,255,255,0.06)",
+              }}
             >
-              <SubCategoryTabs subCategories={availableSubs} activeSub={activeSub} onSubChange={setActiveSub} accent={accent} isTreeTheme={isTreeTheme} />
-            </motion.div>
+              <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+                <ParentTabs groups={parentGroups} activeGroup={activeGroup} onGroupChange={handleGroupChange} accent={accent} isTreeTheme={isTreeTheme} />
+              </motion.div>
+
+              {activeGroup !== "all" && availableSubs.length > 1 && (
+                <motion.div
+                  key={activeGroup}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <SubCategoryTabs subCategories={availableSubs} activeSub={activeSub} onSubChange={setActiveSub} accent={accent} isTreeTheme={isTreeTheme} />
+                </motion.div>
+              )}
+            </div>
           )}
 
           {/* Section title when viewing a group with no sub-tabs (or sub=all) */}
@@ -622,15 +693,77 @@ export default function MenuPage() {
               <TreeCarousel groups={parentGroups} onGroupChange={handleGroupChange} />
             </motion.div>
           ) : (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${activeGroup}-${activeSub}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.25 }}
-                className="space-y-7"
-              >
+            <div
+              className="relative"
+              style={{ touchAction: "pan-y" }}
+              onPointerDown={parentGroups.length > 1 ? onSwipePointerDown : undefined}
+              onPointerMove={parentGroups.length > 1 ? onSwipePointerMove : undefined}
+              onPointerUp={parentGroups.length > 1 ? onSwipePointerEnd : undefined}
+              onPointerCancel={parentGroups.length > 1 ? onSwipePointerCancel : undefined}
+            >
+              {/* Swipe nav side arrows (tap fallback) */}
+              {parentGroups.length > 1 && (
+                <>
+                  <button
+                    onClick={() => navigateBySwipe(-1)}
+                    className="absolute left-0 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
+                    style={{
+                      background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
+                      border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
+                      color: isTreeTheme ? "#E5C158" : accent,
+                    }}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => navigateBySwipe(1)}
+                    className="absolute right-0 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
+                    style={{
+                      background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
+                      border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
+                      color: isTreeTheme ? "#E5C158" : accent,
+                    }}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              )}
+
+              {/* Swipe hint pill */}
+              <AnimatePresence>
+                {showSwipeHint && parentGroups.length > 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
+                  >
+                    <div
+                      className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md"
+                      style={{
+                        background: isTreeTheme ? "rgba(20,12,7,0.85)" : "rgba(13,13,13,0.85)",
+                        border: isTreeTheme ? "1px solid rgba(229,193,88,0.2)" : `1px solid ${accent}30`,
+                      }}
+                    >
+                      <ChevronLeft className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
+                      <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap" style={{ color: isTreeTheme ? "rgba(229,193,88,0.7)" : accent }}>
+                        اسحب يمين / شمال للتنقل
+                      </span>
+                      <ChevronRight className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeGroup}-${activeSub}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-7"
+                >
                 {groupedBySub.length === 0 && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
                     <div
@@ -671,10 +804,11 @@ export default function MenuPage() {
                         <MenuItemRow key={`${item.name}-${item.size || ""}-${i}`} item={item} index={i} accent={accent} isTreeTheme={isTreeTheme} priceAccent={priceAccent} />
                       ))}
                     </div>
-                  </div>
-                ))}
+                </div>
+              ))}
               </motion.div>
             </AnimatePresence>
+            </div>
           )}
 
           {/* Footer */}

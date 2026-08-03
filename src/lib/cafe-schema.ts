@@ -74,6 +74,12 @@ export interface MenuItem {
   category: string;
   size?: string;
   description?: string;
+  prices?: { label: string; price: string }[];
+}
+
+export interface CafeLocation {
+  label: string;
+  url: string;
 }
 
 export interface Cafe {
@@ -97,6 +103,7 @@ export interface Cafe {
   telegram?: string;
   googleMapsUrl?: string;
   googleReviewsUrl?: string;
+  locations?: CafeLocation[];
   wifiName?: string;
   wifiPassword?: string;
   vodafoneCash?: string;
@@ -167,6 +174,7 @@ export async function getAllCafes(): Promise<Cafe[]> {
       telegram: data.telegram,
       googleMapsUrl: data.googleMapsUrl,
       googleReviewsUrl: data.googleReviewsUrl,
+      locations: data.locations || [],
       wifiName: data.wifiName,
       wifiPassword: data.wifiPassword,
         vodafoneCash: data.vodafoneCash,
@@ -209,6 +217,7 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     telegram: data.telegram,
     googleMapsUrl: data.googleMapsUrl,
     googleReviewsUrl: data.googleReviewsUrl,
+    locations: data.locations || [],
     wifiName: data.wifiName,
     wifiPassword: data.wifiPassword,
     vodafoneCash: data.vodafoneCash,

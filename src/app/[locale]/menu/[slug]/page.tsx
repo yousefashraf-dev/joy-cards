@@ -5,9 +5,10 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { UtensilsCrossed, Share2, ArrowUp, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence, useMotionValue, useMotionTemplate, animate } from "framer-motion";
+import { UtensilsCrossed, Share2, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import type { MenuDocument } from "@/lib/menu-schema";
+import type { MenuItem } from "@/lib/cafe-schema";
 import { MENU_GROUPS, getGroupByLabel, getBadgeText, type MenuGroup } from "@/lib/menu-groups";
 import { CAFE_THEMES, type CafeTheme } from "@/lib/cafe-themes";
 import TreeCarousel from "@/components/menu/TreeCarousel";
@@ -211,7 +212,7 @@ function Badge({ type }: { type: string }) {
 }
 
 function MenuItemRow({ item, index, accent, isTreeTheme, priceAccent }: {
-  item: { name: string; price: string; size?: string; description?: string };
+  item: { name: string; price: string; size?: string; description?: string; prices?: { label: string; price: string }[] };
   index: number;
   accent?: string;
   isTreeTheme?: boolean;
@@ -219,6 +220,8 @@ function MenuItemRow({ item, index, accent, isTreeTheme, priceAccent }: {
 }) {
   const ac = accent || ACCENT_OLIVE_DEFAULT;
   const badge = isTreeTheme ? getItemBadge(item.name, item.description) : null;
+
+  const extraPrices = item.prices && item.prices.length > 0 ? item.prices : null;
 
   if (isTreeTheme) {
     return (
@@ -260,6 +263,25 @@ function MenuItemRow({ item, index, accent, isTreeTheme, priceAccent }: {
             {item.price}
           </span>
         </div>
+        {extraPrices && (
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {extraPrices.map((p, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] md:text-xs font-semibold tabular-nums"
+                style={{
+                  color: "#E5C158",
+                  border: "1px solid rgba(229,193,88,0.3)",
+                  background: "rgba(229,193,88,0.08)",
+                  fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
+                }}
+              >
+                <span className="opacity-80">{p.label}</span>
+                <span className="font-extrabold">{p.price}</span>
+              </span>
+            ))}
+          </div>
+        )}
         <div className="mt-3 h-px w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "linear-gradient(to right, transparent, rgba(229,193,88,0.2), transparent)" }} />
       </motion.div>
     );
@@ -305,6 +327,25 @@ function MenuItemRow({ item, index, accent, isTreeTheme, priceAccent }: {
         >
           {item.description}
         </p>
+      )}
+      {extraPrices && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {extraPrices.map((p, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] md:text-xs font-semibold tabular-nums"
+              style={{
+                color: ac,
+                border: `1px solid ${ac}40`,
+                background: `${ac}0d`,
+                fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
+              }}
+            >
+              <span className="opacity-80">{p.label}</span>
+              <span className="font-bold">{p.price}</span>
+            </span>
+          ))}
+        </div>
       )}
     </motion.div>
   );
@@ -409,9 +450,8 @@ export default function MenuPage() {
   const slug = params.slug as string;
   const [menu, setMenu] = useState<MenuDocument | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeGroup, setActiveGroup] = useState("all");
+  const [deckIndex, setDeckIndex] = useState(0);
   const [activeSub, setActiveSub] = useState("all");
-  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const items = menu?.items || [];
   const categories = menu?.categories || [];
@@ -424,68 +464,117 @@ export default function MenuPage() {
   const bgColor = themeConfig?.bgLoading || BG_DEFAULT;
   const bgGradient = themeConfig?.bg || BG_DEFAULT;
 
-  const activeGroupConfig = activeGroup === "all" ? null : getGroupByLabel(activeGroup);
-
   const parentGroups = useMemo(() => {
     return MENU_GROUPS.filter((g) =>
       g.children.some((child) => categories.some((c) => c.name === child))
     );
   }, [categories]);
 
-  const handleGroupChange = useCallback((g: string) => {
-    setActiveGroup(g);
-    setActiveSub("all");
-  }, []);
+  const screens = useMemo(
+    () => ["all", ...parentGroups.map((g) => g.labelEn)],
+    [parentGroups]
+  );
 
-  const navigateBySwipe = useCallback(
+  const activeGroup = screens[Math.min(deckIndex, screens.length - 1)] || "all";
+
+  /* ---------- Deck slide (fixed viewport, app-like) ---------- */
+  const slideX = useMotionValue(0);
+  const deckTransform = useMotionTemplate`translateX(${slideX}%)`;
+  const deckRef = useRef<HTMLDivElement>(null);
+  const dragInfo = useRef<{ startX: number; index: number; active: boolean; width: number }>({
+    startX: 0,
+    index: 0,
+    active: false,
+    width: 1,
+  });
+  const screenScrollRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const goToDeck = useCallback(
+    (idx: number) => {
+      const clamped = Math.max(0, Math.min(screens.length - 1, idx));
+      setDeckIndex(clamped);
+      setActiveSub("all");
+      animate(slideX, -clamped * 100, { type: "spring", stiffness: 400, damping: 38 });
+    },
+    [screens.length, slideX]
+  );
+
+  const flipDeck = useCallback(
     (dir: 1 | -1) => {
-      if (parentGroups.length === 0) return;
-      if (activeGroup === "all") {
-        handleGroupChange(dir === 1 ? parentGroups[0].labelEn : parentGroups[parentGroups.length - 1].labelEn);
-        return;
-      }
-      const idx = parentGroups.findIndex((g) => g.labelEn === activeGroup);
-      if (idx === -1) return;
-      const nextIdx = (idx + dir + parentGroups.length) % parentGroups.length;
-      handleGroupChange(parentGroups[nextIdx].labelEn);
+      if (screens.length < 2) return;
+      goToDeck((deckIndex + dir + screens.length) % screens.length);
     },
-    [activeGroup, parentGroups, handleGroupChange]
+    [deckIndex, screens.length, goToDeck]
   );
 
-  const swipeStart = useRef<{ x: number; y: number } | null>(null);
-  const swiping = useRef(false);
+  const handleGroupChange = useCallback(
+    (g: string) => {
+      const idx = screens.indexOf(g);
+      goToDeck(idx === -1 ? 0 : idx);
+    },
+    [screens, goToDeck]
+  );
 
-  const onSwipePointerDown = useCallback((e: React.PointerEvent) => {
-    swipeStart.current = { x: e.clientX, y: e.clientY };
-    swiping.current = false;
-  }, []);
+  useEffect(() => {
+    if (deckIndex >= screens.length) {
+      const target = Math.max(0, screens.length - 1);
+      setDeckIndex(target);
+      slideX.set(-target * 100);
+    }
+  }, [screens.length, deckIndex, slideX]);
 
-  const onSwipePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!swipeStart.current) return;
-    const dx = e.clientX - swipeStart.current.x;
-    const dy = e.clientY - swipeStart.current.y;
-    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) swiping.current = true;
-  }, []);
+  useEffect(() => {
+    const el = screenScrollRefs.current[deckIndex];
+    if (el) el.scrollTop = 0;
+  }, [deckIndex]);
 
-  const onSwipePointerEnd = useCallback(
+  const deckDragEnabled = screens.length > 1 && !(isTreeTheme && deckIndex === 0);
+
+  const onDeckPointerDown = useCallback(
     (e: React.PointerEvent) => {
-      if (!swipeStart.current) return;
-      const dx = e.clientX - swipeStart.current.x;
-      const dy = e.clientY - swipeStart.current.y;
-      if (swiping.current && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.2) {
-        if (dx < 0) navigateBySwipe(1);
-        else navigateBySwipe(-1);
-      }
-      swipeStart.current = null;
-      swiping.current = false;
+      if (!deckDragEnabled) return;
+      const el = deckRef.current;
+      dragInfo.current = {
+        startX: e.clientX,
+        index: deckIndex,
+        active: true,
+        width: el?.getBoundingClientRect().width || 1,
+      };
     },
-    [navigateBySwipe]
+    [deckDragEnabled, deckIndex]
   );
 
-  const onSwipePointerCancel = useCallback(() => {
-    swipeStart.current = null;
-    swiping.current = false;
-  }, []);
+  const onDeckPointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      const d = dragInfo.current;
+      if (!d.active) return;
+      const dx = e.clientX - d.startX;
+      slideX.set(-d.index * 100 + (dx / d.width) * 100);
+    },
+    [slideX]
+  );
+
+  const onDeckPointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      const d = dragInfo.current;
+      if (!d.active) return;
+      d.active = false;
+      const dx = e.clientX - d.startX;
+      if (Math.abs(dx) > 60) {
+        flipDeck(dx < 0 ? 1 : -1);
+      } else {
+        animate(slideX, -d.index * 100, { type: "spring", stiffness: 400, damping: 38 });
+      }
+    },
+    [flipDeck, slideX]
+  );
+
+  const onDeckPointerCancel = useCallback(() => {
+    const d = dragInfo.current;
+    if (!d.active) return;
+    d.active = false;
+    animate(slideX, -d.index * 100, { type: "spring", stiffness: 400, damping: 38 });
+  }, [slideX]);
 
   const [showSwipeHint, setShowSwipeHint] = useState(true);
 
@@ -494,41 +583,43 @@ export default function MenuPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const filteredByGroup = useMemo(() => {
-    if (activeGroup === "all") return items;
-    if (!activeGroupConfig) return items;
-    const groupCats = new Set(activeGroupConfig.children);
-    return items.filter((i) => groupCats.has(i.category));
-  }, [activeGroup, activeGroupConfig, items]);
+  /* ---------- Per-screen data ---------- */
+  const screenData = useMemo(() => {
+    return screens.map((label) => {
+      if (label === "all") return { label, type: "all" as const };
+      const cfg = getGroupByLabel(label);
+      const groupItems = cfg ? items.filter((i) => cfg.children.includes(i.category)) : items;
+      const subs = cfg ? cfg.children.filter((c) => groupItems.some((i) => i.category === c)) : [];
+      const cats =
+        activeSub !== "all" && subs.includes(activeSub)
+          ? [activeSub]
+          : subs.length > 0
+            ? subs
+            : categories.map((c) => c.name);
+      const grouped = cats
+        .map((catName) => ({
+          name: catName,
+          icon: categories.find((c) => c.name === catName)?.icon || "",
+          items: groupItems.filter((i) => i.category === catName),
+        }))
+        .filter((g) => g.items.length > 0);
+      return { label, type: "group" as const, cfg, subs, grouped };
+    });
+  }, [screens, items, categories, activeSub]);
 
-  const filteredBySub = useMemo(() => {
-    if (activeSub === "all") return filteredByGroup;
-    return filteredByGroup.filter((i) => i.category === activeSub);
-  }, [activeSub, filteredByGroup]);
-
-  const availableSubs = useMemo(() => {
-    if (!activeGroupConfig) return [];
-    const subs = activeGroupConfig.children.filter((child) =>
-      filteredByGroup.some((i) => i.category === child)
-    );
-    return subs;
-  }, [activeGroupConfig, filteredByGroup]);
-
-  const groupedBySub = useMemo(() => {
-    const cats = activeGroup !== "all" && activeSub === "all"
-      ? availableSubs
-      : activeSub !== "all"
-        ? [activeSub]
-        : categories.map((c) => c.name);
-
+  const allScreenGroups = useMemo(() => {
+    const cats = categories.map((c) => c.name);
     return cats
       .map((catName) => ({
         name: catName,
         icon: categories.find((c) => c.name === catName)?.icon || "",
-        items: filteredBySub.filter((i) => i.category === catName),
+        items: items.filter((i) => i.category === catName),
       }))
       .filter((g) => g.items.length > 0);
-  }, [activeGroup, activeSub, availableSubs, categories, filteredBySub]);
+  }, [categories, items]);
+
+  const activeScreen = screenData[Math.min(deckIndex, screenData.length - 1)];
+  const activeScreenSubs = activeScreen?.type === "group" ? activeScreen.subs : [];
 
   useEffect(() => {
     if (!slug) return;
@@ -538,14 +629,6 @@ export default function MenuPage() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [slug]);
-
-  useEffect(() => {
-    const onScroll = () => setShowScrollTop(window.scrollY > 400);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const shareMenu = async () => {
     const url = window.location.href;
@@ -578,9 +661,63 @@ export default function MenuPage() {
     );
   }
 
+  const renderEmpty = () => (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
+      <div
+        className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
+        style={{
+          background: isTreeTheme ? "rgba(229,193,88,0.05)" : "rgba(255,255,255,0.05)",
+          border: isTreeTheme ? "1px solid rgba(229,193,88,0.1)" : "1px solid rgba(255,255,255,0.1)",
+        }}
+      >
+        <ShoppingBag className="w-8 h-8" style={{ color: isTreeTheme ? "rgba(229,193,88,0.2)" : "rgba(255,255,255,0.2)" }} />
+      </div>
+      <p className="text-sm font-medium" style={{ color: isTreeTheme ? "rgba(226,232,240,0.4)" : "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>
+        لا توجد أصناف في هذا القسم
+      </p>
+    </motion.div>
+  );
+
+  const renderGroupItems = (
+    grouped: { name: string; icon: string; items: MenuItem[] }[],
+    isAllScreen: boolean
+  ) => (
+    <>
+      {grouped.length === 0 ? (
+        renderEmpty()
+      ) : (
+        grouped.map((group) => (
+          <div key={group.name} className="mb-6">
+            <motion.div
+              initial={{ opacity: 0, x: -4 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="mb-3 pb-2"
+              style={{ borderBottom: isTreeTheme ? "1px solid rgba(229,193,88,0.08)" : "1px solid rgba(255,255,255,0.1)" }}
+            >
+              <h3
+                className="text-sm md:text-base font-bold tracking-wide"
+                style={{
+                  color: isTreeTheme ? "#E5C158" : accent,
+                  fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
+                }}
+              >
+                {isAllScreen ? getBadgeText(group.name) : group.name}
+              </h3>
+            </motion.div>
+            <div className="space-y-3 md:space-y-5">
+              {group.items.map((item, i) => (
+                <MenuItemRow key={`${item.name}-${item.size || ""}-${i}`} item={item} index={i} accent={accent} isTreeTheme={isTreeTheme} priceAccent={priceAccent} />
+              ))}
+            </div>
+          </div>
+        ))
+      )}
+    </>
+  );
+
   return (
     <div
-      className="min-h-screen relative"
+      className="h-dvh overflow-hidden relative flex flex-col"
       style={{
         background: bgGradient,
         overscrollBehaviorY: "contain",
@@ -588,15 +725,15 @@ export default function MenuPage() {
       }}
     >
       {isTreeTheme && <LuxuryDecorations />}
-      <div className="relative z-10">
-        <div className="max-w-lg mx-auto px-4 md:px-5 py-8 md:py-12">
+      <div className="relative z-10 flex flex-col h-full w-full">
+        <div className="max-w-lg mx-auto w-full px-4 md:px-5 flex flex-col h-full">
 
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="text-center mb-6"
+            className="text-center pt-6 md:pt-8 shrink-0"
           >
             {menu.logo && (
               <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4 }} className="flex justify-center mb-4">
@@ -629,191 +766,140 @@ export default function MenuPage() {
             </div>
           </motion.div>
 
-          {/* Sticky Tabs — always visible while scrolling (app-like) */}
+          {/* Tabs (fixed, always visible) */}
           {(!isTreeTheme || activeGroup !== "all") && parentGroups.length > 0 && (
-            <div
-              className="sticky top-0 z-40 -mx-4 md:-mx-5 px-4 md:px-5 pt-3 pb-1 backdrop-blur-xl"
-              style={{
-                backgroundColor: isTreeTheme ? "rgba(20,12,7,0.85)" : "rgba(13,13,13,0.85)",
-                borderBottom: isTreeTheme ? "1px solid rgba(229,193,88,0.08)" : "1px solid rgba(255,255,255,0.06)",
-              }}
-            >
+            <div className="shrink-0 pt-3">
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
                 <ParentTabs groups={parentGroups} activeGroup={activeGroup} onGroupChange={handleGroupChange} accent={accent} isTreeTheme={isTreeTheme} />
               </motion.div>
 
-              {activeGroup !== "all" && availableSubs.length > 1 && (
+              {activeGroup !== "all" && activeScreenSubs.length > 1 && (
                 <motion.div
                   key={activeGroup}
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <SubCategoryTabs subCategories={availableSubs} activeSub={activeSub} onSubChange={setActiveSub} accent={accent} isTreeTheme={isTreeTheme} />
+                  <SubCategoryTabs subCategories={activeScreenSubs} activeSub={activeSub} onSubChange={setActiveSub} accent={accent} isTreeTheme={isTreeTheme} />
                 </motion.div>
               )}
             </div>
           )}
 
-          {/* Section title when viewing a group with no sub-tabs (or sub=all) */}
-          {activeGroup !== "all" && activeSub === "all" && activeGroupConfig && (
-            <motion.div
-              initial={{ opacity: 0, x: -4 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="mb-5"
-            >
-              <h2
-                className="text-lg md:text-xl font-bold tracking-wide"
-                style={{
-                  color: isTreeTheme ? "#E5C158" : accent,
-                  fontFamily: "var(--font-outfit), var(--font-cairo), sans-serif",
-                }}
-              >
-                {activeGroupConfig.icon && <span className="ml-2">{activeGroupConfig.icon}</span>}
-                {activeGroupConfig.labelEn}
-              </h2>
-              <div className="h-[2px] w-10 mt-1 rounded-full" style={{ backgroundColor: isTreeTheme ? "#E5C158" : accent }} />
-            </motion.div>
-          )}
-
-          {/* Content: Tree Carousel for "all" tab when tree theme, otherwise items */}
-          {isTreeTheme && activeGroup === "all" ? (
-            <motion.div
-              key="tree-carousel"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-            >
-              <div className="text-center mb-4">
-                <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: isTreeTheme ? "rgba(229,193,88,0.6)" : `${accent}99` }}>
-                  اختر قسمك
-                </p>
-                <div className="h-px w-8 mx-auto mt-2 rounded-full" style={{ backgroundColor: isTreeTheme ? "rgba(229,193,88,0.2)" : `${accent}33` }} />
-              </div>
-              <TreeCarousel groups={parentGroups} onGroupChange={handleGroupChange} />
-            </motion.div>
-          ) : (
-            <div
-              className="relative"
-              style={{ touchAction: "pan-y" }}
-              onPointerDown={parentGroups.length > 1 ? onSwipePointerDown : undefined}
-              onPointerMove={parentGroups.length > 1 ? onSwipePointerMove : undefined}
-              onPointerUp={parentGroups.length > 1 ? onSwipePointerEnd : undefined}
-              onPointerCancel={parentGroups.length > 1 ? onSwipePointerCancel : undefined}
-            >
-              {/* Swipe nav side arrows (tap fallback) */}
-              {parentGroups.length > 1 && (
-                <>
-                  <button
-                    onClick={() => navigateBySwipe(-1)}
-                    className="absolute left-0 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
-                    style={{
-                      background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
-                      border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
-                      color: isTreeTheme ? "#E5C158" : accent,
-                    }}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => navigateBySwipe(1)}
-                    className="absolute right-0 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
-                    style={{
-                      background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
-                      border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
-                      color: isTreeTheme ? "#E5C158" : accent,
-                    }}
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </>
-              )}
-
-              {/* Swipe hint pill */}
-              <AnimatePresence>
-                {showSwipeHint && parentGroups.length > 1 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
-                  >
-                    <div
-                      className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md"
-                      style={{
-                        background: isTreeTheme ? "rgba(20,12,7,0.85)" : "rgba(13,13,13,0.85)",
-                        border: isTreeTheme ? "1px solid rgba(229,193,88,0.2)" : `1px solid ${accent}30`,
-                      }}
-                    >
-                      <ChevronLeft className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
-                      <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap" style={{ color: isTreeTheme ? "rgba(229,193,88,0.7)" : accent }}>
-                        اسحب يمين / شمال للتنقل
-                      </span>
-                      <ChevronRight className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeGroup}-${activeSub}`}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25 }}
-                  className="space-y-7"
+          {/* Deck — fixed viewport, swipe between screens */}
+          <div
+            ref={deckRef}
+            className="relative flex-1 min-h-0 mt-3 overflow-hidden"
+            style={{ touchAction: "pan-y" }}
+            onPointerDown={deckDragEnabled ? onDeckPointerDown : undefined}
+            onPointerMove={deckDragEnabled ? onDeckPointerMove : undefined}
+            onPointerUp={deckDragEnabled ? onDeckPointerUp : undefined}
+            onPointerCancel={deckDragEnabled ? onDeckPointerCancel : undefined}
+          >
+            <motion.div className="flex h-full" style={{ transform: deckTransform, width: "100%" }}>
+              {screenData.map((scr, i) => (
+                <div
+                  key={scr.label}
+                  ref={(el) => {
+                    screenScrollRefs.current[i] = el;
+                  }}
+                  className="h-full overflow-y-auto overscroll-contain"
+                  style={{ flex: "0 0 100%", touchAction: "pan-y" }}
                 >
-                {groupedBySub.length === 0 && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
-                    <div
-                      className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
-                      style={{
-                        background: isTreeTheme ? "rgba(229,193,88,0.05)" : "rgba(255,255,255,0.05)",
-                        border: isTreeTheme ? "1px solid rgba(229,193,88,0.1)" : "1px solid rgba(255,255,255,0.1)",
-                      }}
-                    >
-                      <ShoppingBag className="w-8 h-8" style={{ color: isTreeTheme ? "rgba(229,193,88,0.2)" : "rgba(255,255,255,0.2)" }} />
+                  {scr.type === "all" ? (
+                    isTreeTheme ? (
+                      <div className="h-full flex flex-col items-center justify-center pb-2">
+                        <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: "rgba(229,193,88,0.6)" }}>
+                          اختر قسمك
+                        </p>
+                        <div className="h-px w-8 mx-auto mt-2 mb-3 rounded-full" style={{ backgroundColor: "rgba(229,193,88,0.2)" }} />
+                        <TreeCarousel groups={parentGroups} onGroupChange={handleGroupChange} onEdgeSwipe={flipDeck} />
+                      </div>
+                    ) : (
+                      <div className="pt-1 pb-6">{renderGroupItems(allScreenGroups, true)}</div>
+                    )
+                  ) : (
+                    <div className="pt-1 pb-6">
+                      {activeSub === "all" && scr.cfg && (
+                        <motion.div initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="mb-4">
+                          <h2
+                            className="text-lg md:text-xl font-bold tracking-wide"
+                            style={{
+                              color: isTreeTheme ? "#E5C158" : accent,
+                              fontFamily: "var(--font-outfit), var(--font-cairo), sans-serif",
+                            }}
+                          >
+                            {scr.cfg.icon && <span className="ml-2">{scr.cfg.icon}</span>}
+                            {scr.cfg.labelEn}
+                          </h2>
+                          <div className="h-[2px] w-10 mt-1 rounded-full" style={{ backgroundColor: isTreeTheme ? "#E5C158" : accent }} />
+                        </motion.div>
+                      )}
+                      {renderGroupItems(scr.grouped, false)}
                     </div>
-                    <p className="text-sm font-medium" style={{ color: isTreeTheme ? "rgba(226,232,240,0.4)" : "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>
-                      لا توجد أصناف في هذا القسم
-                    </p>
-                  </motion.div>
-                )}
-
-                {groupedBySub.map((group) => (
-                  <div key={group.name}>
-                    <motion.div
-                      initial={{ opacity: 0, x: -4 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="mb-4 pb-2"
-                      style={{ borderBottom: isTreeTheme ? "1px solid rgba(229,193,88,0.08)" : "1px solid rgba(255,255,255,0.1)" }}
-                    >
-                      <h3
-                        className="text-sm md:text-base font-bold tracking-wide"
-                        style={{
-                          color: isTreeTheme ? "#E5C158" : accent,
-                          fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
-                        }}
-                      >
-                        {activeGroup === "all" ? getBadgeText(group.name) : group.name}
-                      </h3>
-                    </motion.div>
-                    <div className={`space-y-4 md:space-y-5 ${isTreeTheme ? "space-y-3 md:space-y-3" : ""}`}>
-                      {group.items.map((item, i) => (
-                        <MenuItemRow key={`${item.name}-${item.size || ""}-${i}`} item={item} index={i} accent={accent} isTreeTheme={isTreeTheme} priceAccent={priceAccent} />
-                      ))}
-                    </div>
+                  )}
                 </div>
               ))}
-              </motion.div>
+            </motion.div>
+
+            {/* Swipe nav side arrows (tap fallback, group screens only) */}
+            {screens.length > 1 && activeGroup !== "all" && (
+              <>
+                <button
+                  onClick={() => flipDeck(-1)}
+                  className="absolute left-1 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
+                  style={{
+                    background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
+                    border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
+                    color: isTreeTheme ? "#E5C158" : accent,
+                  }}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => flipDeck(1)}
+                  className="absolute right-1 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
+                  style={{
+                    background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
+                    border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
+                    color: isTreeTheme ? "#E5C158" : accent,
+                  }}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
+
+            {/* Swipe hint pill */}
+            <AnimatePresence>
+              {showSwipeHint && screens.length > 1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 pointer-events-none"
+                >
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md"
+                    style={{
+                      background: isTreeTheme ? "rgba(20,12,7,0.85)" : "rgba(13,13,13,0.85)",
+                      border: isTreeTheme ? "1px solid rgba(229,193,88,0.2)" : `1px solid ${accent}30`,
+                    }}
+                  >
+                    <ChevronLeft className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
+                    <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap" style={{ color: isTreeTheme ? "rgba(229,193,88,0.7)" : accent }}>
+                      اسحب يمين / شمال للتنقل
+                    </span>
+                    <ChevronRight className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
-            </div>
-          )}
+          </div>
 
           {/* Footer */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-center mt-12 md:mt-16 pb-6">
-            <div className="h-px max-w-xs mx-auto mb-5" style={{ background: isTreeTheme ? "linear-gradient(to right, transparent, rgba(229,193,88,0.15), transparent)" : "rgba(255,255,255,0.1)" }} />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="shrink-0 pt-2 pb-4 text-center">
+            <div className="h-px max-w-xs mx-auto mb-3" style={{ background: isTreeTheme ? "linear-gradient(to right, transparent, rgba(229,193,88,0.15), transparent)" : "rgba(255,255,255,0.1)" }} />
             <div className="flex items-center justify-center gap-4">
               <button onClick={shareMenu} className={`flex items-center gap-1.5 text-[10px] tracking-wider transition-colors ${isTreeTheme ? "text-[#E2E8F0]/40 hover:text-[#E5C158]" : "text-white/40 hover:text-white/70"}`}>
                 <Share2 className="w-3 h-3" />مشاركة
@@ -826,26 +912,6 @@ export default function MenuPage() {
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll to Top */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            onClick={scrollToTop}
-            className="fixed bottom-6 md:bottom-8 right-4 md:right-8 z-50 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:-translate-y-1"
-            style={{
-              backgroundColor: isTreeTheme ? "rgba(229,193,88,0.12)" : `${accent}20`,
-              border: isTreeTheme ? "1px solid rgba(229,193,88,0.25)" : `1px solid ${accent}40`,
-              boxShadow: isTreeTheme ? "0 0 20px rgba(229,193,88,0.12)" : `0 0 20px ${accent}20`,
-            }}
-          >
-            <ArrowUp className="w-5 h-5" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
-          </motion.button>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send, Download, ListOrdered } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
-import type { Cafe, WorkingHour, MenuItem, MenuCategory } from "@/lib/cafe-schema";
+import type { Cafe, WorkingHour, MenuItem, MenuCategory, CafeLocation } from "@/lib/cafe-schema";
 import MenuBuilder from "./MenuBuilder";
 
 import { compressImage } from "@/lib/compressImage";
@@ -41,7 +41,13 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [snapchatUrl, setSnapchatUrl] = useState(cafe?.snapchatUrl || "");
   const [telegram, setTelegram] = useState(cafe?.telegram || "");
   const [email, setEmail] = useState(cafe?.email || "");
-  const [googleMapsUrl, setGoogleMapsUrl] = useState(cafe?.googleMapsUrl || "");
+  const [locations, setLocations] = useState<CafeLocation[]>(
+    cafe?.locations && cafe.locations.length > 0
+      ? cafe.locations.map((l) => ({ label: l.label || "", url: l.url || "" }))
+      : cafe?.googleMapsUrl
+        ? [{ label: "", url: cafe.googleMapsUrl }]
+        : []
+  );
   const [googleReviewsUrl, setGoogleReviewsUrl] = useState(
     cafe?.googleReviewsUrl || ""
   );
@@ -146,6 +152,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         finalMenuImages = [];
       }
 
+      const cleanedLocations = locations
+        .map((l) => ({ label: l.label.trim(), url: l.url.trim() }))
+        .filter((l) => l.url);
+
       const data = {
         name: name.trim(),
         slug: slug.trim(),
@@ -164,8 +174,9 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         tiktok: tiktok.trim(),
         snapchatUrl: snapchatUrl.trim(),
         telegram: telegram.trim(),
-        googleMapsUrl: googleMapsUrl.trim(),
+        googleMapsUrl: cleanedLocations[0]?.url || "",
         googleReviewsUrl: googleReviewsUrl.trim(),
+        locations: cleanedLocations,
         wifiName: wifiName.trim(),
         wifiPassword: wifiPassword.trim(),
         vodafoneCash: vodafoneCash.trim(),
@@ -624,30 +635,72 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
           </div>
         </div>
 
-        {/* YouTube Link */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>{t("googleMapsUrl")}</label>
-            <input
-              type="url"
-              value={googleMapsUrl}
-              onChange={(e) => setGoogleMapsUrl(e.target.value)}
-              className={inputClass}
-              placeholder="https://maps.app.goo.gl/..."
-              dir="ltr"
-            />
-          </div>
-          <div>
-            <label className={labelClass}>{t("googleReviewsUrl")}</label>
-            <input
-              type="url"
-              value={googleReviewsUrl}
-              onChange={(e) => setGoogleReviewsUrl(e.target.value)}
-              className={inputClass}
-              placeholder="https://g.page/r/..."
-              dir="ltr"
-            />
-          </div>
+        {/* Locations / Branches */}
+        <div>
+          <label className={labelClass}>{t("locations")}</label>
+          <p className="text-xs text-slate-muted/60 -mt-2 mb-2">
+            {t("locationsHint")}
+          </p>
+          {locations.map((loc, i) => (
+            <div key={i} className="mb-2 p-3 rounded-lg border border-white/10 bg-dark-card/40">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-bold text-slate-muted shrink-0">
+                  {i === 0 ? "1" : `${i + 1}`}
+                </span>
+                <input
+                  type="text"
+                  value={loc.label}
+                  onChange={(e) => {
+                    const updated = [...locations];
+                    updated[i] = { ...updated[i], label: e.target.value };
+                    setLocations(updated);
+                  }}
+                  className={inputClass}
+                  placeholder={t("locationName")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setLocations((prev) => prev.filter((_, idx) => idx !== i))}
+                  className="p-2 rounded-lg text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+                  title={t("remove")}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+              <input
+                type="url"
+                value={loc.url}
+                onChange={(e) => {
+                  const updated = [...locations];
+                  updated[i] = { ...updated[i], url: e.target.value };
+                  setLocations(updated);
+                }}
+                className={inputClass}
+                placeholder="https://maps.app.goo.gl/..."
+                dir="ltr"
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setLocations((prev) => [...prev, { label: "", url: "" }])}
+            className="mt-1 px-4 py-2 rounded-lg border border-dashed border-white/20 text-sm text-slate-muted hover:text-slate-light hover:border-white/40 transition-all duration-200"
+          >
+            + {t("addLocation")}
+          </button>
+        </div>
+
+        {/* Google Reviews */}
+        <div>
+          <label className={labelClass}>{t("googleReviewsUrl")}</label>
+          <input
+            type="url"
+            value={googleReviewsUrl}
+            onChange={(e) => setGoogleReviewsUrl(e.target.value)}
+            className={inputClass}
+            placeholder="https://g.page/r/..."
+            dir="ltr"
+          />
         </div>
 
         {/* YouTube Link */}

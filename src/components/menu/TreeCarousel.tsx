@@ -30,9 +30,10 @@ const CAROUSEL_ORDER: Record<string, number> = {
 interface TreeCarouselProps {
   groups: MenuGroup[];
   onGroupChange: (groupEn: string) => void;
+  onEdgeSwipe?: (dir: 1 | -1) => void;
 }
 
-export default function TreeCarousel({ groups, onGroupChange }: TreeCarouselProps) {
+export default function TreeCarousel({ groups, onGroupChange, onEdgeSwipe }: TreeCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const dragStartX = useRef(0);
   const isDragging = useRef(false);
@@ -68,18 +69,23 @@ export default function TreeCarousel({ groups, onGroupChange }: TreeCarouselProp
     (e: React.PointerEvent) => {
       if (isDragging.current) {
         const diff = e.clientX - dragStartX.current;
-        if (diff < -40) goNext();
-        else if (diff > 40) goPrev();
+        if (diff < -40) {
+          if (activeIndex >= sorted.length - 1) onEdgeSwipe?.(1);
+          else goNext();
+        } else if (diff > 40) {
+          if (activeIndex <= 0) onEdgeSwipe?.(-1);
+          else goPrev();
+        }
       }
       isDragging.current = false;
     },
-    [goNext, goPrev]
+    [goNext, goPrev, onEdgeSwipe, activeIndex, sorted.length]
   );
 
   if (sorted.length === 0) return null;
 
   return (
-    <div className="relative w-full select-none" style={{ height: "360px" }}>
+    <div className="relative w-full select-none overflow-hidden" style={{ height: "min(360px, 100%)" }}>
       <div
         className="absolute inset-0 flex items-center justify-center"
         onPointerDown={handlePointerDown}

@@ -191,6 +191,7 @@ export default function CafePage() {
   const [wifiModal, setWifiModal] = useState(false);
   const [hoursModal, setHoursModal] = useState(false);
   const [vodafoneModal, setVodafoneModal] = useState(false);
+  const [locationsModal, setLocationsModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [menuImages, setMenuImages] = useState<string[]>([]);
 
@@ -249,6 +250,20 @@ export default function CafePage() {
   const sanitizedWhatsApp = cafe.whatsapp
     ? cafe.whatsapp.replace(/[^0-9]/g, "")
     : "";
+
+  const cafeLocations = (cafe.locations || [])
+    .map((l) => ({ label: l.label || "", url: l.url || "" }))
+    .filter((l) => l.url);
+  const allLocations =
+    cafeLocations.length > 0
+      ? cafeLocations
+      : cafe.googleMapsUrl
+        ? [{ label: "", url: cafe.googleMapsUrl }]
+        : [];
+  const multipleLocations = allLocations.length > 1;
+
+  const locationLabel = (l: { label: string }, i: number) =>
+    l.label || (i === 0 ? "Main Branch" : `Branch ${i + 1}`);
 
   const socialItems: { key: string; href: string; icon: React.ReactNode }[] = [
     {
@@ -515,31 +530,53 @@ export default function CafePage() {
                   return rows;
                 })().map((row, idx) => (
                   <div key={idx} className="grid gap-y-6 gap-x-4 justify-items-center" style={{ gridTemplateColumns: `repeat(${row.cols}, 1fr)` }}>
-                    {row.items.map((item) => (
-                      <a
-                        key={item.key}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`flex flex-col items-center gap-2 transition-all duration-300 group ${row.cols === 3 ? "scale-90" : ""}`}
-                      >
-                        <div
-                          className="w-20 h-20 rounded-full backdrop-blur-md border-2 flex items-center justify-center group-hover:scale-110 transition-all duration-300"
-                          style={{
-                            backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
-                            borderColor: `${accentHex}4D`,
-                            color: accentHex,
-                          }}
-                        >
-                          <div className="w-10 h-10 flex items-center justify-center">
-                            {item.icon}
+                    {row.items.map((item) => {
+                      const isLocationPicker = item.key === "googleMaps" && multipleLocations;
+                      const label =
+                        item.key === "googleMaps"
+                          ? allLocations.length === 1 && allLocations[0].label
+                            ? allLocations[0].label
+                            : "Google Maps"
+                          : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "youtube" ? "YouTube" : item.key === "email" ? "Email" : item.key === "telegram" ? "Telegram" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key;
+                      const content = (
+                        <>
+                          <div
+                            className="w-20 h-20 rounded-full backdrop-blur-md border-2 flex items-center justify-center group-hover:scale-110 transition-all duration-300"
+                            style={{
+                              backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                              borderColor: `${accentHex}4D`,
+                              color: accentHex,
+                            }}
+                          >
+                            <div className="w-10 h-10 flex items-center justify-center">
+                              {item.icon}
+                            </div>
                           </div>
-                        </div>
-                        <span className="text-xs font-semibold text-center transition-opacity duration-200 group-hover:opacity-80">
-                          {item.key === "googleMaps" ? "Google Maps" : item.key === "googleReviews" ? "Google Reviews" : item.key === "facebook" ? "Facebook" : item.key === "instagram" ? "Instagram" : item.key === "tiktok" ? "TikTok" : item.key === "snapchat" ? "Snapchat" : item.key === "youtube" ? "YouTube" : item.key === "email" ? "Email" : item.key === "telegram" ? "Telegram" : item.key === "phone" ? "Phone" : item.key === "whatsapp" ? "WhatsApp" : item.key}
-                        </span>
-                      </a>
-                    ))}
+                          <span className="text-xs font-semibold text-center transition-opacity duration-200 group-hover:opacity-80">
+                            {label}
+                          </span>
+                        </>
+                      );
+                      return isLocationPicker ? (
+                        <button
+                          key={item.key}
+                          onClick={() => setLocationsModal(true)}
+                          className={`flex flex-col items-center gap-2 transition-all duration-300 group ${row.cols === 3 ? "scale-90" : ""}`}
+                        >
+                          {content}
+                        </button>
+                      ) : (
+                        <a
+                          key={item.key}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`flex flex-col items-center gap-2 transition-all duration-300 group ${row.cols === 3 ? "scale-90" : ""}`}
+                        >
+                          {content}
+                        </a>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
@@ -856,6 +893,69 @@ export default function CafePage() {
                     >
                       <span className="text-sm font-bold">{i === 0 ? "رقم 1" : `رقم ${i + 1}`}</span>
                       <ChevronRight className="w-4 h-4" />
+                    </a>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Locations Modal */}
+        <AnimatePresence>
+          {locationsModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 z-50"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setLocationsModal(false);
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="w-full max-w-sm backdrop-blur-xl border rounded-2xl p-8"
+                style={{
+                  backgroundColor: `${themeCfg.ringOffset}F2`,
+                  borderColor: `${accentHex}4D`,
+                  boxShadow: `0 0 40px ${accentHex}26`,
+                }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-6 h-6" style={{ color: accentHex }} />
+                    <h3 className="text-lg font-bold" style={{ color: accentHex }}>
+                      Our Locations
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setLocationsModal(false)}
+                    className="text-slate-muted hover:text-slate-light transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {allLocations.map((loc, i) => (
+                    <a
+                      key={i}
+                      href={loc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
+                      style={{
+                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                        borderColor: `${accentHex}4D`,
+                        color: accentHex,
+                      }}
+                    >
+                      <MapPin className="w-4 h-4 shrink-0" />
+                      <span className="text-sm font-bold text-center">{locationLabel(loc, i)}</span>
+                      <ChevronRight className="w-4 h-4 shrink-0" />
                     </a>
                   ))}
                 </div>

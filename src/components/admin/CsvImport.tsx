@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Upload, FileText, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { Upload, FileText, CheckCircle, AlertCircle, Loader2, Download } from "lucide-react";
+
+interface ExtraPrice {
+  label: string;
+  price: string;
+}
 
 interface CsvRow {
   Category: string;
@@ -9,7 +14,59 @@ interface CsvRow {
   "Size/Pieces": string;
   Price: string;
   Notes: string;
+  "Extra Prices": ExtraPrice[];
 }
+
+const HEADER_ALIASES: Record<string, string[]> = {
+  Category: ["القسم", "category", "الفئة", "التصنيف"],
+  "Item Name": ["اسم الصنف", "اسم", "item name", "item", "name", "الاسم"],
+  "Size/Pieces": ["الحجم", "size", "size/pieces", "قطع", "عدد القطع"],
+  Notes: ["الوصف", "notes", "description", "ملاحظات"],
+  Price: ["السعر", "price"],
+};
+
+function splitLine(line: string, delim: string): string[] {
+  const cols: string[] = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === delim && !inQuotes) {
+      cols.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  cols.push(cur);
+  return cols;
+}
+
+function detectDelimiter(line: string): string {
+  let bestDelim = ",";
+  let bestCount = -1;
+  for (const d of [",", ";", "\t"]) {
+    const count = line.split(d).length;
+    if (count > bestCount) {
+      bestCount = count;
+      bestDelim = d;
+    }
+  }
+  return bestDelim;
+}
+
+const TEMPLATE_CSV = `\uFEFFالقسم,اسم الصنف,الوصف,السعر,سعر العادي,سعر الكومبو
+بيتزا,بيتزا مارجريتا,جبنة موتزاريلا,120,90,150
+بيتزا,بيتزا خضار,فلفل وزيتون,110,85,140
+مشروبات ساخنة,قهوة تركي,على الطريقة المصرية,40,30,
+`;
 
 export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
   const [rows, setRows] = useState<CsvRow[]>([]);
@@ -20,66 +77,122 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
   const [message, setMessage] = useState("");
 
   const parseCsv = useCallback((text: string) => {
-    const lines = text.split("\n").filter((l) => l.trim());
-    if (lines.length < 2) return [];
-
-    const header = lines[0].split(",").map((h) => h.trim());
-    const catIdx = header.indexOf("Category");
-    const nameIdx = header.indexOf("Item Name");
-    const sizeIdx = header.indexOf("Size/Pieces");
-    const priceIdx = header.indexOf("Price");
-    const notesIdx = header.indexOf("Notes");
-
-    if (catIdx === -1 || nameIdx === -1 || priceIdx === -1) {
-      setMessage("الملف غير صالح: تأكد من وجود الأعمدة Category, Item Name, Price");
+    const clean = text.replace(/^\uFEFF/, "");
+    const lines = clean.split(/\r?\n/).filter((l) => l.trim());
+    if (lines.length < 2) {
+      setMessage("الملف فارغ: يجب أن يحتوي على سطر عناوين وسطر بيانات واحد على الأقل");
       return [];
     }
 
+    const delim = detectDelimiter(lines[0]);
+    const headerRaw = splitLine(lines[0], delim).map((h) => h.trim());
+    const header = headerRaw.map((h) => h.toLowerCase());
+
+    const findIdx = (aliases: string[]) => {
+      for (const a of aliases) {
+        const idx = header.indexOf(a);
+        if (idx !== -1) return idx;
+      }
+      return -1;
+    };
+
+    const catIdx = findIdx(HEADER_ALIASES.Category);
+    const nameIdx = findIdx(HEADER_ALIASES["Item Name"]);
+    const sizeIdx = findIdx(HEADER_ALIASES["Size/Pieces"]);
+    const priceIdx = findIdx(HEADER_ALIASES.Price);
+    const notesIdx = findIdx(HEADER_ALIASES.Notes);
+
+    if (catIdx === -1 || nameIdx === -1) {
+      const missing: string[] = [];
+      if (catIdx === -1) missing.push("القسم (Category)");
+      if (nameIdx === -1) missing.push("اسم الصنف (Item Name)");
+      setMessage(
+        `الملف غير صالح: العمود المطلوب "${missing.join(" و ")}" غير موجود — الأعمدة المتاحة: ${headerRaw.join("، ")}`
+      );
+      return [];
+    }
+
+    const extraPriceCols: { col: number; label: string }[] = [];
+    header.forEach((h, i) => {
+      if (i === priceIdx) return;
+      if (h.includes("سعر") || h.includes("price")) {
+        let label = headerRaw[i]
+          .replace(/^سعر\s*/i, "")
+          .replace(/^price\s*/i, "")
+          .trim();
+        if (!label) label = `خيار ${extraPriceCols.length + 1}`;
+        extraPriceCols.push({ col: i, label });
+      }
+    });
+
     const parsed: CsvRow[] = [];
     for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(",").map((c) => c.trim());
+      const cols = splitLine(lines[i], delim).map((c) => c.trim());
       const category = cols[catIdx] || "";
       const name = cols[nameIdx] || "";
-      const sizeOrPieces = sizeIdx !== -1 ? (cols[sizeIdx] || "") : "";
-      const price = priceIdx !== -1 ? (cols[priceIdx] || "") : "";
+      if (!name || !category) continue;
+
       const notes = notesIdx !== -1 ? (cols[notesIdx] || "") : "";
-      if (name && category) {
-        parsed.push({
-          Category: category,
-          "Item Name": name,
-          "Size/Pieces": sizeOrPieces,
-          Price: price,
-          Notes: notes,
-        });
-      }
+      const size = sizeIdx !== -1 ? (cols[sizeIdx] || "") : "";
+      let price = priceIdx !== -1 ? (cols[priceIdx] || "") : "";
+      const extras = extraPriceCols
+        .map((c) => ({ label: c.label, price: cols[c.col] || "" }))
+        .filter((x) => x.price);
+      if (!price && extras.length > 0) price = extras[0].price;
+
+      parsed.push({
+        Category: category,
+        "Item Name": name,
+        "Size/Pieces": size,
+        Price: price,
+        Notes: notes,
+        "Extra Prices": extras,
+      });
     }
     return parsed;
   }, []);
 
-  const handleFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setMessage("");
+  const handleFile = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setMessage("");
 
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const text = ev.target?.result as string;
-      const parsed = parseCsv(text);
-      if (parsed.length === 0) {
-        setMessage("لم يتم العثور على أصناف صالحة في الملف");
-        setStatus("error");
-        return;
-      }
-      setRows(parsed);
-      setStatus("preview");
-      setMessage(`تم العثور على ${parsed.length} صنف من ${new Set(parsed.map((r) => r.Category)).size} أقسام`);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const text = ev.target?.result as string;
+        const parsed = parseCsv(text);
+        if (parsed.length === 0) {
+          setStatus("error");
+          setMessage((m) => m || "لم يتم العثور على أصناف صالحة في الملف — تأكد من امتلاء عمودي القسم واسم الصنف");
+          return;
+        }
+        setRows(parsed);
+        setStatus("preview");
+        const cats = new Set(parsed.map((r) => r.Category)).size;
+        const withExtras = parsed.filter((r) => r["Extra Prices"].length > 0).length;
+        setMessage(
+          `تم العثور على ${parsed.length} صنف من ${cats} أقسام${withExtras > 0 ? ` (${withExtras} صنف بأسعار إضافية)` : ""}`
+        );
 
-      const nameFromFile = file.name.replace(/\.csv$/i, "").replace(/[_-]/g, " ");
-      setMenuName(nameFromFile);
-      setMenuSlug(nameFromFile.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""));
-    };
-    reader.readAsText(file);
-  }, [parseCsv]);
+        const nameFromFile = file.name.replace(/\.csv$/i, "").replace(/[_-]/g, " ");
+        setMenuName(nameFromFile);
+        setMenuSlug(nameFromFile.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""));
+      };
+      reader.readAsText(file);
+    },
+    [parseCsv]
+  );
+
+  const downloadTemplate = useCallback(() => {
+    const blob = new Blob([TEMPLATE_CSV], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "menu_template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }, []);
 
   const importMenu = useCallback(async () => {
     if (!menuName.trim() || rows.length === 0) return;
@@ -92,6 +205,7 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
       category: r.Category,
       size: r["Size/Pieces"] || "",
       description: r.Notes || "",
+      prices: r["Extra Prices"].map((p) => ({ label: p.label, price: p.price })),
     }));
 
     try {
@@ -141,6 +255,14 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
           <span className="text-sm text-slate-muted">اختر ملف CSV</span>
           <input type="file" accept=".csv" onChange={handleFile} className="hidden" />
         </label>
+
+        <button
+          onClick={downloadTemplate}
+          className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-xs text-slate-muted hover:text-slate-light hover:border-white/30 transition-all"
+        >
+          <Download className="w-3.5 h-3.5" />
+          تحميل نموذج CSV
+        </button>
 
         {message && (
           <p className={`mt-3 text-sm flex items-center gap-1.5 ${status === "error" ? "text-red-400" : status === "done" ? "text-green-400" : "text-slate-muted"}`}>
@@ -192,6 +314,7 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
                   <th className="text-right p-2 text-slate-muted font-medium">الاسم</th>
                   <th className="text-center p-2 text-slate-muted font-medium">الحجم</th>
                   <th className="text-center p-2 text-slate-muted font-medium">السعر</th>
+                  <th className="text-right p-2 text-slate-muted font-medium">الأسعار الإضافية</th>
                   <th className="text-right p-2 text-slate-muted font-medium">ملاحظات</th>
                 </tr>
               </thead>
@@ -203,7 +326,12 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
                       <td className="p-2 text-slate-light">{row["Item Name"]}</td>
                       <td className="p-2 text-center text-slate-muted text-xs">{row["Size/Pieces"] || "—"}</td>
                       <td className="p-2 text-center text-slate-light tabular-nums" dir="ltr">{row.Price}</td>
-                      <td className="p-2 text-slate-muted text-xs max-w-[200px] truncate">{row.Notes || "—"}</td>
+                      <td className="p-2 text-slate-muted text-xs" dir="ltr">
+                        {row["Extra Prices"].length > 0
+                          ? row["Extra Prices"].map((p) => `${p.label} ${p.price}`).join(" · ")
+                          : "—"}
+                      </td>
+                      <td className="p-2 text-slate-muted text-xs max-w-[160px] truncate">{row.Notes || "—"}</td>
                     </tr>
                   ))
                 )}

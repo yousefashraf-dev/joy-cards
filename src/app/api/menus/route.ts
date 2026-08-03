@@ -1,48 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase";
-import type { MenuCategory } from "@/lib/cafe-schema";
-
-const CATEGORY_ICON_MAP: Record<string, string> = {
-  سلطة: "🥗", salad: "🥗",
-  "مشروبات ساخنة": "☕", "مشروبات ساخنه": "☕", "hot drinks": "☕", coffee: "☕", قهوة: "☕", شاي: "🍵",
-  "مشروبات باردة": "🥤", "مشروبات بارده": "🥤", "cold drinks": "🥤", juice: "🧃", عصير: "🧃", عصائر: "🧃",
-  بيتزا: "🍕", pizza: "🍕",
-  برجر: "🍔", burger: "🍔",
-  سوشي: "🍣", sushi: "🍣",
-  حلويات: "🍰", sweets: "🍰", dessert: "🍰", "آيس كريم": "🍦",
-  شوربة: "🍜", soup: "🍜",
-  باستا: "🍝", pasta: "🍝",
-  مقبلات: "🥓", appetizer: "🥓", starters: "🥓",
-  لحوم: "🥩", meat: "🥩", steak: "🥩",
-  مشاوي: "🍖", grill: "🍖",
-  فطار: "🍳", breakfast: "🍳", "وجبة فطار": "🍳",
-  سموذي: "🥑", smoothie: "🥑",
-  ميلك: "🥛", "ميلك شيك": "🥛",
-  دونات: "🍩", donut: "🍩",
-  مخبوزات: "🥨", bakery: "🥨", "خبز": "🍞",
-  سمك: "🐟", fish: "🐟", seafood: "🦐",
-  دجاج: "🍗", chicken: "🍗",
-  "وجبات أطفال": "👶", kids: "👶",
-};
-
-function normalizeCategories(cats: unknown): MenuCategory[] {
-  if (!Array.isArray(cats)) return [];
-  if (cats.length === 0) return [];
-  if (typeof cats[0] === "string") {
-    return (cats as string[]).map((name) => {
-      const lower = name.trim().toLowerCase();
-      let icon = "";
-      for (const [key, emoji] of Object.entries(CATEGORY_ICON_MAP)) {
-        if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) {
-          icon = emoji;
-          break;
-        }
-      }
-      return { name: name.trim(), icon };
-    });
-  }
-  return cats as MenuCategory[];
-}
+import { normalizeCategories } from "@/lib/category-icons";
 
 export async function POST(req: NextRequest) {
   try {

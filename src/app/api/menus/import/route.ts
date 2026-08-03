@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase";
 import { Timestamp } from "firebase-admin/firestore";
+import { resolveCategoryIcon } from "@/lib/category-icons";
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
       ...new Set(items.map((i: { category: string }) => i.category).filter(Boolean)),
     ].map((catName: string) => ({
       name: catName,
-      icon: "",
+      icon: resolveCategoryIcon(catName),
     }));
 
     const db = getAdminDb();

@@ -14,58 +14,15 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { CafeTheme } from "./cafe-themes";
 
+import { normalizeCategories, type MenuCategory } from "./category-icons";
+
+export { normalizeCategories, type MenuCategory };
+
 export interface WorkingHour {
   day: string;
   open: string;
   close: string;
   closed?: boolean;
-}
-
-export interface MenuCategory {
-  name: string;
-  icon: string;
-}
-
-const CATEGORY_ICON_MAP: Record<string, string> = {
-  سلطة: "🥗", salad: "🥗",
-  "مشروبات ساخنة": "☕", "مشروبات ساخنه": "☕", "hot drinks": "☕", coffee: "☕", قهوة: "☕", شاي: "🍵",
-  "مشروبات باردة": "🥤", "مشروبات بارده": "🥤", "cold drinks": "🥤", juice: "🧃", عصير: "🧃", عصائر: "🧃",
-  بيتزا: "🍕", pizza: "🍕",
-  برجر: "🍔", burger: "🍔",
-  سوشي: "🍣", sushi: "🍣",
-  حلويات: "🍰", sweets: "🍰", dessert: "🍰", "آيس كريم": "🍦",
-  شوربة: "🍜", soup: "🍜",
-  باستا: "🍝", pasta: "🍝",
-  مقبلات: "🥓", appetizer: "🥓", starters: "🥓",
-  لحوم: "🥩", meat: "🥩", steak: "🥩",
-  مشاوي: "🍖", grill: "🍖",
-  فطار: "🍳", breakfast: "🍳", "وجبة فطار": "🍳",
-  سموذي: "🥑", smoothie: "🥑",
-  ميلك: "🥛", "ميلك شيك": "🥛",
-  دونات: "🍩", donut: "🍩",
-  مخبوزات: "🥨", bakery: "🥨", خبز: "🍞",
-  سمك: "🐟", fish: "🐟", seafood: "🦐",
-  دجاج: "🍗", chicken: "🍗",
-  "وجبات أطفال": "👶", kids: "👶",
-};
-
-export function normalizeCategories(cats: unknown): MenuCategory[] {
-  if (!Array.isArray(cats)) return [];
-  if (cats.length === 0) return [];
-  if (typeof cats[0] === "string") {
-    return (cats as string[]).map((name) => {
-      const lower = name.trim().toLowerCase();
-      let icon = "";
-      for (const [key, emoji] of Object.entries(CATEGORY_ICON_MAP)) {
-        if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) {
-          icon = emoji;
-          break;
-        }
-      }
-      return { name: name.trim(), icon };
-    });
-  }
-  return cats as MenuCategory[];
 }
 
 export interface MenuItem {

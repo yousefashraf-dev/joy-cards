@@ -43,6 +43,9 @@ LAST_SAVE_SUMMARY.md
 new.gas
 gas/
 
+# client data files (local only)
+public/teka_pizza_menu.csv
+
 # vercel
 .vercel
 

@@ -66,7 +66,7 @@ function ParentTabs({
             boxShadow: activeGroup === "all" ? `0 0 20px ${accent}26` : undefined,
           }}
         >
-          الكل
+          All
         </button>
         {groups.map((g) => (
           <button
@@ -130,7 +130,7 @@ function SubCategoryTabs({
             backgroundColor: activeSub === "all" ? `${accent}1a` : undefined,
           }}
         >
-          الكل
+          All
         </button>
         {subCategories.map((sub) => (
           <button
@@ -199,7 +199,7 @@ function MenuItemRow({ item, index, accent, priceAccent, cardBg }: {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.025, duration: 0.3, ease: "easeOut" }}
       className="group rounded-xl border backdrop-blur-md p-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
@@ -611,15 +611,15 @@ export default function MenuPage() {
           >
             <UtensilsCrossed className="w-8 h-8" style={{ color: `${accent}66` }} />
           </div>
-          <h1 className="text-xl font-bold" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-cairo), sans-serif" }}>غير موجود</h1>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>المنيو غير موجود أو تم حذفه</p>
+          <h1 className="text-xl font-bold" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-cairo), sans-serif" }}>Not found</h1>
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>This menu doesn't exist or was deleted</p>
         </motion.div>
       </div>
     );
   }
 
   const renderEmpty = () => (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
+    <motion.div initial={false} animate={{ opacity: 1 }} className="text-center py-16">
       <div
         className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
         style={{
@@ -630,7 +630,7 @@ export default function MenuPage() {
         <ShoppingBag className="w-8 h-8" style={{ color: `${accent}40` }} />
       </div>
       <p className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>
-        لا توجد أصناف في هذا القسم
+        No items in this section
       </p>
     </motion.div>
   );
@@ -646,7 +646,7 @@ export default function MenuPage() {
         grouped.map((group) => (
           <div key={group.name} className="mb-6">
             <motion.div
-              initial={{ opacity: 0, x: -4 }}
+              initial={{ x: -4 }}
               animate={{ opacity: 1, x: 0 }}
               className="mb-3 pb-2"
               style={{ borderBottom: `1px solid ${accent}14` }}
@@ -687,13 +687,13 @@ export default function MenuPage() {
 
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="text-center pt-6 md:pt-8 shrink-0"
           >
             {menu.logo && (
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4 }} className="flex justify-center mb-4">
+              <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4 }} className="flex justify-center mb-4">
                 <div
                   className="w-[68px] h-[68px] md:w-20 md:h-20 rounded-full overflow-hidden"
                   style={{
@@ -726,14 +726,14 @@ export default function MenuPage() {
           {/* Tabs (fixed, always visible — hidden on "all" screen) */}
           {activeGroup !== "all" && parentGroups.length > 0 && (
             <div className="shrink-0 pt-3">
-              <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+              <motion.div initial={{ y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
                 <ParentTabs groups={parentGroups} activeGroup={activeGroup} onGroupChange={handleGroupChange} accent={accent} />
               </motion.div>
 
               {activeScreenSubs.length > 1 && (
                 <motion.div
                   key={activeGroup}
-                  initial={{ opacity: 0, y: 4 }}
+                  initial={{ y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
                 >
@@ -767,7 +767,7 @@ export default function MenuPage() {
                     carouselGroups.length > 0 ? (
                       <div className="h-full flex flex-col items-center justify-center pb-2">
                         <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: `${accent}99` }}>
-                          اختر قسمك
+                          Choose your section
                         </p>
                         <div className="h-px w-8 mx-auto mt-2 mb-3 rounded-full" style={{ backgroundColor: `${accent}33` }} />
                         <TreeCarousel
@@ -784,7 +784,7 @@ export default function MenuPage() {
                   ) : (
                     <div className="pt-1 pb-6">
                       {activeSub === "all" && scr.cfg && (
-                        <motion.div initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="mb-4">
+                        <motion.div initial={{ x: -4 }} animate={{ opacity: 1, x: 0 }} className="mb-4">
                           <h2
                             className="text-lg md:text-xl font-bold tracking-wide"
                             style={{
@@ -851,7 +851,7 @@ export default function MenuPage() {
                   >
                     <ChevronLeft className="w-3 h-3" style={{ color: accent }} />
                     <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap" style={{ color: `${accent}cc` }}>
-                      اسحب يمين / شمال للتنقل
+                      Swipe left / right
                     </span>
                     <ChevronRight className="w-3 h-3" style={{ color: accent }} />
                   </div>
@@ -861,14 +861,14 @@ export default function MenuPage() {
           </div>
 
           {/* Footer */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="shrink-0 pt-2 pb-4 text-center">
+          <motion.div initial={false} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="shrink-0 pt-2 pb-4 text-center">
             <div className="h-px max-w-xs mx-auto mb-3" style={{ background: `linear-gradient(to right, transparent, ${accent}26, transparent)` }} />
             <div className="flex items-center justify-center gap-4">
               <button onClick={shareMenu} className="flex items-center gap-1.5 text-[10px] tracking-wider text-white/40 hover:text-white/70 transition-colors">
-                <Share2 className="w-3 h-3" />مشاركة
+                <Share2 className="w-3 h-3" />Share
               </button>
               <span className="text-[10px] tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
-                مدعوم من{" "}
+                Powered by{" "}
                 <a href="https://gotap.vercel.app/ar" target="_blank" rel="noopener noreferrer" className="hover:underline font-medium transition-opacity" style={{ color: accent }}>GoTap</a>
               </span>
             </div>

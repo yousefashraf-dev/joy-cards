@@ -891,7 +891,7 @@ export default function CafePage() {
                         color: accentHex,
                       }}
                     >
-                      <span className="text-sm font-bold">{i === 0 ? "رقم 1" : `رقم ${i + 1}`}</span>
+                      <span dir="ltr" className="text-sm font-bold tracking-wide">{num}</span>
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   ))}

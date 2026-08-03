@@ -27,13 +27,14 @@ export async function POST(req: NextRequest) {
       slug,
       theme: theme || "standard",
       categories,
-      items: items.map((i: { name: string; price: string; category: string; size?: string; description?: string; prices?: { label: string; price: string }[] }) => ({
+      items: items.map((i: { name: string; price: string; category: string; size?: string; description?: string; prices?: { label: string; price: string }[]; sizes?: { label: string; price: string }[] }) => ({
         name: i.name,
         price: i.price,
         category: i.category,
         size: i.size || "",
         description: i.description || "",
         prices: i.prices || [],
+        sizes: i.sizes || i.prices || [],
       })),
       createdAt: Timestamp.now(),
     });

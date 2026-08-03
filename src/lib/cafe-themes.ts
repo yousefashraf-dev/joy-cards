@@ -9,6 +9,7 @@ export interface CafeThemeConfig {
   ringOffset: string;
   decorationColor?: string;
   priceAccent?: string;
+  cardBg?: string;
 }
 
 export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
@@ -19,6 +20,8 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     bgLoading: "#1A1A1A",
     accent: "#C6A568",
     ringOffset: "#1A1A1A",
+    priceAccent: "#4CAF50",
+    cardBg: "linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
   },
   restaurant: {
     label: { ar: "مطعم", en: "Restaurant" },
@@ -27,6 +30,8 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     bgLoading: "#1C1510",
     accent: "#C6A568",
     ringOffset: "#1C1510",
+    priceAccent: "#4CAF50",
+    cardBg: "linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
   },
   "cafe-restaurant": {
     label: { ar: "كافيه ومطعم", en: "Cafe & Restaurant" },
@@ -36,6 +41,8 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     accent: "#C4956A",
     ringOffset: "#0A0A0C",
     decorationColor: "#FFFFFF",
+    priceAccent: "#4CAF50",
+    cardBg: "linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))",
   },
   flowers: {
     label: { ar: "ورد", en: "Flowers" },
@@ -44,6 +51,8 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     bgLoading: "#0D0A0A",
     accent: "#C6A568",
     ringOffset: "#0D0A0A",
+    priceAccent: "#E58FB0",
+    cardBg: "linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))",
   },
   vape: {
     label: { ar: "فيب", en: "Vape" },
@@ -52,6 +61,8 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     bgLoading: "#0A0A0A",
     accent: "#FFFFFF",
     ringOffset: "#0A0A0A",
+    priceAccent: "#B3E5FC",
+    cardBg: "linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
   },
   standard: {
     label: { ar: "ستاندرد", en: "Standard" },
@@ -60,6 +71,8 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     bgLoading: "#0f172a",
     accent: "#cbd5e1",
     ringOffset: "#0f172a",
+    priceAccent: "#93C5FD",
+    cardBg: "linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))",
   },
   premium: {
     label: { ar: "بريميم", en: "Premium" },
@@ -69,6 +82,8 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     accent: "#D4985C",
     ringOffset: "#0F0D0A",
     decorationColor: "#D4985C",
+    priceAccent: "#4CAF50",
+    cardBg: "linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))",
   },
   tree: {
     label: { ar: "غابة", en: "Tree" },
@@ -79,5 +94,6 @@ export const CAFE_THEMES: Record<CafeTheme, CafeThemeConfig> = {
     ringOffset: "#1A0F0A",
     decorationColor: "#E5C158",
     priceAccent: "#4CAF50",
+    cardBg: "linear-gradient(145deg, rgba(42,24,18,0.92), rgba(30,17,11,0.95))",
   },
 };

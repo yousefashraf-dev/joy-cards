@@ -75,6 +75,7 @@ export interface MenuItem {
   size?: string;
   description?: string;
   prices?: { label: string; price: string }[];
+  sizes?: { label: string; price: string }[];
 }
 
 export interface CafeLocation {

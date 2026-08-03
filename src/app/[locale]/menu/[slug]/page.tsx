@@ -9,18 +9,19 @@ import { motion, AnimatePresence, useMotionValue, useMotionTemplate, animate } f
 import { UtensilsCrossed, Share2, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import type { MenuDocument } from "@/lib/menu-schema";
 import type { MenuItem } from "@/lib/cafe-schema";
-import { MENU_GROUPS, getGroupByLabel, getBadgeText, type MenuGroup } from "@/lib/menu-groups";
+import { MENU_GROUPS, getBadgeText, type MenuGroup } from "@/lib/menu-groups";
 import { CAFE_THEMES, type CafeTheme } from "@/lib/cafe-themes";
-import TreeCarousel from "@/components/menu/TreeCarousel";
+import TreeCarousel, { type CarouselGroup } from "@/components/menu/TreeCarousel";
+import { getGroupIcon } from "@/components/menu/LineArtIcons";
 
-const ACCENT_OLIVE_DEFAULT = "#7A8B3E";
+const ACCENT_DEFAULT = "#C6A568";
 const BG_DEFAULT = "#1A1A1A";
 
 function LoadingSkeleton() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: BG_DEFAULT }}>
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 rounded-full border-2 border-[#E5C158]/20 border-t-[#E5C158] animate-spin" style={{ borderTopColor: "#E5C158" }} />
+        <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-white animate-spin" />
         <div className="w-40 h-4 rounded-full bg-white/5" />
         <div className="w-24 h-3 rounded-full bg-white/5" />
       </div>
@@ -32,14 +33,12 @@ function ParentTabs({
   groups,
   activeGroup,
   onGroupChange,
-  accent = ACCENT_OLIVE_DEFAULT,
-  isTreeTheme,
+  accent = ACCENT_DEFAULT,
 }: {
   groups: MenuGroup[];
   activeGroup: string;
   onGroupChange: (g: string) => void;
   accent?: string;
-  isTreeTheme?: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -56,26 +55,18 @@ function ParentTabs({
           data-group="all"
           onClick={() => onGroupChange("all")}
           className={`shrink-0 px-5 py-2.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 whitespace-nowrap border ${
-            isTreeTheme
-              ? activeGroup === "all"
-                ? "text-[#E5C158] border-[#E5C158]/40 bg-[#E5C158]/10"
-                : "text-[#E2E8F0]/40 border-[#E5C158]/10 bg-[#2A1812]/80 hover:text-[#E2E8F0]/70 hover:border-[#E5C158]/30"
-              : activeGroup === "all"
-                ? "text-white"
-                : "text-white/40 border-white/10 bg-white/5 hover:text-white/70 hover:border-white/20"
+            activeGroup === "all"
+              ? "text-white"
+              : "text-white/40 border-white/10 bg-white/5 hover:text-white/70 hover:border-white/20"
           }`}
           style={{
-            fontFamily: isTreeTheme ? "var(--font-outfit), sans-serif" : "var(--font-cairo), sans-serif",
-            ...(isTreeTheme
-              ? {}
-              : {
-                  borderColor: activeGroup === "all" ? accent : undefined,
-                  backgroundColor: activeGroup === "all" ? `${accent}26` : undefined,
-                  boxShadow: activeGroup === "all" ? `0 0 20px ${accent}26` : undefined,
-                }),
+            fontFamily: "var(--font-cairo), sans-serif",
+            borderColor: activeGroup === "all" ? accent : undefined,
+            backgroundColor: activeGroup === "all" ? `${accent}26` : undefined,
+            boxShadow: activeGroup === "all" ? `0 0 20px ${accent}26` : undefined,
           }}
         >
-          {isTreeTheme ? "ALL" : "الكل"}
+          الكل
         </button>
         {groups.map((g) => (
           <button
@@ -83,26 +74,18 @@ function ParentTabs({
             data-group={g.labelEn}
             onClick={() => onGroupChange(g.labelEn)}
             className={`shrink-0 px-5 py-2.5 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 whitespace-nowrap border ${
-              isTreeTheme
-                ? activeGroup === g.labelEn
-                  ? "text-[#E5C158] border-[#E5C158]/40 bg-[#E5C158]/10"
-                  : "text-[#E2E8F0]/40 border-[#E5C158]/10 bg-[#2A1812]/80 hover:text-[#E2E8F0]/70 hover:border-[#E5C158]/30"
-                : activeGroup === g.labelEn
-                  ? "text-white"
-                  : "text-white/40 border-white/10 bg-white/5 hover:text-white/70 hover:border-white/20"
+              activeGroup === g.labelEn
+                ? "text-white"
+                : "text-white/40 border-white/10 bg-white/5 hover:text-white/70 hover:border-white/20"
             }`}
             style={{
               fontFamily: "var(--font-outfit), var(--font-cairo), sans-serif",
-              ...(isTreeTheme
-                ? {}
-                : {
-                    borderColor: activeGroup === g.labelEn ? accent : undefined,
-                    backgroundColor: activeGroup === g.labelEn ? `${accent}26` : undefined,
-                    boxShadow: activeGroup === g.labelEn ? `0 0 20px ${accent}26` : undefined,
-                  }),
+              borderColor: activeGroup === g.labelEn ? accent : undefined,
+              backgroundColor: activeGroup === g.labelEn ? `${accent}26` : undefined,
+              boxShadow: activeGroup === g.labelEn ? `0 0 20px ${accent}26` : undefined,
             }}
           >
-            <span className="ml-1.5 text-base">{g.icon}</span>
+            {g.icon && <span className="ml-1.5 text-base">{g.icon}</span>}
             {g.labelEn}
           </button>
         ))}
@@ -115,14 +98,12 @@ function SubCategoryTabs({
   subCategories,
   activeSub,
   onSubChange,
-  accent = ACCENT_OLIVE_DEFAULT,
-  isTreeTheme,
+  accent = ACCENT_DEFAULT,
 }: {
   subCategories: string[];
   activeSub: string;
   onSubChange: (s: string) => void;
   accent?: string;
-  isTreeTheme?: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -139,23 +120,17 @@ function SubCategoryTabs({
           data-sub="all"
           onClick={() => onSubChange("all")}
           className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap border ${
-            isTreeTheme
-              ? activeSub === "all"
-                ? "text-[#E5C158] border-[#E5C158]/50 bg-[#E5C158]/15"
-                : "text-[#E2E8F0]/30 border-[#E5C158]/10 hover:text-[#E2E8F0]/50 hover:border-[#E5C158]/30"
-              : activeSub === "all"
-                ? "text-white"
-                : "text-white/30 border-white/10 hover:text-white/50 hover:border-white/20"
+            activeSub === "all"
+              ? "text-white"
+              : "text-white/30 border-white/10 hover:text-white/50 hover:border-white/20"
           }`}
           style={{
-            fontFamily: isTreeTheme ? "var(--font-outfit), sans-serif" : "var(--font-cairo), sans-serif",
-            ...(isTreeTheme ? {} : {
-              borderColor: activeSub === "all" ? `${accent}b3` : undefined,
-              backgroundColor: activeSub === "all" ? `${accent}1a` : undefined,
-            }),
+            fontFamily: "var(--font-cairo), sans-serif",
+            borderColor: activeSub === "all" ? `${accent}b3` : undefined,
+            backgroundColor: activeSub === "all" ? `${accent}1a` : undefined,
           }}
         >
-          {isTreeTheme ? "ALL" : "الكل"}
+          الكل
         </button>
         {subCategories.map((sub) => (
           <button
@@ -163,20 +138,14 @@ function SubCategoryTabs({
             data-sub={sub}
             onClick={() => onSubChange(sub)}
             className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 whitespace-nowrap border ${
-              isTreeTheme
-                ? activeSub === sub
-                  ? "text-[#E5C158] border-[#E5C158]/50 bg-[#E5C158]/15"
-                  : "text-[#E2E8F0]/30 border-[#E5C158]/10 hover:text-[#E2E8F0]/50 hover:border-[#E5C158]/30"
-                : activeSub === sub
-                  ? "text-white"
-                  : "text-white/30 border-white/10 hover:text-white/50 hover:border-white/20"
+              activeSub === sub
+                ? "text-white"
+                : "text-white/30 border-white/10 hover:text-white/50 hover:border-white/20"
             }`}
             style={{
-              fontFamily: isTreeTheme ? "var(--font-outfit), sans-serif" : "var(--font-cairo), sans-serif",
-              ...(isTreeTheme ? {} : {
-                borderColor: activeSub === sub ? `${accent}b3` : undefined,
-                backgroundColor: activeSub === sub ? `${accent}1a` : undefined,
-              }),
+              fontFamily: "var(--font-cairo), sans-serif",
+              borderColor: activeSub === sub ? `${accent}b3` : undefined,
+              backgroundColor: activeSub === sub ? `${accent}1a` : undefined,
             }}
           >
             {sub}
@@ -211,139 +180,98 @@ function Badge({ type }: { type: string }) {
   );
 }
 
-function MenuItemRow({ item, index, accent, isTreeTheme, priceAccent }: {
-  item: { name: string; price: string; size?: string; description?: string; prices?: { label: string; price: string }[] };
+function MenuItemRow({ item, index, accent, priceAccent, cardBg }: {
+  item: MenuItem;
   index: number;
   accent?: string;
-  isTreeTheme?: boolean;
   priceAccent?: string;
+  cardBg?: string;
 }) {
-  const ac = accent || ACCENT_OLIVE_DEFAULT;
-  const badge = isTreeTheme ? getItemBadge(item.name, item.description) : null;
-
-  const extraPrices = item.prices && item.prices.length > 0 ? item.prices : null;
-
-  if (isTreeTheme) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.025, duration: 0.3, ease: "easeOut" }}
-        className="group rounded-xl border border-[#E5C158]/10 bg-gradient-to-br from-[#2A1812]/90 to-[#1E110B]/90 backdrop-blur-md p-4 transition-all duration-300 hover:scale-[1.01] hover:border-[#E5C158]/30 hover:shadow-lg hover:shadow-[#E5C158]/5"
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3
-                className="text-base md:text-lg font-extrabold leading-snug break-words"
-                style={{ color: "#E5C158", fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif" }}
-              >
-                {item.name}
-              </h3>
-              {item.size && (
-                <span className="text-[10px] md:text-xs font-semibold text-[#E2E8F0]/30 tracking-wide whitespace-nowrap">
-                  {item.size}
-                </span>
-              )}
-              {badge && <Badge type={badge} />}
-            </div>
-            {item.description && (
-              <p
-                className="mt-1.5 text-sm md:text-base leading-relaxed font-normal"
-                style={{ color: "#E2E8F0", fontFamily: "var(--font-cairo), var(--font-inter), sans-serif" }}
-              >
-                {item.description}
-              </p>
-            )}
-          </div>
-          <span
-            className="text-base md:text-lg font-extrabold tabular-nums whitespace-nowrap shrink-0 mt-0.5"
-            style={{ color: priceAccent || "#4CAF50", fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
-          >
-            {item.price}
-          </span>
-        </div>
-        {extraPrices && (
-          <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {extraPrices.map((p, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] md:text-xs font-semibold tabular-nums"
-                style={{
-                  color: "#E5C158",
-                  border: "1px solid rgba(229,193,88,0.3)",
-                  background: "rgba(229,193,88,0.08)",
-                  fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
-                }}
-              >
-                <span className="opacity-80">{p.label}</span>
-                <span className="font-extrabold">{p.price}</span>
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="mt-3 h-px w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "linear-gradient(to right, transparent, rgba(229,193,88,0.2), transparent)" }} />
-      </motion.div>
-    );
-  }
+  const ac = accent || ACCENT_DEFAULT;
+  const priceAc = priceAccent || ac;
+  const badge = getItemBadge(item.name, item.description);
+  const sizes =
+    item.sizes && item.sizes.length > 0
+      ? item.sizes
+      : item.prices && item.prices.length > 0
+        ? item.prices
+        : null;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.025, duration: 0.3, ease: "easeOut" }}
+      className="group rounded-xl border backdrop-blur-md p-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+      style={{
+        background: cardBg || "rgba(255,255,255,0.04)",
+        borderColor: `${ac}1a`,
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = `${ac}4d`;
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 30px ${ac}0d`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = `${ac}1a`;
+        (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 rgba(0,0,0,0)";
+      }}
     >
-      <div className="flex items-baseline justify-between gap-3">
-        <div className="flex items-baseline gap-2 min-w-0 flex-1">
-          <span
-            className="text-base md:text-lg font-bold text-white leading-snug break-words"
-            style={{ fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
-          >
-            {item.name}
-          </span>
-          {item.size && (
-            <span
-              className="text-[10px] md:text-xs font-semibold text-white/30 tracking-wide whitespace-nowrap shrink-0"
-              style={{ fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3
+              className="text-base md:text-lg font-extrabold leading-snug break-words"
+              style={{ color: ac, fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif" }}
             >
-              {item.size}
-            </span>
+              {item.name}
+            </h3>
+            {item.size && (
+              <span className="text-[10px] md:text-xs font-semibold text-white/30 tracking-wide whitespace-nowrap">
+                {item.size}
+              </span>
+            )}
+            {badge && <Badge type={badge} />}
+          </div>
+          {item.description && (
+            <p
+              className="mt-1.5 text-sm md:text-base leading-relaxed font-normal"
+              style={{ color: "rgba(226,232,240,0.55)", fontFamily: "var(--font-cairo), var(--font-inter), sans-serif" }}
+            >
+              {item.description}
+            </p>
           )}
         </div>
         <span
-          className="text-base md:text-lg font-bold text-white tabular-nums whitespace-nowrap shrink-0"
-          style={{ fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
+          className="text-base md:text-lg font-extrabold tabular-nums whitespace-nowrap shrink-0 mt-0.5"
+          style={{ color: priceAc, fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
         >
           {item.price}
         </span>
       </div>
-      <div className="flex items-center gap-2 mt-0.5">
-        <div className="h-[1px] flex-1 opacity-15" style={{ background: `linear-gradient(to left, transparent, ${ac}, transparent)` }} />
-      </div>
-      {item.description && (
-        <p
-          className="mt-1.5 text-sm md:text-base leading-relaxed text-white/55 font-normal"
-          style={{ fontFamily: "var(--font-cairo), var(--font-inter), sans-serif" }}
-        >
-          {item.description}
-        </p>
-      )}
-      {extraPrices && (
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {extraPrices.map((p, i) => (
-            <span
+      {sizes && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {sizes.map((s, i) => (
+            <div
               key={i}
-              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] md:text-xs font-semibold tabular-nums"
+              className="min-w-[72px] px-3 py-1.5 rounded-lg border text-center transition-all duration-200 hover:scale-[1.03]"
               style={{
-                color: ac,
-                border: `1px solid ${ac}40`,
-                background: `${ac}0d`,
-                fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
+                borderColor: `${priceAc}33`,
+                background: `${priceAc}0d`,
               }}
             >
-              <span className="opacity-80">{p.label}</span>
-              <span className="font-bold">{p.price}</span>
-            </span>
+              <div
+                className="text-[10px] font-semibold leading-tight truncate max-w-[110px]"
+                style={{ color: `${priceAc}cc`, fontFamily: "var(--font-cairo), sans-serif" }}
+              >
+                {s.label}
+              </div>
+              <div
+                className="text-sm font-extrabold tabular-nums leading-tight"
+                style={{ color: priceAc, fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
+              >
+                {s.price}
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -351,96 +279,95 @@ function MenuItemRow({ item, index, accent, isTreeTheme, priceAccent }: {
   );
 }
 
-function LuxuryDecorations() {
-  const GOLD = "#E5C158";
+function LuxuryDecorations({ color = "#E5C158" }: { color?: string }) {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {/* Big blurred coffee cup - top left */}
       <svg className="absolute" style={{top:"3%",left:"-6%",width:"38%",height:"42%",transform:"rotate(-15deg)",opacity:0.025,filter:"blur(20px)"}} viewBox="0 0 200 200" fill="none">
-        <ellipse cx="100" cy="160" rx="75" ry="14" stroke={GOLD} strokeWidth="2"/>
-        <ellipse cx="100" cy="160" rx="55" ry="10" stroke={GOLD} strokeWidth="1" opacity="0.4"/>
-        <path d="M45 80 C45 145, 50 152, 100 152 C150 152, 155 145, 155 80 Z" stroke={GOLD} strokeWidth="2"/>
-        <ellipse cx="100" cy="80" rx="55" ry="12" stroke={GOLD} strokeWidth="2"/>
-        <path d="M155 98 C185 98, 185 135, 155 135" stroke={GOLD} strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-        <path d="M78 58 C74 42, 90 32, 82 16" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round" opacity="0.3"/>
-        <path d="M100 52 C105 38, 92 28, 100 12" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round" opacity="0.2"/>
+        <ellipse cx="100" cy="160" rx="75" ry="14" stroke={color} strokeWidth="2"/>
+        <ellipse cx="100" cy="160" rx="55" ry="10" stroke={color} strokeWidth="1" opacity="0.4"/>
+        <path d="M45 80 C45 145, 50 152, 100 152 C150 152, 155 145, 155 80 Z" stroke={color} strokeWidth="2"/>
+        <ellipse cx="100" cy="80" rx="55" ry="12" stroke={color} strokeWidth="2"/>
+        <path d="M155 98 C185 98, 185 135, 155 135" stroke={color} strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+        <path d="M78 58 C74 42, 90 32, 82 16" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.3"/>
+        <path d="M100 52 C105 38, 92 28, 100 12" stroke={color} strokeWidth="1.5" strokeLinecap="round" opacity="0.2"/>
       </svg>
 
       {/* Big blurred juice glass - right side */}
       <svg className="absolute" style={{top:"45%",right:"-8%",width:"35%",height:"45%",transform:"rotate(25deg)",opacity:0.02,filter:"blur(22px)"}} viewBox="0 0 160 200" fill="none">
-        <path d="M40 20 L30 150 C30 162, 130 162, 130 150 L120 20Z" stroke={GOLD} strokeWidth="2" fill="none" strokeLinejoin="round"/>
-        <path d="M40 20 C40 12, 120 12, 120 20" stroke={GOLD} strokeWidth="2" fill="none"/>
-        <path d="M60 30 L58 70" stroke={GOLD} strokeWidth="1" opacity="0.3" strokeLinecap="round"/>
-        <path d="M100 30 L102 70" stroke={GOLD} strokeWidth="1" opacity="0.3" strokeLinecap="round"/>
-        <path d="M58 50 L102 50" stroke={GOLD} strokeWidth="0.8" opacity="0.2" strokeLinecap="round"/>
-        <path d="M80 20 L80 12" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M74 14 L86 14" stroke={GOLD} strokeWidth="1.2" strokeLinecap="round"/>
-        <circle cx="80" cy="38" r="3" stroke={GOLD} strokeWidth="0.8" opacity="0.15"/>
-        <path d="M55 48 Q80 56, 105 48" stroke={GOLD} strokeWidth="0.8" opacity="0.15" fill="none"/>
+        <path d="M40 20 L30 150 C30 162, 130 162, 130 150 L120 20Z" stroke={color} strokeWidth="2" fill="none" strokeLinejoin="round"/>
+        <path d="M40 20 C40 12, 120 12, 120 20" stroke={color} strokeWidth="2" fill="none"/>
+        <path d="M60 30 L58 70" stroke={color} strokeWidth="1" opacity="0.3" strokeLinecap="round"/>
+        <path d="M100 30 L102 70" stroke={color} strokeWidth="1" opacity="0.3" strokeLinecap="round"/>
+        <path d="M58 50 L102 50" stroke={color} strokeWidth="0.8" opacity="0.2" strokeLinecap="round"/>
+        <path d="M80 20 L80 12" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M74 14 L86 14" stroke={color} strokeWidth="1.2" strokeLinecap="round"/>
+        <circle cx="80" cy="38" r="3" stroke={color} strokeWidth="0.8" opacity="0.15"/>
+        <path d="M55 48 Q80 56, 105 48" stroke={color} strokeWidth="0.8" opacity="0.15" fill="none"/>
       </svg>
 
       {/* Plate with cutlery - bottom left */}
       <svg className="absolute" style={{bottom:"5%",left:"-5%",width:"40%",height:"40%",transform:"rotate(-10deg)",opacity:0.025,filter:"blur(18px)"}} viewBox="0 0 200 160" fill="none">
-        <ellipse cx="100" cy="100" rx="85" ry="22" stroke={GOLD} strokeWidth="1.5"/>
-        <ellipse cx="100" cy="100" rx="60" ry="15" stroke={GOLD} strokeWidth="1" opacity="0.4"/>
-        <ellipse cx="100" cy="30" rx="50" ry="20" stroke={GOLD} strokeWidth="1.5" fill="none"/>
-        <path d="M100 10 L100 50" stroke={GOLD} strokeWidth="0.8" opacity="0.2"/>
-        <path d="M90 20 L110 20" stroke={GOLD} strokeWidth="0.8" opacity="0.15"/>
+        <ellipse cx="100" cy="100" rx="85" ry="22" stroke={color} strokeWidth="1.5"/>
+        <ellipse cx="100" cy="100" rx="60" ry="15" stroke={color} strokeWidth="1" opacity="0.4"/>
+        <ellipse cx="100" cy="30" rx="50" ry="20" stroke={color} strokeWidth="1.5" fill="none"/>
+        <path d="M100 10 L100 50" stroke={color} strokeWidth="0.8" opacity="0.2"/>
+        <path d="M90 20 L110 20" stroke={color} strokeWidth="0.8" opacity="0.15"/>
       </svg>
 
       {/* Elegant branch - right top */}
       <svg className="absolute" style={{top:"8%",right:"5%",width:"18%",height:"30%",transform:"rotate(10deg)",opacity:0.025,filter:"blur(8px)"}} viewBox="0 0 80 160" fill="none">
-        <path d="M10 155 C10 155, 20 100, 40 80 C60 60, 70 40, 70 20" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M10 155 L10 145" stroke={GOLD} strokeWidth="1.2" strokeLinecap="round"/>
-        <path d="M20 115 L15 108" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M30 95 L24 88" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M45 72 L38 66" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M55 50 L48 44" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M65 32 L58 26" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M70 20 L66 14" stroke={GOLD} strokeWidth="0.8" strokeLinecap="round"/>
-        <circle cx="72" cy="18" r="2" stroke={GOLD} strokeWidth="0.8" opacity="0.3"/>
-        <circle cx="60" cy="38" r="1.5" stroke={GOLD} strokeWidth="0.8" opacity="0.2"/>
-        <circle cx="42" cy="70" r="1.5" stroke={GOLD} strokeWidth="0.8" opacity="0.15"/>
+        <path d="M10 155 C10 155, 20 100, 40 80 C60 60, 70 40, 70 20" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M10 155 L10 145" stroke={color} strokeWidth="1.2" strokeLinecap="round"/>
+        <path d="M20 115 L15 108" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M30 95 L24 88" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M45 72 L38 66" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M55 50 L48 44" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M65 32 L58 26" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M70 20 L66 14" stroke={color} strokeWidth="0.8" strokeLinecap="round"/>
+        <circle cx="72" cy="18" r="2" stroke={color} strokeWidth="0.8" opacity="0.3"/>
+        <circle cx="60" cy="38" r="1.5" stroke={color} strokeWidth="0.8" opacity="0.2"/>
+        <circle cx="42" cy="70" r="1.5" stroke={color} strokeWidth="0.8" opacity="0.15"/>
       </svg>
 
       {/* Second branch - bottom right */}
       <svg className="absolute" style={{bottom:"15%",right:"15%",width:"14%",height:"25%",transform:"rotate(-40deg)",opacity:0.02,filter:"blur(7px)"}} viewBox="0 0 60 120" fill="none">
-        <path d="M8 115 C8 115, 15 80, 30 60 C45 40, 52 25, 52 10" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M15 88 L10 82" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M24 68 L18 62" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M38 45 L32 40" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <path d="M46 26 L42 22" stroke={GOLD} strokeWidth="0.8" strokeLinecap="round"/>
-        <circle cx="48" cy="18" r="1.5" stroke={GOLD} strokeWidth="0.8" opacity="0.25"/>
+        <path d="M8 115 C8 115, 15 80, 30 60 C45 40, 52 25, 52 10" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M15 88 L10 82" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M24 68 L18 62" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M38 45 L32 40" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <path d="M46 26 L42 22" stroke={color} strokeWidth="0.8" strokeLinecap="round"/>
+        <circle cx="48" cy="18" r="1.5" stroke={color} strokeWidth="0.8" opacity="0.25"/>
       </svg>
 
       {/* Small sharp coffee cup - top right */}
       <svg className="absolute" style={{top:"12%",right:"20%",width:"10%",height:"12%",transform:"rotate(20deg)",opacity:0.03}} viewBox="0 0 100 100" fill="none">
-        <ellipse cx="50" cy="78" rx="35" ry="7" stroke={GOLD} strokeWidth="1.2"/>
-        <path d="M22 42 C22 72, 25 76, 50 76 C75 76, 78 72, 78 42Z" stroke={GOLD} strokeWidth="1.2"/>
-        <ellipse cx="50" cy="42" rx="28" ry="8" stroke={GOLD} strokeWidth="1.2"/>
-        <path d="M78 54 C95 54, 95 72, 78 72" stroke={GOLD} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+        <ellipse cx="50" cy="78" rx="35" ry="7" stroke={color} strokeWidth="1.2"/>
+        <path d="M22 42 C22 72, 25 76, 50 76 C75 76, 78 72, 78 42Z" stroke={color} strokeWidth="1.2"/>
+        <ellipse cx="50" cy="42" rx="28" ry="8" stroke={color} strokeWidth="1.2"/>
+        <path d="M78 54 C95 54, 95 72, 78 72" stroke={color} strokeWidth="1.5" strokeLinecap="round" fill="none"/>
       </svg>
 
       {/* Small juice glass - left */}
       <svg className="absolute" style={{bottom:"35%",left:"8%",width:"8%",height:"14%",transform:"rotate(-25deg)",opacity:0.025}} viewBox="0 0 60 80" fill="none">
-        <path d="M15 10 L12 60 C12 66, 48 66, 48 60 L45 10Z" stroke={GOLD} strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
-        <path d="M15 10 C15 6, 45 6, 45 10" stroke={GOLD} strokeWidth="1.2" fill="none"/>
-        <path d="M30 10 L30 5" stroke={GOLD} strokeWidth="1" strokeLinecap="round"/>
-        <circle cx="30" cy="24" r="1.5" stroke={GOLD} strokeWidth="0.6" opacity="0.2"/>
+        <path d="M15 10 L12 60 C12 66, 48 66, 48 60 L45 10Z" stroke={color} strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M15 10 C15 6, 45 6, 45 10" stroke={color} strokeWidth="1.2" fill="none"/>
+        <path d="M30 10 L30 5" stroke={color} strokeWidth="1" strokeLinecap="round"/>
+        <circle cx="30" cy="24" r="1.5" stroke={color} strokeWidth="0.6" opacity="0.2"/>
       </svg>
 
       {/* Small plate icon - bottom */}
       <svg className="absolute" style={{bottom:"8%",left:"35%",width:"10%",height:"8%",opacity:0.025}} viewBox="0 0 80 40" fill="none">
-        <ellipse cx="40" cy="25" rx="38" ry="12" stroke={GOLD} strokeWidth="1"/>
-        <ellipse cx="40" cy="25" rx="25" ry="8" stroke={GOLD} strokeWidth="0.8" opacity="0.4"/>
+        <ellipse cx="40" cy="25" rx="38" ry="12" stroke={color} strokeWidth="1"/>
+        <ellipse cx="40" cy="25" rx="25" ry="8" stroke={color} strokeWidth="0.8" opacity="0.4"/>
       </svg>
 
       {/* Tiny decorative dots scattered */}
-      <div className="absolute top-1/4 left-1/4 w-1 h-1 rounded-full" style={{backgroundColor: GOLD, opacity: 0.035}} />
-      <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 rounded-full" style={{backgroundColor: GOLD, opacity: 0.025}} />
-      <div className="absolute bottom-1/3 left-1/2 w-1 h-1 rounded-full" style={{backgroundColor: GOLD, opacity: 0.02}} />
-      <div className="absolute top-2/3 right-1/4 w-1 h-1 rounded-full" style={{backgroundColor: GOLD, opacity: 0.03}} />
-      <div className="absolute top-1/5 right-1/2 w-2 h-2 rounded-full" style={{backgroundColor: GOLD, opacity: 0.015}} />
+      <div className="absolute top-1/4 left-1/4 w-1 h-1 rounded-full" style={{backgroundColor: color, opacity: 0.035}} />
+      <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 rounded-full" style={{backgroundColor: color, opacity: 0.025}} />
+      <div className="absolute bottom-1/3 left-1/2 w-1 h-1 rounded-full" style={{backgroundColor: color, opacity: 0.02}} />
+      <div className="absolute top-2/3 right-1/4 w-1 h-1 rounded-full" style={{backgroundColor: color, opacity: 0.03}} />
+      <div className="absolute top-1/5 right-1/2 w-2 h-2 rounded-full" style={{backgroundColor: color, opacity: 0.015}} />
     </div>
   );
 }
@@ -457,18 +384,44 @@ export default function MenuPage() {
   const categories = menu?.categories || [];
 
   const themeType: CafeTheme = menu?.theme || "cafe";
-  const isTreeTheme = themeType === "tree";
   const themeConfig = CAFE_THEMES[themeType];
-  const accent = themeConfig?.accent || ACCENT_OLIVE_DEFAULT;
+  const accent = themeConfig?.accent || ACCENT_DEFAULT;
   const priceAccent = themeConfig?.priceAccent || accent;
+  const cardBg = themeConfig?.cardBg;
   const bgColor = themeConfig?.bgLoading || BG_DEFAULT;
   const bgGradient = themeConfig?.bg || BG_DEFAULT;
 
   const parentGroups = useMemo(() => {
-    return MENU_GROUPS.filter((g) =>
+    const matched = MENU_GROUPS.filter((g) =>
       g.children.some((child) => categories.some((c) => c.name === child))
     );
-  }, [categories]);
+    if (matched.length > 0) return matched;
+    return categories
+      .filter((c) => items.some((i) => i.category === c.name))
+      .map((c) => ({
+        label: c.name,
+        labelEn: c.name,
+        icon: c.icon || "📋",
+        children: [c.name],
+      }));
+  }, [categories, items]);
+
+  const groupMap = useMemo(
+    () => Object.fromEntries(parentGroups.map((g) => [g.labelEn, g])),
+    [parentGroups]
+  );
+
+  const carouselGroups = useMemo<CarouselGroup[]>(
+    () =>
+      parentGroups.map((g) => ({
+        labelEn: g.labelEn,
+        label: g.label,
+        icon: getGroupIcon(g.labelEn) ? undefined : (
+          <span className="w-full h-full flex items-center justify-center text-4xl">{g.icon || "📋"}</span>
+        ),
+      })),
+    [parentGroups]
+  );
 
   const screens = useMemo(
     () => ["all", ...parentGroups.map((g) => g.labelEn)],
@@ -528,7 +481,8 @@ export default function MenuPage() {
     if (el) el.scrollTop = 0;
   }, [deckIndex]);
 
-  const deckDragEnabled = screens.length > 1 && !(isTreeTheme && deckIndex === 0);
+  const deckDragEnabled =
+    screens.length > 1 && (deckIndex !== 0 || carouselGroups.length === 0);
 
   const onDeckPointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -587,8 +541,8 @@ export default function MenuPage() {
   const screenData = useMemo(() => {
     return screens.map((label) => {
       if (label === "all") return { label, type: "all" as const };
-      const cfg = getGroupByLabel(label);
-      const groupItems = cfg ? items.filter((i) => cfg.children.includes(i.category)) : items;
+      const cfg = groupMap[label];
+      const groupItems = cfg ? items.filter((i) => cfg.children.includes(i.category)) : [];
       const subs = cfg ? cfg.children.filter((c) => groupItems.some((i) => i.category === c)) : [];
       const cats =
         activeSub !== "all" && subs.includes(activeSub)
@@ -605,11 +559,14 @@ export default function MenuPage() {
         .filter((g) => g.items.length > 0);
       return { label, type: "group" as const, cfg, subs, grouped };
     });
-  }, [screens, items, categories, activeSub]);
+  }, [screens, items, categories, activeSub, groupMap]);
 
   const allScreenGroups = useMemo(() => {
-    const cats = categories.map((c) => c.name);
-    return cats
+    const names =
+      categories.length > 0
+        ? categories.map((c) => c.name)
+        : [...new Set(items.map((i) => i.category))];
+    return names
       .map((catName) => ({
         name: catName,
         icon: categories.find((c) => c.name === catName)?.icon || "",
@@ -648,14 +605,14 @@ export default function MenuPage() {
           <div
             className="w-16 h-16 rounded-2xl flex items-center justify-center"
             style={{
-              background: isTreeTheme ? "rgba(229,193,88,0.05)" : "rgba(255,255,255,0.05)",
-              border: isTreeTheme ? "1px solid rgba(229,193,88,0.1)" : "1px solid rgba(255,255,255,0.1)",
+              background: `${accent}0d`,
+              border: `1px solid ${accent}1a`,
             }}
           >
-            <UtensilsCrossed className="w-8 h-8" style={{ color: isTreeTheme ? "rgba(229,193,88,0.3)" : "rgba(255,255,255,0.3)" }} />
+            <UtensilsCrossed className="w-8 h-8" style={{ color: `${accent}66` }} />
           </div>
-          <h1 className="text-xl font-bold" style={{ color: isTreeTheme ? "rgba(226,232,240,0.6)" : "rgba(255,255,255,0.6)", fontFamily: "var(--font-cairo), sans-serif" }}>غير موجود</h1>
-          <p className="text-sm" style={{ color: isTreeTheme ? "rgba(226,232,240,0.4)" : "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>المنيو غير موجود أو تم حذفه</p>
+          <h1 className="text-xl font-bold" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-cairo), sans-serif" }}>غير موجود</h1>
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>المنيو غير موجود أو تم حذفه</p>
         </motion.div>
       </div>
     );
@@ -666,13 +623,13 @@ export default function MenuPage() {
       <div
         className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
         style={{
-          background: isTreeTheme ? "rgba(229,193,88,0.05)" : "rgba(255,255,255,0.05)",
-          border: isTreeTheme ? "1px solid rgba(229,193,88,0.1)" : "1px solid rgba(255,255,255,0.1)",
+          background: `${accent}0d`,
+          border: `1px solid ${accent}1a`,
         }}
       >
-        <ShoppingBag className="w-8 h-8" style={{ color: isTreeTheme ? "rgba(229,193,88,0.2)" : "rgba(255,255,255,0.2)" }} />
+        <ShoppingBag className="w-8 h-8" style={{ color: `${accent}40` }} />
       </div>
-      <p className="text-sm font-medium" style={{ color: isTreeTheme ? "rgba(226,232,240,0.4)" : "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>
+      <p className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>
         لا توجد أصناف في هذا القسم
       </p>
     </motion.div>
@@ -692,21 +649,21 @@ export default function MenuPage() {
               initial={{ opacity: 0, x: -4 }}
               animate={{ opacity: 1, x: 0 }}
               className="mb-3 pb-2"
-              style={{ borderBottom: isTreeTheme ? "1px solid rgba(229,193,88,0.08)" : "1px solid rgba(255,255,255,0.1)" }}
+              style={{ borderBottom: `1px solid ${accent}14` }}
             >
               <h3
                 className="text-sm md:text-base font-bold tracking-wide"
                 style={{
-                  color: isTreeTheme ? "#E5C158" : accent,
+                  color: accent,
                   fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
                 }}
               >
                 {isAllScreen ? getBadgeText(group.name) : group.name}
               </h3>
             </motion.div>
-            <div className="space-y-3 md:space-y-5">
+            <div className="space-y-3 md:space-y-4">
               {group.items.map((item, i) => (
-                <MenuItemRow key={`${item.name}-${item.size || ""}-${i}`} item={item} index={i} accent={accent} isTreeTheme={isTreeTheme} priceAccent={priceAccent} />
+                <MenuItemRow key={`${item.name}-${item.size || ""}-${i}`} item={item} index={i} accent={accent} priceAccent={priceAccent} cardBg={cardBg} />
               ))}
             </div>
           </div>
@@ -724,7 +681,7 @@ export default function MenuPage() {
         WebkitTapHighlightColor: "transparent",
       }}
     >
-      {isTreeTheme && <LuxuryDecorations />}
+      <LuxuryDecorations color={accent} />
       <div className="relative z-10 flex flex-col h-full w-full">
         <div className="max-w-lg mx-auto w-full px-4 md:px-5 flex flex-col h-full">
 
@@ -740,8 +697,8 @@ export default function MenuPage() {
                 <div
                   className="w-[68px] h-[68px] md:w-20 md:h-20 rounded-full overflow-hidden"
                   style={{
-                    border: isTreeTheme ? "2px solid rgba(229,193,88,0.2)" : "1px solid rgba(255,255,255,0.1)",
-                    boxShadow: isTreeTheme ? "0 0 40px rgba(229,193,88,0.15)" : `0 0 30px ${accent}33`,
+                    border: `1px solid ${accent}33`,
+                    boxShadow: `0 0 30px ${accent}33`,
                   }}
                 >
                   <Image src={menu.logo} alt={menu.name} width={80} height={80} priority className="w-full h-full object-cover" />
@@ -751,36 +708,36 @@ export default function MenuPage() {
             <h1
               className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight"
               style={{
-                color: isTreeTheme ? "#E5C158" : "white",
+                color: "white",
                 fontFamily: "var(--font-cairo), var(--font-heading), Georgia, serif",
               }}
             >
               {menu.name}
             </h1>
             <div className="mt-2 flex items-center justify-center gap-3">
-              <div className="h-px w-10" style={{ background: isTreeTheme ? "linear-gradient(to left, transparent, rgba(229,193,88,0.3))" : "rgba(255,255,255,0.1)" }} />
-              <span className="text-sm md:text-base font-black tracking-[0.25em] uppercase" style={{ color: isTreeTheme ? "#E5C158" : accent }}>
+              <div className="h-px w-10" style={{ background: `linear-gradient(to left, transparent, ${accent}66)` }} />
+              <span className="text-sm md:text-base font-black tracking-[0.25em] uppercase" style={{ color: accent }}>
                 Menu
               </span>
-              <div className="h-px w-10" style={{ background: isTreeTheme ? "linear-gradient(to right, transparent, rgba(229,193,88,0.3))" : "rgba(255,255,255,0.1)" }} />
+              <div className="h-px w-10" style={{ background: `linear-gradient(to right, transparent, ${accent}66)` }} />
             </div>
           </motion.div>
 
-          {/* Tabs (fixed, always visible) */}
-          {(!isTreeTheme || activeGroup !== "all") && parentGroups.length > 0 && (
+          {/* Tabs (fixed, always visible — hidden on "all" screen) */}
+          {activeGroup !== "all" && parentGroups.length > 0 && (
             <div className="shrink-0 pt-3">
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-                <ParentTabs groups={parentGroups} activeGroup={activeGroup} onGroupChange={handleGroupChange} accent={accent} isTreeTheme={isTreeTheme} />
+                <ParentTabs groups={parentGroups} activeGroup={activeGroup} onGroupChange={handleGroupChange} accent={accent} />
               </motion.div>
 
-              {activeGroup !== "all" && activeScreenSubs.length > 1 && (
+              {activeScreenSubs.length > 1 && (
                 <motion.div
                   key={activeGroup}
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <SubCategoryTabs subCategories={activeScreenSubs} activeSub={activeSub} onSubChange={setActiveSub} accent={accent} isTreeTheme={isTreeTheme} />
+                  <SubCategoryTabs subCategories={activeScreenSubs} activeSub={activeSub} onSubChange={setActiveSub} accent={accent} />
                 </motion.div>
               )}
             </div>
@@ -807,13 +764,19 @@ export default function MenuPage() {
                   style={{ flex: "0 0 100%", touchAction: "pan-y" }}
                 >
                   {scr.type === "all" ? (
-                    isTreeTheme ? (
+                    carouselGroups.length > 0 ? (
                       <div className="h-full flex flex-col items-center justify-center pb-2">
-                        <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: "rgba(229,193,88,0.6)" }}>
+                        <p className="text-xs tracking-[0.2em] uppercase font-semibold" style={{ color: `${accent}99` }}>
                           اختر قسمك
                         </p>
-                        <div className="h-px w-8 mx-auto mt-2 mb-3 rounded-full" style={{ backgroundColor: "rgba(229,193,88,0.2)" }} />
-                        <TreeCarousel groups={parentGroups} onGroupChange={handleGroupChange} onEdgeSwipe={flipDeck} />
+                        <div className="h-px w-8 mx-auto mt-2 mb-3 rounded-full" style={{ backgroundColor: `${accent}33` }} />
+                        <TreeCarousel
+                          groups={carouselGroups}
+                          onGroupChange={handleGroupChange}
+                          onEdgeSwipe={flipDeck}
+                          accent={accent}
+                          cardBg={cardBg}
+                        />
                       </div>
                     ) : (
                       <div className="pt-1 pb-6">{renderGroupItems(allScreenGroups, true)}</div>
@@ -825,14 +788,14 @@ export default function MenuPage() {
                           <h2
                             className="text-lg md:text-xl font-bold tracking-wide"
                             style={{
-                              color: isTreeTheme ? "#E5C158" : accent,
+                              color: accent,
                               fontFamily: "var(--font-outfit), var(--font-cairo), sans-serif",
                             }}
                           >
                             {scr.cfg.icon && <span className="ml-2">{scr.cfg.icon}</span>}
                             {scr.cfg.labelEn}
                           </h2>
-                          <div className="h-[2px] w-10 mt-1 rounded-full" style={{ backgroundColor: isTreeTheme ? "#E5C158" : accent }} />
+                          <div className="h-[2px] w-10 mt-1 rounded-full" style={{ backgroundColor: accent }} />
                         </motion.div>
                       )}
                       {renderGroupItems(scr.grouped, false)}
@@ -849,9 +812,9 @@ export default function MenuPage() {
                   onClick={() => flipDeck(-1)}
                   className="absolute left-1 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
                   style={{
-                    background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
-                    border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
-                    color: isTreeTheme ? "#E5C158" : accent,
+                    background: `${accent}14`,
+                    border: `1px solid ${accent}26`,
+                    color: accent,
                   }}
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -860,9 +823,9 @@ export default function MenuPage() {
                   onClick={() => flipDeck(1)}
                   className="absolute right-1 top-1/3 z-30 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm transition-all opacity-35 hover:opacity-100 md:hidden"
                   style={{
-                    background: isTreeTheme ? "rgba(229,193,88,0.08)" : "rgba(255,255,255,0.06)",
-                    border: isTreeTheme ? "1px solid rgba(229,193,88,0.15)" : `1px solid ${accent}30`,
-                    color: isTreeTheme ? "#E5C158" : accent,
+                    background: `${accent}14`,
+                    border: `1px solid ${accent}26`,
+                    color: accent,
                   }}
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -882,15 +845,15 @@ export default function MenuPage() {
                   <div
                     className="flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md"
                     style={{
-                      background: isTreeTheme ? "rgba(20,12,7,0.85)" : "rgba(13,13,13,0.85)",
-                      border: isTreeTheme ? "1px solid rgba(229,193,88,0.2)" : `1px solid ${accent}30`,
+                      background: "rgba(13,13,13,0.85)",
+                      border: `1px solid ${accent}30`,
                     }}
                   >
-                    <ChevronLeft className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
-                    <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap" style={{ color: isTreeTheme ? "rgba(229,193,88,0.7)" : accent }}>
+                    <ChevronLeft className="w-3 h-3" style={{ color: accent }} />
+                    <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap" style={{ color: `${accent}cc` }}>
                       اسحب يمين / شمال للتنقل
                     </span>
-                    <ChevronRight className="w-3 h-3" style={{ color: isTreeTheme ? "#E5C158" : accent }} />
+                    <ChevronRight className="w-3 h-3" style={{ color: accent }} />
                   </div>
                 </motion.div>
               )}
@@ -899,14 +862,14 @@ export default function MenuPage() {
 
           {/* Footer */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="shrink-0 pt-2 pb-4 text-center">
-            <div className="h-px max-w-xs mx-auto mb-3" style={{ background: isTreeTheme ? "linear-gradient(to right, transparent, rgba(229,193,88,0.15), transparent)" : "rgba(255,255,255,0.1)" }} />
+            <div className="h-px max-w-xs mx-auto mb-3" style={{ background: `linear-gradient(to right, transparent, ${accent}26, transparent)` }} />
             <div className="flex items-center justify-center gap-4">
-              <button onClick={shareMenu} className={`flex items-center gap-1.5 text-[10px] tracking-wider transition-colors ${isTreeTheme ? "text-[#E2E8F0]/40 hover:text-[#E5C158]" : "text-white/40 hover:text-white/70"}`}>
+              <button onClick={shareMenu} className="flex items-center gap-1.5 text-[10px] tracking-wider text-white/40 hover:text-white/70 transition-colors">
                 <Share2 className="w-3 h-3" />مشاركة
               </button>
-              <span className="text-[10px] tracking-widest" style={{ color: isTreeTheme ? "rgba(229,193,88,0.3)" : "rgba(255,255,255,0.25)" }}>
+              <span className="text-[10px] tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
                 مدعوم من{" "}
-                <a href="https://gotap.vercel.app/ar" target="_blank" rel="noopener noreferrer" className="hover:underline font-medium transition-opacity" style={{ color: isTreeTheme ? "#E5C158" : accent }}>GoTap</a>
+                <a href="https://gotap.vercel.app/ar" target="_blank" rel="noopener noreferrer" className="hover:underline font-medium transition-opacity" style={{ color: accent }}>GoTap</a>
               </span>
             </div>
           </motion.div>

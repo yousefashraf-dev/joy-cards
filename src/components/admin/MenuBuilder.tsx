@@ -60,6 +60,31 @@ export default function MenuBuilder({
     onItemsChange(updated);
   };
 
+  const updateItemSize = (index: number, sizeIndex: number, field: "label" | "price", value: string) => {
+    const updated = items.map((item, i) => {
+      if (i !== index) return item;
+      const sizes = [...(item.sizes || [])];
+      if (!sizes[sizeIndex]) sizes[sizeIndex] = { label: "", price: "" };
+      sizes[sizeIndex] = { ...sizes[sizeIndex], [field]: value };
+      return { ...item, sizes };
+    });
+    onItemsChange(updated);
+  };
+
+  const addItemSize = (index: number) => {
+    const updated = items.map((item, i) =>
+      i === index ? { ...item, sizes: [...(item.sizes || []), { label: "", price: "" }] } : item
+    );
+    onItemsChange(updated);
+  };
+
+  const removeItemSize = (index: number, sizeIndex: number) => {
+    const updated = items.map((item, i) =>
+      i === index ? { ...item, sizes: (item.sizes || []).filter((_, si) => si !== sizeIndex) } : item
+    );
+    onItemsChange(updated);
+  };
+
   const removeItem = (index: number) => {
     onItemsChange(items.filter((_, i) => i !== index));
   };
@@ -176,16 +201,6 @@ export default function MenuBuilder({
                           className={`${inputClass} flex-[3] min-w-0`}
                           placeholder="اسم الصنف"
                         />
-                        <input
-                          type="text"
-                          value={item.size || ""}
-                          onChange={(e) =>
-                            updateItem(globalIdx, "size", e.target.value)
-                          }
-                          className={`${inputClass} w-16 shrink-0 text-center text-xs`}
-                          placeholder="حجم"
-                          dir="ltr"
-                        />
                         <div className="relative w-16 shrink-0">
                           <input
                             type="text"
@@ -208,6 +223,56 @@ export default function MenuBuilder({
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
+                      </div>
+                      {(item.sizes || []).map((sizeRow, si) => (
+                        <div key={si} className="flex items-center gap-1.5">
+                          <input
+                            type="text"
+                            value={sizeRow.label}
+                            onChange={(e) =>
+                              updateItemSize(globalIdx, si, "label", e.target.value)
+                            }
+                            className={`${inputClass} flex-[2] min-w-0 text-xs`}
+                            placeholder="الحجم (مثال: عادي / كومبو / كبير)"
+                          />
+                          <div className="relative w-20 shrink-0">
+                            <input
+                              type="text"
+                              value={sizeRow.price}
+                              onChange={(e) =>
+                                updateItemSize(globalIdx, si, "price", e.target.value)
+                              }
+                              className={`${priceInputClass} pl-4 text-xs`}
+                              placeholder="0"
+                              dir="ltr"
+                            />
+                            <span className="absolute left-1 top-1/2 -translate-y-1/2 text-[9px] text-slate-muted/40 pointer-events-none">
+                              ﷼
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeItemSize(globalIdx, si)}
+                            className="p-1.5 shrink-0 rounded-lg text-red-400/70 hover:bg-red-400/10 hover:text-red-400 transition-all"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => addItemSize(globalIdx)}
+                          className="flex items-center gap-1 text-[11px] text-slate-muted hover:text-neon-green transition-colors"
+                        >
+                          <Plus className="w-3 h-3" />
+                          إضافة حجم / سعر
+                        </button>
+                        {item.size && (
+                          <span className="text-[10px] text-slate-muted/40 truncate">
+                            حجم قديم: {item.size}
+                          </span>
+                        )}
                       </div>
                       <input
                         type="text"

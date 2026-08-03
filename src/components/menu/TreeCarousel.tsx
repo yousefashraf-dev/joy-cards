@@ -4,10 +4,6 @@ import { useState, useRef, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getGroupIcon } from "./LineArtIcons";
-import type { MenuGroup } from "@/lib/menu-groups";
-
-const GOLD = "#E5C158";
-const GREEN = "#4CAF50";
 
 const CAROUSEL_ORDER: Record<string, number> = {
   SUSHI: 1,
@@ -27,13 +23,34 @@ const CAROUSEL_ORDER: Record<string, number> = {
   DESSERTS: 15,
 };
 
-interface TreeCarouselProps {
-  groups: MenuGroup[];
-  onGroupChange: (groupEn: string) => void;
-  onEdgeSwipe?: (dir: 1 | -1) => void;
+export interface CarouselGroup {
+  labelEn: string;
+  label: string;
+  icon?: React.ReactNode;
 }
 
-export default function TreeCarousel({ groups, onGroupChange, onEdgeSwipe }: TreeCarouselProps) {
+interface TreeCarouselProps {
+  groups: CarouselGroup[];
+  onGroupChange: (groupEn: string) => void;
+  onEdgeSwipe?: (dir: 1 | -1) => void;
+  accent?: string;
+  cardBg?: string;
+  textMuted?: string;
+}
+
+const DEFAULT_ACCENT = "#E5C158";
+const DEFAULT_CARD_BG =
+  "linear-gradient(145deg, rgba(42,24,18,0.92), rgba(30,17,11,0.95))";
+const DEFAULT_MUTED = "rgba(226,232,240,0.25)";
+
+export default function TreeCarousel({
+  groups,
+  onGroupChange,
+  onEdgeSwipe,
+  accent = DEFAULT_ACCENT,
+  cardBg = DEFAULT_CARD_BG,
+  textMuted = DEFAULT_MUTED,
+}: TreeCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const dragStartX = useRef(0);
   const isDragging = useRef(false);
@@ -140,39 +157,36 @@ export default function TreeCarousel({ groups, onGroupChange, onEdgeSwipe }: Tre
                 style={{
                   width: "186px",
                   height: "250px",
-                  background: isActive
-                    ? "linear-gradient(145deg, rgba(42,24,18,0.9), rgba(30,17,11,0.95))"
-                    : "linear-gradient(145deg, rgba(42,24,18,0.6), rgba(30,17,11,0.7))",
+                  background: cardBg,
                   border: isActive
-                    ? "1px solid rgba(229,193,88,0.25)"
-                    : "1px solid rgba(229,193,88,0.06)",
+                    ? `1px solid ${accent}40`
+                    : `1px solid ${accent}0f`,
                   boxShadow: isActive
-                    ? "0 8px 32px rgba(229,193,88,0.08), 0 0 60px rgba(229,193,88,0.04)"
+                    ? `0 8px 32px ${accent}14, 0 0 60px ${accent}0a`
                     : "none",
+                  opacity: isActive ? 1 : 0.65,
                 }}
               >
                 <div
                   className="w-[80px] h-[80px] flex items-center justify-center transition-all duration-300"
                   style={{
-                    color: isActive ? GOLD : "rgba(226,232,240,0.25)",
-                    filter: isActive
-                      ? "drop-shadow(0 0 20px rgba(229,193,88,0.3))"
-                      : "none",
+                    color: isActive ? accent : textMuted,
+                    filter: isActive ? `drop-shadow(0 0 20px ${accent}4d)` : "none",
                   }}
                 >
-                  {getGroupIcon(group.labelEn, "w-full h-full")}
+                  {group.icon || getGroupIcon(group.labelEn, "w-full h-full")}
                 </div>
                 <div className="text-center mt-5 px-3">
                   <p
                     className="text-sm font-black tracking-[0.15em] uppercase"
-                    style={{ color: isActive ? GOLD : "rgba(226,232,240,0.25)" }}
+                    style={{ color: isActive ? accent : textMuted }}
                   >
                     {group.labelEn}
                   </p>
                   <p
                     className="text-[11px] mt-1.5 leading-tight line-clamp-1"
                     style={{
-                      color: isActive ? "rgba(226,232,240,0.6)" : "rgba(226,232,240,0.2)",
+                      color: isActive ? "rgba(226,232,240,0.6)" : textMuted,
                       fontFamily: "var(--font-cairo), sans-serif",
                     }}
                   >
@@ -191,9 +205,9 @@ export default function TreeCarousel({ groups, onGroupChange, onEdgeSwipe }: Tre
           onClick={(e) => { e.stopPropagation(); goPrev(); }}
           className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 z-50 w-9 h-9 rounded-full flex items-center justify-center transition-all backdrop-blur-sm hover:-translate-y-1/2 hover:scale-105"
           style={{
-            background: "rgba(229,193,88,0.08)",
-            border: "1px solid rgba(229,193,88,0.15)",
-            color: GOLD,
+            background: `${accent}14`,
+            border: `1px solid ${accent}26`,
+            color: accent,
           }}
         >
           <ChevronLeft className="w-5 h-5" />
@@ -204,9 +218,9 @@ export default function TreeCarousel({ groups, onGroupChange, onEdgeSwipe }: Tre
           onClick={(e) => { e.stopPropagation(); goNext(); }}
           className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 z-50 w-9 h-9 rounded-full flex items-center justify-center transition-all backdrop-blur-sm hover:-translate-y-1/2 hover:scale-105"
           style={{
-            background: "rgba(229,193,88,0.08)",
-            border: "1px solid rgba(229,193,88,0.15)",
-            color: GOLD,
+            background: `${accent}14`,
+            border: `1px solid ${accent}26`,
+            color: accent,
           }}
         >
           <ChevronRight className="w-5 h-5" />
@@ -223,7 +237,7 @@ export default function TreeCarousel({ groups, onGroupChange, onEdgeSwipe }: Tre
             style={{
               width: i === activeIndex ? 20 : 6,
               height: 6,
-              backgroundColor: i === activeIndex ? GOLD : "rgba(229,193,88,0.12)",
+              backgroundColor: i === activeIndex ? accent : `${accent}1f`,
             }}
           />
         ))}

@@ -14,7 +14,7 @@ interface CsvRow {
   "Size/Pieces": string;
   Price: string;
   Notes: string;
-  "Extra Prices": ExtraPrice[];
+  Sizes: ExtraPrice[];
 }
 
 const HEADER_ALIASES: Record<string, string[]> = {
@@ -146,7 +146,7 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
         "Size/Pieces": size,
         Price: price,
         Notes: notes,
-        "Extra Prices": extras,
+        Sizes: extras,
       });
     }
     return parsed;
@@ -170,7 +170,7 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
         setRows(parsed);
         setStatus("preview");
         const cats = new Set(parsed.map((r) => r.Category)).size;
-        const withExtras = parsed.filter((r) => r["Extra Prices"].length > 0).length;
+        const withExtras = parsed.filter((r) => r.Sizes.length > 0).length;
         setMessage(
           `تم العثور على ${parsed.length} صنف من ${cats} أقسام${withExtras > 0 ? ` (${withExtras} صنف بأسعار إضافية)` : ""}`
         );
@@ -205,7 +205,7 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
       category: r.Category,
       size: r["Size/Pieces"] || "",
       description: r.Notes || "",
-      prices: r["Extra Prices"].map((p) => ({ label: p.label, price: p.price })),
+      sizes: r.Sizes.map((p) => ({ label: p.label, price: p.price })),
     }));
 
     try {
@@ -327,8 +327,8 @@ export default function CsvImport({ onSuccess }: { onSuccess: () => void }) {
                       <td className="p-2 text-center text-slate-muted text-xs">{row["Size/Pieces"] || "—"}</td>
                       <td className="p-2 text-center text-slate-light tabular-nums" dir="ltr">{row.Price}</td>
                       <td className="p-2 text-slate-muted text-xs" dir="ltr">
-                        {row["Extra Prices"].length > 0
-                          ? row["Extra Prices"].map((p) => `${p.label} ${p.price}`).join(" · ")
+                        {row.Sizes.length > 0
+                          ? row.Sizes.map((p) => `${p.label} ${p.price}`).join(" · ")
                           : "—"}
                       </td>
                       <td className="p-2 text-slate-muted text-xs max-w-[160px] truncate">{row.Notes || "—"}</td>

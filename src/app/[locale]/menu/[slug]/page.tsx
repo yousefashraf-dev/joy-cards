@@ -17,6 +17,19 @@ import { getGroupIcon } from "@/components/menu/LineArtIcons";
 const ACCENT_DEFAULT = "#C6A568";
 const BG_DEFAULT = "#1A1A1A";
 
+const CATEGORY_EN: Record<string, string> = {
+  "كريبات فراخ": "Chicken Crepes",
+  "كريبات خفيفة": "Light Crepes",
+  "كريبات ميكسات": "Mix Crepes",
+  "كريبات لحوم": "Meat Crepes",
+  "الساندوتشات": "Sandwiches",
+  "سوري": "Syrian Rolls",
+  "الإضافات": "Add-ons",
+  "الحلويات": "Desserts",
+  "البيتزا": "Pizza",
+  "New Mix": "New Mix",
+};
+
 function LoadingSkeleton() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: BG_DEFAULT }}>
@@ -395,7 +408,7 @@ export default function MenuPage() {
       .filter((c) => items.some((i) => i.category === c.name))
       .map((c) => ({
         label: c.name,
-        labelEn: c.name,
+        labelEn: CATEGORY_EN[c.name] || c.name,
         icon: c.icon || "📋",
         children: [c.name],
       }));
@@ -779,16 +792,16 @@ export default function MenuPage() {
                   ) : (
                     <div className="pt-1 pb-6">
                       {activeSub === "all" && scr.cfg && (
-                        <motion.div initial={{ x: -4 }} animate={{ opacity: 1, x: 0 }} className="mb-4">
+                        <motion.div initial={{ x: -4 }} animate={{ opacity: 1, x: 0 }} className="mb-4" dir="rtl">
                           <h2
                             className="text-lg md:text-xl font-bold tracking-wide"
                             style={{
                               color: accent,
-                              fontFamily: "var(--font-outfit), var(--font-cairo), sans-serif",
+                              fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
                             }}
                           >
                             {scr.cfg.icon && <span className="ml-2">{scr.cfg.icon}</span>}
-                            {scr.cfg.labelEn}
+                            {scr.cfg.label}
                           </h2>
                           <div className="h-[2px] w-10 mt-1 rounded-full" style={{ backgroundColor: accent }} />
                         </motion.div>

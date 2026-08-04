@@ -147,6 +147,12 @@ function to12h(time: string) {
   return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${ap}`;
 }
 
+function isOvernight(open: string, close: string) {
+  const [oh, om] = open.split(":").map(Number);
+  const [ch, cm] = close.split(":").map(Number);
+  return ch * 60 + cm <= oh * 60 + om;
+}
+
 const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; position: string }[]> = {
   cafe: [
     { component: CoffeeCupSvg, position: "left-0 top-1/4 -translate-x-1/4 w-64 h-64" },
@@ -1009,7 +1015,11 @@ export default function CafePage() {
                         {wh.day}
                       </span>
                       <span className={`text-sm ${wh.closed ? "text-red-400" : "text-slate-muted"}`}>
-                        {wh.closed ? "Closed" : `${to12h(wh.open)} — ${to12h(wh.close)}`}
+                        {wh.closed
+                          ? "Closed"
+                          : `From ${to12h(wh.open)} to ${to12h(wh.close)}${
+                              isOvernight(wh.open, wh.close) ? " (next day)" : ""
+                            }`}
                       </span>
                     </div>
                   ))}

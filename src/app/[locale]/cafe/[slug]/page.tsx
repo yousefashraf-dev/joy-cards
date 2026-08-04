@@ -1008,19 +1008,28 @@ export default function CafePage() {
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-1" dir="ltr">
                   {cafe.workingHours.map((wh, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                      <span className="text-sm font-medium capitalize" style={{ color: accentHex }}>
+                    <div key={i} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
+                      <span className="w-24 shrink-0 text-sm font-bold capitalize" style={{ color: accentHex }}>
                         {wh.day}
                       </span>
-                      <span className={`text-sm ${wh.closed ? "text-red-400" : "text-slate-muted"}`}>
-                        {wh.closed
-                          ? "Closed"
-                          : `From ${to12h(wh.open)} to ${to12h(wh.close)}${
-                              isOvernight(wh.open, wh.close) ? " (next day)" : ""
-                            }`}
-                      </span>
+                      <div className="flex-1 text-right" dir="ltr">
+                        {wh.closed ? (
+                          <span className="text-sm font-semibold text-red-400">Closed</span>
+                        ) : (
+                          <>
+                            <span className="block text-[13px] leading-tight whitespace-nowrap tabular-nums text-slate-muted">
+                              From {to12h(wh.open)} to {to12h(wh.close)}
+                            </span>
+                            {isOvernight(wh.open, wh.close) && (
+                              <span className="block text-[10px] uppercase tracking-wider text-white/40 mt-0.5">
+                                Next day
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

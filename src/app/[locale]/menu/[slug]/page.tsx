@@ -753,7 +753,7 @@ export default function MenuPage() {
             onPointerUp={deckDragEnabled ? onDeckPointerUp : undefined}
             onPointerCancel={deckDragEnabled ? onDeckPointerCancel : undefined}
           >
-            <motion.div className="flex h-full" style={{ transform: deckTransform, width: "100%" }}>
+            <motion.div dir="ltr" className="flex h-full" style={{ transform: deckTransform, width: "100%" }}>
               {screenData.map((scr, i) => (
                 <div
                   key={scr.label}

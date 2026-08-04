@@ -48,12 +48,13 @@ function ParentTabs({
   onGroupChange,
   accent = ACCENT_DEFAULT,
 }: {
-  groups: MenuGroup[];
+  groups: (MenuGroup & { isArabic?: boolean })[];
   activeGroup: string;
   onGroupChange: (g: string) => void;
   accent?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const tabsArabic = groups.some((g) => g.isArabic);
 
   useEffect(() => {
     if (!scrollRef.current) return;
@@ -79,7 +80,7 @@ function ParentTabs({
             boxShadow: activeGroup === "all" ? `0 0 20px ${accent}26` : undefined,
           }}
         >
-          All
+          {tabsArabic ? "الكل" : "All"}
         </button>
         {groups.map((g) => (
           <button
@@ -92,14 +93,14 @@ function ParentTabs({
                 : "text-white/40 border-white/10 bg-white/5 hover:text-white/70 hover:border-white/20"
             }`}
             style={{
-              fontFamily: "var(--font-outfit), var(--font-cairo), sans-serif",
+              fontFamily: g.isArabic ? "var(--font-cairo), var(--font-outfit), sans-serif" : "var(--font-outfit), var(--font-cairo), sans-serif",
               borderColor: activeGroup === g.labelEn ? accent : undefined,
               backgroundColor: activeGroup === g.labelEn ? `${accent}26` : undefined,
               boxShadow: activeGroup === g.labelEn ? `0 0 20px ${accent}26` : undefined,
             }}
           >
             {g.icon && <span className="ml-1.5 text-base">{g.icon}</span>}
-            {g.labelEn}
+            {g.isArabic ? g.label : g.labelEn}
           </button>
         ))}
       </div>
@@ -176,6 +177,13 @@ function getItemBadge(name: string, desc?: string): string | null {
   if (lower.includes("chef") || lower.includes("special") || lower.includes("خاص") || lower.includes("شيف")) return "chef";
   if (lower.includes("new") || lower.includes("جديد")) return "new";
   return null;
+}
+
+function shortPriceLabel(label: string) {
+  const l = label.trim();
+  if (!/[\u0600-\u06FF]/.test(l)) return l;
+  if (l.includes("عادي") || l === "regular") return "عادي";
+  return "اكسترا";
 }
 
 function Badge({ type }: { type: string }) {
@@ -263,7 +271,7 @@ function MenuItemRow({ item, index, accent, priceAccent, cardBg }: {
                   className="text-[10px] font-semibold leading-tight max-w-[110px]"
                   style={{ color: `${priceAc}99`, fontFamily: "var(--font-cairo), sans-serif" }}
                 >
-                  {s.label}
+                  {shortPriceLabel(s.label)}
                 </div>
                 <div
                   className="text-base md:text-lg font-extrabold tabular-nums leading-tight"
@@ -411,6 +419,7 @@ export default function MenuPage() {
         labelEn: CATEGORY_EN[c.name] || c.name,
         icon: c.icon || "📋",
         children: [c.name],
+        isArabic: true,
       }));
   }, [categories, items]);
 

@@ -42,6 +42,8 @@ LAST_SAVE.md
 LAST_SAVE_SUMMARY.md
 new.gas
 gas/
+gas-activate.gs
+GAS_DASHBOARD_v16.gs
 
 # client data files (local only)
 public/teka_pizza_menu.csv

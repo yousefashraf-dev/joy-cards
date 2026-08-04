@@ -199,6 +199,7 @@ function MenuItemRow({ item, index, accent, priceAccent, cardBg }: {
 
   return (
     <motion.div
+      dir="rtl"
       initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.025, duration: 0.3, ease: "easeOut" }}
@@ -241,40 +242,34 @@ function MenuItemRow({ item, index, accent, priceAccent, cardBg }: {
             </p>
           )}
         </div>
-        <span
-          className="text-base md:text-lg font-extrabold tabular-nums whitespace-nowrap shrink-0 mt-0.5"
-          style={{ color: priceAc, fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
-        >
-          {item.price}
-        </span>
+        {sizes ? (
+          <div className="flex gap-4 shrink-0 pt-0.5">
+            {sizes.map((s, i) => (
+              <div key={i} className="text-center">
+                <div
+                  className="text-[10px] font-semibold leading-tight max-w-[110px]"
+                  style={{ color: `${priceAc}99`, fontFamily: "var(--font-cairo), sans-serif" }}
+                >
+                  {s.label}
+                </div>
+                <div
+                  className="text-base md:text-lg font-extrabold tabular-nums leading-tight"
+                  style={{ color: priceAc, fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
+                >
+                  {s.price}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <span
+            className="text-base md:text-lg font-extrabold tabular-nums whitespace-nowrap shrink-0 mt-0.5"
+            style={{ color: priceAc, fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
+          >
+            {item.price}
+          </span>
+        )}
       </div>
-      {sizes && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {sizes.map((s, i) => (
-            <div
-              key={i}
-              className="min-w-[72px] px-3 py-1.5 rounded-lg border text-center transition-all duration-200 hover:scale-[1.03]"
-              style={{
-                borderColor: `${priceAc}33`,
-                background: `${priceAc}0d`,
-              }}
-            >
-              <div
-                className="text-[10px] font-semibold leading-tight truncate max-w-[110px]"
-                style={{ color: `${priceAc}cc`, fontFamily: "var(--font-cairo), sans-serif" }}
-              >
-                {s.label}
-              </div>
-              <div
-                className="text-sm font-extrabold tabular-nums leading-tight"
-                style={{ color: priceAc, fontFamily: "var(--font-outfit), var(--font-inter), sans-serif" }}
-              >
-                {s.price}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </motion.div>
   );
 }
@@ -760,7 +755,7 @@ export default function MenuPage() {
                   ref={(el) => {
                     screenScrollRefs.current[i] = el;
                   }}
-                  className="h-full overflow-y-auto overscroll-contain"
+                  className="h-full overflow-y-auto overscroll-contain scrollbar-none"
                   style={{ flex: "0 0 100%", touchAction: "pan-y" }}
                 >
                   {scr.type === "all" ? (

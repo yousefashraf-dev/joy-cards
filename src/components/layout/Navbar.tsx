@@ -19,6 +19,7 @@ export default function Navbar() {
     { href: "/auto-tap", label: t("autoTap") },
     { href: "/business-tap", label: t("businessTap") },
     { href: "/shop", label: t("shop") },
+    { href: "/project", label: t("project") },
   ];
 
   const isActive = (href: string) => {

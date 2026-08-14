@@ -22,7 +22,8 @@
     "shop": "Accessories Store",
     "language": "العربية",
     "toggleLanguage": "Toggle language",
-    "toggleMenu": "Toggle menu"
+    "toggleMenu": "Toggle menu",
+    "project": "About Project"
   },
   "hero": {
     "headline": "Your Digital Identity, One Tap Away",

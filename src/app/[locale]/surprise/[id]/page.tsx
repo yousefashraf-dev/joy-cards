@@ -258,18 +258,16 @@ export default function SurprisePage() {
       {(data.coverPhoto || data.caption) && (
         <Section>
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: "easeOut" }}
-            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)] flex flex-col max-h-[85dvh] max-h-[85svh]">
-            <div className="flex-1 min-h-0 relative">
-              {data.coverPhoto ? (
-                <img src={data.coverPhoto} alt="" className="absolute inset-0 w-full h-full object-contain" />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 via-pink-500/10 to-fuchsia-500/20 flex items-center justify-center">
-                  <span className="text-7xl drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]">💖</span>
-                </div>
-              )}
-            </div>
+            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)]">
+            {data.coverPhoto ? (
+              <img src={data.coverPhoto} alt="" className="w-full h-72 sm:h-96 object-cover" />
+            ) : (
+              <div className="w-full h-72 sm:h-96 bg-gradient-to-br from-rose-500/20 via-pink-500/10 to-fuchsia-500/20 flex items-center justify-center">
+                <span className="text-7xl drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]">💖</span>
+              </div>
+            )}
             {data.caption && (
-              <div className="p-6 text-center bg-gradient-to-t from-white/[0.03] to-transparent shrink-0">
+              <div className="p-6 text-center bg-gradient-to-t from-white/[0.03] to-transparent">
                 <GoldDivider />
                 <p className="text-white text-xl sm:text-2xl font-bold tracking-tight">{data.caption}</p>
               </div>
@@ -328,12 +326,10 @@ export default function SurprisePage() {
       {data.photos.length > 0 && data.photos.map((photo, i) => (
         <Section key={`photo-${i}`}>
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: "easeOut" }}
-            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)] flex flex-col max-h-[85dvh] max-h-[85svh]">
-            <div className="flex-1 min-h-0 relative">
-              <img src={photo.url} alt="" className="absolute inset-0 w-full h-full object-contain" />
-            </div>
+            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)]">
+            <img src={photo.url} alt="" className="w-full h-80 sm:h-[28rem] object-cover" />
             {photo.caption && (
-              <div className="px-5 py-4 text-center bg-gradient-to-t from-white/[0.03] to-transparent shrink-0">
+              <div className="px-5 py-4 text-center bg-gradient-to-t from-white/[0.03] to-transparent">
                 <p className="text-white text-base sm:text-lg font-medium">{photo.caption}</p>
               </div>
             )}

@@ -18,11 +18,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const maxSize = 10 * 1024 * 1024;
-    if (file.size > maxSize) {
-      return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
-    }
-
     let detectedType = file.type;
     if (!detectedType || detectedType === "application/octet-stream") {
       const ext = file.name.split('.').pop()?.toLowerCase();
@@ -31,17 +26,29 @@ export async function POST(request: NextRequest) {
       else if (ext === 'jpg' || ext === 'jpeg') detectedType = 'image/jpeg';
       else if (ext === 'webp') detectedType = 'image/webp';
       else if (ext === 'pdf') detectedType = 'application/pdf';
+      else if (ext === 'mp3') detectedType = 'audio/mpeg';
+      else if (ext === 'wav') detectedType = 'audio/wav';
+      else if (ext === 'ogg') detectedType = 'audio/ogg';
+      else if (ext === 'm4a') detectedType = 'audio/mp4';
+      else if (ext === 'aac') detectedType = 'audio/aac';
     }
-    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/heic", "image/heif", "application/pdf"];
+
+    const isAudio = detectedType.startsWith("audio/");
+    const isPdf = detectedType === "application/pdf";
+    const maxSize = isAudio ? 20 * 1024 * 1024 : 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return NextResponse.json({ error: isAudio ? "الملف كبير جداً (حد أقصى 20MB)" : "File too large (max 10MB)" }, { status: 400 });
+    }
+
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/heic", "image/heif", "application/pdf", "audio/mpeg", "audio/wav", "audio/ogg", "audio/mp4", "audio/aac"];
     if (!allowedTypes.includes(detectedType)) {
-      return NextResponse.json({ error: "نوع الملف غير مدعوم. استخدم PNG, JPEG, أو WebP" }, { status: 400 });
+      return NextResponse.json({ error: "نوع الملف غير مدعوم" }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const isPdf = detectedType === "application/pdf";
-    const resourceType = isPdf ? "raw" : "image";
+    const resourceType = isAudio ? "video" : isPdf ? "raw" : "image";
 
     const uploadOptions: Record<string, unknown> = {
       resource_type: resourceType,
@@ -49,7 +56,7 @@ export async function POST(request: NextRequest) {
       quality: "auto:good",
     };
 
-    if (!isPdf) {
+    if (!isPdf && !isAudio) {
       uploadOptions.format = "webp";
     }
 

@@ -4,17 +4,20 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, NotebookText, Upload } from "lucide-react";
+import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, NotebookText, Upload, Gift, Share2, Copy, Check } from "lucide-react";
 import CafeForm from "@/components/admin/CafeForm";
 import CafeTable from "@/components/admin/CafeTable";
 import ProductForm from "@/components/admin/ProductForm";
 import ProductTable from "@/components/admin/ProductTable";
 import MenuForm from "@/components/admin/MenuForm";
 import MenuTable from "@/components/admin/MenuTable";
+import SurpriseForm from "@/components/admin/SurpriseForm";
+import SurpriseTable from "@/components/admin/SurpriseTable";
 import CsvImport from "@/components/admin/CsvImport";
 import type { Cafe } from "@/lib/cafe-schema";
 import type { Product } from "@/lib/product-schema";
 import type { MenuDocument } from "@/lib/menu-schema";
+import type { Surprise } from "@/lib/surprise-schema";
 
 const ADMIN_PASSWORD = "oreo2552000";
 
@@ -22,7 +25,7 @@ export default function AdminDashboardPage() {
   const t = useTranslations("admin");
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<"cafes" | "products" | "menus" | "import-csv">("cafes");
+  const [activeTab, setActiveTab] = useState<"cafes" | "products" | "menus" | "import-csv" | "surprises">("cafes");
 
   useEffect(() => {
     setAuthenticated(sessionStorage.getItem("admin_auth") === "true");
@@ -37,7 +40,10 @@ export default function AdminDashboardPage() {
   const [editingCafe, setEditingCafe] = useState<Cafe | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingMenu, setEditingMenu] = useState<MenuDocument | null>(null);
+  const [editingSurprise, setEditingSurprise] = useState<Surprise | null>(null);
+  const [surprises, setSurprises] = useState<Surprise[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [copiedCreateLink, setCopiedCreateLink] = useState(false);
 
   useEffect(() => {
     if (authenticated && activeTab === "cafes") {
@@ -54,6 +60,12 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     if (authenticated && activeTab === "menus") {
       fetch("/api/menus").then((r) => r.ok ? r.json() : []).then(setMenus).catch(console.error);
+    }
+  }, [authenticated, activeTab, refreshKey]);
+
+  useEffect(() => {
+    if (authenticated && activeTab === "surprises") {
+      fetch("/api/surprises").then((r) => r.ok ? r.json() : []).then(setSurprises).catch(console.error);
     }
   }, [authenticated, activeTab, refreshKey]);
 
@@ -98,11 +110,17 @@ export default function AdminDashboardPage() {
     setShowForm(true);
   }, []);
 
+  const handleEditSurprise = useCallback((surprise: Surprise) => {
+    setEditingSurprise(surprise);
+    setShowForm(true);
+  }, []);
+
   const handleFormClose = useCallback(() => {
     setShowForm(false);
     setEditingCafe(null);
     setEditingProduct(null);
     setEditingMenu(null);
+    setEditingSurprise(null);
   }, []);
 
   const handleFormSuccess = useCallback(() => {
@@ -110,6 +128,7 @@ export default function AdminDashboardPage() {
     setEditingCafe(null);
     setEditingProduct(null);
     setEditingMenu(null);
+    setEditingSurprise(null);
     setRefreshKey((k) => k + 1);
   }, []);
 
@@ -167,6 +186,24 @@ export default function AdminDashboardPage() {
             </h1>
           </div>
           <div className="flex items-center gap-4">
+            {activeTab === "surprises" && (
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/ar/surprise/create`;
+                  navigator.clipboard.writeText(url).then(() => {
+                    setCopiedCreateLink(true);
+                    setTimeout(() => setCopiedCreateLink(false), 3000);
+                  }).catch(() => prompt("انسخ لينك الإنشاء:", url));
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border font-semibold text-sm transition-all duration-200 ${
+                  copiedCreateLink
+                    ? "bg-green-500/20 border-green-500/40 text-green-400"
+                    : "bg-pink-500/10 border-pink-500/30 text-pink-400 hover:bg-pink-500/20"
+                }`}
+              >
+                {copiedCreateLink ? <><Check className="w-4 h-4" /> تم النسخ!</> : <><Share2 className="w-4 h-4" /> نسخ لينك الإنشاء</>}
+              </button>
+            )}
             <button
               onClick={() => {
                 setEditingCafe(null);
@@ -176,7 +213,7 @@ export default function AdminDashboardPage() {
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gold text-matte-dark font-semibold hover:bg-gold-light transition-colors duration-200 text-sm"
             >
               <Plus className="w-4 h-4" />
-              {activeTab === "cafes" ? t("addCafe") : activeTab === "menus" ? "إضافة منيو" : t("addProduct")}
+              {activeTab === "cafes" ? t("addCafe") : activeTab === "menus" ? "إضافة منيو" : activeTab === "surprises" ? "إضافة مفاجأة" : t("addProduct")}
             </button>
             <button
               onClick={handleLogout}
@@ -233,6 +270,17 @@ export default function AdminDashboardPage() {
             <Upload className="w-4 h-4" />
             استيراد CSV
           </button>
+          <button
+            onClick={() => setActiveTab("surprises")}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              activeTab === "surprises"
+                ? "bg-pink-500/20 text-pink-400 border border-pink-500/40 shadow-[0_0_15px_rgba(236,72,153,0.15)]"
+                : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
+            }`}
+          >
+            <Gift className="w-4 h-4" />
+            المفاجآت
+          </button>
         </div>
 
         {/* Form Modal */}
@@ -253,7 +301,19 @@ export default function AdminDashboardPage() {
                 exit={{ opacity: 0, y: 20 }}
                 className="w-full max-w-2xl mt-8 mb-8"
               >
-                {editingCafe || (activeTab === "cafes" && !editingProduct && !editingMenu) ? (
+                {editingSurprise ? (
+                  <SurpriseForm
+                    surprise={editingSurprise}
+                    onSuccess={handleFormSuccess}
+                    onCancel={handleFormClose}
+                  />
+                ) : activeTab === "surprises" ? (
+                  <SurpriseForm
+                    surprise={null}
+                    onSuccess={handleFormSuccess}
+                    onCancel={handleFormClose}
+                  />
+                ) : editingCafe || (activeTab === "cafes" && !editingProduct && !editingMenu) ? (
                   <CafeForm
                     cafe={editingCafe}
                     onSuccess={handleFormSuccess}
@@ -288,6 +348,12 @@ export default function AdminDashboardPage() {
           <MenuTable
             menus={menus}
             onEdit={handleEditMenu}
+            onRefresh={() => setRefreshKey((k) => k + 1)}
+          />
+        ) : activeTab === "surprises" ? (
+          <SurpriseTable
+            surprises={surprises}
+            onEdit={handleEditSurprise}
             onRefresh={() => setRefreshKey((k) => k + 1)}
           />
         ) : activeTab === "import-csv" ? (

@@ -105,6 +105,8 @@ export default function SurprisePage() {
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
   const [showLetter, setShowLetter] = useState(false);
+  const [runawayPos, setRunawayPos] = useState({ x: 0, y: 0 });
+  const [runawayCount, setRunawayCount] = useState(0);
 
   const [data, setData] = useState<SurpriseData | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -128,6 +130,15 @@ export default function SurprisePage() {
     }
     return () => { audioRef.current?.pause(); audioRef.current = null; };
   }, [data?.musicUrl]);
+
+  const handleRunaway = useCallback(() => {
+    const maxX = 120;
+    const maxY = 80;
+    const newX = (Math.random() - 0.5) * 2 * maxX;
+    const newY = (Math.random() - 0.5) * 2 * maxY;
+    setRunawayPos({ x: newX, y: newY });
+    setRunawayCount((c) => c + 1);
+  }, []);
 
   const handlePasswordSubmit = useCallback(() => {
     if (!data) return;
@@ -209,6 +220,24 @@ export default function SurprisePage() {
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-fuchsia-500 text-white font-bold text-lg shadow-[0_0_40px_rgba(244,63,94,0.3)] hover:shadow-[0_0_50px_rgba(244,63,94,0.4)] active:scale-[0.97] transition-all duration-300">
                 افتح المفاجأة ✨
               </button>
+            </div>
+
+            {/* Runaway button */}
+            <div className="mt-6 relative h-12 overflow-visible">
+              <motion.button
+                animate={runawayPos}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                onMouseEnter={handleRunaway}
+                onTouchStart={handleRunaway}
+                onClick={handleRunaway}
+                className="absolute left-1/2 top-0 -translate-x-1/2 px-5 py-2.5 rounded-full bg-white/[0.08] border border-white/[0.12] text-white/50 text-sm font-medium hover:bg-white/[0.12] hover:text-white/70 hover:border-pink-400/30 transition-colors duration-200 whitespace-nowrap select-none cursor-pointer"
+              >
+                {runawayCount === 0 && "موافق/ة تشوفي المفاجأة؟ 😏"}
+                {runawayCount === 1 && "ممكن تكتبين كلمة السر بقى 😂"}
+                {runawayCount === 2 && " Bruh... كل مرة بجري 😭"}
+                {runawayCount === 3 && "خلاص كده؟ 💀"}
+                {runawayCount >= 4 && "ال偷 مش هسيبك تضغطين 😈"}
+              </motion.button>
             </div>
           </div>
         </motion.div>

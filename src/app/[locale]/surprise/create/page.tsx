@@ -22,10 +22,12 @@ export default function SurpriseCreatePage() {
   const [coverPreview, setCoverPreview] = useState("");
   const [caption, setCaption] = useState("بحبك 💖");
   const [startDate, setStartDate] = useState("");
+  const [startDateLabel, setStartDateLabel] = useState("من يوم ما اتقابلنا");
   const [confessionDate, setConfessionDate] = useState("");
   const [confessionLabel, setConfessionLabel] = useState("يوم ما قولتلك بحبك");
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [newPhotoCaptions, setNewPhotoCaptions] = useState<string[]>([]);
   const [finalLetter, setFinalLetter] = useState("");
 
   const coverRef = useRef<HTMLInputElement>(null);
@@ -65,7 +67,9 @@ export default function SurpriseCreatePage() {
   const handleGalleryChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const remaining = 10 - photos.length - photoFiles.length;
-    setPhotoFiles((prev) => [...prev, ...files.slice(0, remaining)]);
+    const toAdd = files.slice(0, remaining);
+    setPhotoFiles((prev) => [...prev, ...toAdd]);
+    setNewPhotoCaptions((prev) => [...prev, ...toAdd.map(() => "")]);
   }, [photos.length, photoFiles.length]);
 
   const updatePhotoCaption = useCallback((index: number, value: string) => {
@@ -85,9 +89,9 @@ export default function SurpriseCreatePage() {
       if (musicFile) finalMusicUrl = await uploadAudio(musicFile);
 
       const uploadedPhotos: GalleryPhoto[] = [...photos];
-      for (const file of photoFiles) {
-        const url = await uploadFile(file);
-        uploadedPhotos.push({ url, caption: "" });
+      for (let i = 0; i < photoFiles.length; i++) {
+        const url = await uploadFile(photoFiles[i]);
+        uploadedPhotos.push({ url, caption: newPhotoCaptions[i] || "" });
       }
 
       const res = await fetch("/api/surprises", {
@@ -103,6 +107,7 @@ export default function SurpriseCreatePage() {
           coverPhoto: coverUrl,
           caption: caption.trim(),
           startDate,
+          startDateLabel: startDateLabel.trim(),
           confessionDate,
           confessionLabel: confessionLabel.trim(),
           photos: uploadedPhotos,
@@ -234,19 +239,21 @@ export default function SurpriseCreatePage() {
             {/* Dates */}
             <div className={sectionClass}>
               <h3 className="text-sm font-semibold text-pink-300">العدادات ⏱️ (اختياري)</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className={labelClass}>تاريخ البداية</label>
-                  <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
-                </div>
-                <div>
-                  <label className={labelClass}>تاريخ الاعتراف</label>
-                  <input type="date" value={confessionDate} onChange={(e) => setConfessionDate(e.target.value)} className={inputClass} />
-                </div>
+              <div>
+                <label className={labelClass}>تسمية العداد الأول</label>
+                <input type="text" value={startDateLabel} onChange={(e) => setStartDateLabel(e.target.value)} placeholder="من يوم ما اتقابلنا" className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>تاريخ البداية</label>
+                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
               </div>
               <div>
                 <label className={labelClass}>تسمية العداد التاني</label>
                 <input type="text" value={confessionLabel} onChange={(e) => setConfessionLabel(e.target.value)} placeholder="يوم ما قولتلك بحبك" className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>تاريخ الاعتراف</label>
+                <input type="date" value={confessionDate} onChange={(e) => setConfessionDate(e.target.value)} className={inputClass} />
               </div>
             </div>
 
@@ -268,10 +275,10 @@ export default function SurpriseCreatePage() {
                   </div>
                 ))}
                 {photoFiles.map((f, i) => (
-                  <div key={`f-${i}`} className="flex items-center gap-2">
+                  <div key={`f-${i}`} className="flex items-start gap-2">
                     <img src={URL.createObjectURL(f)} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
-                    <span className="text-xs text-white/40 flex-1 truncate">{f.name}</span>
-                    <button type="button" onClick={() => setPhotoFiles((prev) => prev.filter((_, j) => j !== i))} className="text-red-400 p-1"><Trash2 className="w-4 h-4" /></button>
+                    <input type="text" value={newPhotoCaptions[i] || ""} onChange={(e) => setNewPhotoCaptions((prev) => prev.map((c, j) => j === i ? e.target.value : c))} placeholder="Caption..." className={inputClass + " flex-1 text-sm py-2"} />
+                    <button type="button" onClick={() => { setPhotoFiles((prev) => prev.filter((_, j) => j !== i)); setNewPhotoCaptions((prev) => prev.filter((_, j) => j !== i)); }} className="text-red-400 p-1"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 ))}
               </div>

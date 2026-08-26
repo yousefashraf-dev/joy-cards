@@ -25,10 +25,12 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
   const [coverPhotoPreview, setCoverPhotoPreview] = useState(surprise?.coverPhoto || "");
   const [caption, setCaption] = useState(surprise?.caption || "بحبك 💖");
   const [startDate, setStartDate] = useState(surprise?.startDate || "");
+  const [startDateLabel, setStartDateLabel] = useState(surprise?.startDateLabel || "من يوم ما اتقابلنا");
   const [confessionDate, setConfessionDate] = useState(surprise?.confessionDate || "");
   const [confessionLabel, setConfessionLabel] = useState(surprise?.confessionLabel || "يوم ما قولتلك بحبك");
   const [photos, setPhotos] = useState<GalleryPhoto[]>(surprise?.photos || []);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [newPhotoCaptions, setNewPhotoCaptions] = useState<string[]>([]);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [finalLetter, setFinalLetter] = useState(surprise?.finalLetter || "");
   const [copiedLink, setCopiedLink] = useState(false);
@@ -78,6 +80,7 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
     const remaining = 10 - photos.length - photoFiles.length;
     const toAdd = files.slice(0, remaining);
     setPhotoFiles((prev) => [...prev, ...toAdd]);
+    setNewPhotoCaptions((prev) => [...prev, ...toAdd.map(() => "")]);
   }, [photos.length, photoFiles.length]);
 
   const removeGalleryPhoto = useCallback((index: number) => {
@@ -86,6 +89,7 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
 
   const removeGalleryFile = useCallback((index: number) => {
     setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+    setNewPhotoCaptions((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const updatePhotoCaption = useCallback((index: number, value: string) => {
@@ -109,9 +113,9 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
       }
 
       const uploadedPhotos: GalleryPhoto[] = [...photos];
-      for (const file of photoFiles) {
-        const url = await uploadFile(file);
-        uploadedPhotos.push({ url, caption: "" });
+      for (let i = 0; i < photoFiles.length; i++) {
+        const url = await uploadFile(photoFiles[i]);
+        uploadedPhotos.push({ url, caption: newPhotoCaptions[i] || "" });
       }
 
       const payload = {
@@ -124,6 +128,7 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
         coverPhoto: finalCoverPhoto,
         caption: caption.trim(),
         startDate: startDate || "",
+        startDateLabel: startDateLabel.trim(),
         confessionDate: confessionDate || "",
         confessionLabel: confessionLabel.trim(),
         photos: uploadedPhotos,
@@ -258,19 +263,21 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
         {/* Date Counters */}
         <div className={sectionClass}>
           <h3 className="text-sm font-semibold text-gold mb-2">العدادات ⏱️</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>تاريخ البداية (عداد "من يوم ما اتقابلنا")</label>
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>تاريخ الاعتراف</label>
-              <input type="date" value={confessionDate} onChange={(e) => setConfessionDate(e.target.value)} className={inputClass} />
-            </div>
+          <div>
+            <label className={labelClass}>تسمية العداد الأول</label>
+            <input type="text" value={startDateLabel} onChange={(e) => setStartDateLabel(e.target.value)} placeholder="من يوم ما اتقابلنا" className={inputClass} />
+          </div>
+          <div>
+            <label className={labelClass}>تاريخ البداية</label>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
           </div>
           <div>
             <label className={labelClass}>تسمية العداد التاني</label>
             <input type="text" value={confessionLabel} onChange={(e) => setConfessionLabel(e.target.value)} placeholder="يوم ما قولتلك بحبك" className={inputClass} />
+          </div>
+          <div>
+            <label className={labelClass}>تاريخ الاعتراف</label>
+            <input type="date" value={confessionDate} onChange={(e) => setConfessionDate(e.target.value)} className={inputClass} />
           </div>
         </div>
 
@@ -298,9 +305,9 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
             ))}
 
             {photoFiles.map((file, i) => (
-              <div key={`new-${i}`} className="flex items-center gap-3 p-2 rounded-lg bg-white/5 border border-white/5">
+              <div key={`new-${i}`} className="flex items-start gap-3 p-2 rounded-lg bg-white/5 border border-white/5">
                 <img src={URL.createObjectURL(file)} alt="" className="w-16 h-16 rounded-lg object-cover shrink-0" />
-                <span className="text-xs text-slate-muted flex-1 truncate">{file.name}</span>
+                <input type="text" value={newPhotoCaptions[i] || ""} onChange={(e) => setNewPhotoCaptions((prev) => prev.map((c, j) => j === i ? e.target.value : c))} placeholder="Caption..." className={inputClass + " flex-1"} />
                 <button type="button" onClick={() => removeGalleryFile(i)} className="p-1.5 text-red-400 hover:bg-red-500/10 rounded-lg shrink-0"><Trash2 className="w-4 h-4" /></button>
               </div>
             ))}

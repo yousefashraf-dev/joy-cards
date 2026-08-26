@@ -15,6 +15,7 @@ interface SurpriseData {
   coverPhoto: string;
   caption: string;
   startDate: string;
+  startDateLabel: string;
   confessionDate: string;
   confessionLabel: string;
   photos: Array<{ url: string; caption: string }>;
@@ -83,7 +84,7 @@ function TimerBlock({ value, label }: { value: number; label: string }) {
 
 function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <section className={`min-h-screen w-full flex flex-col items-center justify-center p-5 snap-start ${className}`}>
+    <section className={`min-h-[100dvh] min-h-[100svh] w-full flex flex-col items-center justify-center p-5 snap-start snap-always overflow-hidden ${className}`}>
       {children}
     </section>
   );
@@ -217,7 +218,7 @@ export default function SurprisePage() {
 
   /* ─── UNLOCKED: FULL-SCREEN SNAP SECTIONS ─── */
   return (
-    <div className="snap-y snap-mandatory overflow-y-auto h-screen bg-gradient-to-br from-[#1a0a1e] via-[#2d0a2e] to-[#1a0a1e]">
+    <div className="snap-y snap-mandatory overflow-y-auto h-[100dvh] h-[100svh] bg-gradient-to-br from-[#1a0a1e] via-[#2d0a2e] to-[#1a0a1e]" style={{ touchAction: "pan-y", WebkitOverflowScrolling: "touch", overscrollBehaviorY: "contain" }}>
 
       {/* Radial glow overlay */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -257,16 +258,18 @@ export default function SurprisePage() {
       {(data.coverPhoto || data.caption) && (
         <Section>
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: "easeOut" }}
-            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)]">
-            {data.coverPhoto ? (
-              <img src={data.coverPhoto} alt="" className="w-full h-72 sm:h-96 object-cover" />
-            ) : (
-              <div className="w-full h-72 sm:h-96 bg-gradient-to-br from-rose-500/20 via-pink-500/10 to-fuchsia-500/20 flex items-center justify-center">
-                <span className="text-7xl drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]">💖</span>
-              </div>
-            )}
+            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)] flex flex-col max-h-[85dvh] max-h-[85svh]">
+            <div className="flex-1 min-h-0 relative">
+              {data.coverPhoto ? (
+                <img src={data.coverPhoto} alt="" className="absolute inset-0 w-full h-full object-contain" />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 via-pink-500/10 to-fuchsia-500/20 flex items-center justify-center">
+                  <span className="text-7xl drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]">💖</span>
+                </div>
+              )}
+            </div>
             {data.caption && (
-              <div className="p-6 text-center bg-gradient-to-t from-white/[0.03] to-transparent">
+              <div className="p-6 text-center bg-gradient-to-t from-white/[0.03] to-transparent shrink-0">
                 <GoldDivider />
                 <p className="text-white text-xl sm:text-2xl font-bold tracking-tight">{data.caption}</p>
               </div>
@@ -285,7 +288,7 @@ export default function SurprisePage() {
             <div className="relative space-y-10">
               {data.startDate && (
                 <div className="text-center">
-                  <p className="text-white/30 text-xs tracking-widest uppercase font-light mb-2">من يوم ما اتقابلنا</p>
+                  <p className="text-white/30 text-xs tracking-widest uppercase font-light mb-2">{data.startDateLabel || "من يوم ما اتقابلنا"}</p>
                   <p className="text-amber-300/60 text-[11px] tracking-wide mb-5 font-medium">{formatDateAr(data.startDate)}</p>
                   <div className="flex justify-center gap-3 sm:gap-5">
                     <TimerBlock value={timer1.days} label="يوم" />
@@ -325,10 +328,12 @@ export default function SurprisePage() {
       {data.photos.length > 0 && data.photos.map((photo, i) => (
         <Section key={`photo-${i}`}>
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: "easeOut" }}
-            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)]">
-            <img src={photo.url} alt="" className="w-full h-80 sm:h-[28rem] object-cover" />
+            className="w-full max-w-md mx-auto backdrop-blur-2xl bg-white/[0.05] border border-white/[0.08] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(244,63,94,0.08)] flex flex-col max-h-[85dvh] max-h-[85svh]">
+            <div className="flex-1 min-h-0 relative">
+              <img src={photo.url} alt="" className="absolute inset-0 w-full h-full object-contain" />
+            </div>
             {photo.caption && (
-              <div className="p-5 text-center bg-gradient-to-t from-white/[0.03] to-transparent">
+              <div className="px-5 py-4 text-center bg-gradient-to-t from-white/[0.03] to-transparent shrink-0">
                 <p className="text-white text-base sm:text-lg font-medium">{photo.caption}</p>
               </div>
             )}
@@ -381,9 +386,11 @@ export default function SurprisePage() {
       </Section>
 
       <style jsx global>{`
-        .snap-y { scroll-behavior: smooth; }
+        html, body { overflow: hidden; height: 100dvh; height: 100svh; margin: 0; padding: 0; }
+        .snap-y { scroll-behavior: smooth; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
         .snap-y::-webkit-scrollbar { display: none; }
-        .snap-y { -ms-overflow-style: none; scrollbar-width: none; }
+        .snap-y { -ms-overflow-style: none; scrollbar-width: none; overscroll-behavior-y: contain; }
+        .snap-always { scroll-snap-align: start; scroll-snap-stop: always; }
         .custom-scrollbar::-webkit-scrollbar { width: 2px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(244,63,94,0.2); border-radius: 4px; }

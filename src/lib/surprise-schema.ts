@@ -14,6 +14,7 @@ export interface Surprise {
   coverPhoto?: string;
   caption?: string;
   startDate?: string;
+  startDateLabel?: string;
   confessionDate?: string;
   confessionLabel?: string;
   photos?: GalleryPhoto[];

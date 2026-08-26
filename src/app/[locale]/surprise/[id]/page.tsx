@@ -230,13 +230,13 @@ export default function SurprisePage() {
                 onMouseEnter={handleRunaway}
                 onTouchStart={handleRunaway}
                 onClick={handleRunaway}
-                className="absolute left-1/2 top-0 -translate-x-1/2 px-5 py-2.5 rounded-full bg-white/[0.08] border border-white/[0.12] text-white/50 text-sm font-medium hover:bg-white/[0.12] hover:text-white/70 hover:border-pink-400/30 transition-colors duration-200 whitespace-nowrap select-none cursor-pointer"
+                className="absolute left-1/2 top-0 -translate-x-1/2 px-6 py-2.5 rounded-full backdrop-blur-xl bg-gradient-to-r from-white/[0.08] via-pink-400/[0.08] to-white/[0.08] border border-white/[0.12] text-white/60 text-sm font-semibold tracking-wide shadow-[0_4px_30px_rgba(244,63,94,0.08)] hover:from-white/[0.14] hover:via-pink-400/[0.14] hover:to-white/[0.14] hover:text-white/80 hover:border-pink-400/30 hover:shadow-[0_4px_40px_rgba(244,63,94,0.2)] active:scale-95 transition-all duration-300 whitespace-nowrap select-none cursor-pointer"
               >
-                {runawayCount === 0 && "موافق/ة تشوفي المفاجأة؟ 😏"}
+                {runawayCount === 0 && "موافق/ة تشوفي المفاجأة؟ ✨"}
                 {runawayCount === 1 && "ممكن تكتبين كلمة السر بقى 😂"}
-                {runawayCount === 2 && " Bruh... كل مرة بجري 😭"}
-                {runawayCount === 3 && "خلاص كده؟ 💀"}
-                {runawayCount >= 4 && "ال偷 مش هسيبك تضغطين 😈"}
+                {runawayCount === 2 && "كل مرة بجري... عيب عليك 😭"}
+                {runawayCount === 3 && "خلاص كده؟ بجد؟ 💀"}
+                {runawayCount >= 4 && "مش هسيبك تضغطين أبداً 😈"}
               </motion.button>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { resolveCategoryIcon } from "@/lib/category-icons";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, slug, theme, items } = body;
+    const { name, slug, theme, items, adminPin } = body;
 
     if (!name || !slug || !items || !Array.isArray(items)) {
       return NextResponse.json(
@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       name,
       slug,
       theme: theme || "standard",
+      adminPin: adminPin || "",
       categories,
       items: items.map((i: { name: string; price: string; category: string; size?: string; description?: string; prices?: { label: string; price: string }[]; sizes?: { label: string; price: string }[] }) => ({
         name: i.name,

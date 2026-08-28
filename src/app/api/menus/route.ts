@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
           sizes: (i.sizes as { label: string; price: string }[] | undefined) || (i.prices as { label: string; price: string }[] | undefined) || [],
         })),
         theme: data.theme || "cafe",
+        adminPin: data.adminPin || null,
         createdAt: data.createdAt?.toMillis() || Date.now(),
       });
     }
@@ -78,6 +79,7 @@ export async function GET(req: NextRequest) {
           sizes: (i.sizes as { label: string; price: string }[] | undefined) || (i.prices as { label: string; price: string }[] | undefined) || [],
         })),
         theme: data.theme || "cafe",
+        adminPin: data.adminPin || null,
         createdAt: data.createdAt?.toMillis() || Date.now(),
       };
     });

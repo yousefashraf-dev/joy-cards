@@ -21,6 +21,7 @@ interface MenuFormProps {
     categories: MenuCategory[];
     items: MenuItem[];
     theme: CafeTheme;
+    adminPin?: string;
   } | null;
   onSuccess: () => void;
   onCancel: () => void;
@@ -41,6 +42,7 @@ export default function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
   const [items, setItems] = useState<MenuItem[]>(menu?.items || []);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [existingLogo, setExistingLogo] = useState(menu?.logo || "");
+  const [adminPin, setAdminPin] = useState(menu?.adminPin || "");
 
   const qrRef = useRef<HTMLDivElement>(null);
   const qrPrintRef = useRef<HTMLDivElement>(null);
@@ -89,6 +91,7 @@ export default function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
         categories,
         items: items.filter((i) => i.name.trim()),
         theme,
+        adminPin: adminPin.trim(),
       };
 
       if (menu?.id) {
@@ -243,6 +246,23 @@ export default function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Quick Edit PIN */}
+        <div>
+          <label className="block text-sm text-slate-muted mb-1.5">كلمة سر التعديل السريع (Quick Edit PIN)</label>
+          <input
+            type="password"
+            value={adminPin}
+            onChange={(e) => setAdminPin(e.target.value)}
+            inputMode="numeric"
+            maxLength={6}
+            className={inputClass}
+            placeholder="4-6 أرقام — اختياري"
+          />
+          <p className="text-xs text-slate-muted/40 mt-1">
+            استخدمه لتسمح لصاحب المنيو بتعديل الأصناف من صفحة المنيو مباشرة. اتركه فارغاً لتعطيل هذه الميزة.
+          </p>
         </div>
 
         {/* Menu Builder */}

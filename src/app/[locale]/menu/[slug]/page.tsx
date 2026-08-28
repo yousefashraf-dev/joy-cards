@@ -6,9 +6,9 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate, animate } from "framer-motion";
-import { UtensilsCrossed, Share2, ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
+import { UtensilsCrossed, Share2, ShoppingBag, ChevronLeft, ChevronRight, Lock, Pencil, Trash2, Plus, X, Check, LogOut } from "lucide-react";
 import type { MenuDocument } from "@/lib/menu-schema";
-import type { MenuItem } from "@/lib/cafe-schema";
+import type { MenuItem, MenuCategory } from "@/lib/cafe-schema";
 import { MENU_GROUPS, getBadgeText, type MenuGroup } from "@/lib/menu-groups";
 import { CAFE_THEMES, type CafeTheme } from "@/lib/cafe-themes";
 import TreeCarousel, { type CarouselGroup } from "@/components/menu/TreeCarousel";
@@ -201,12 +201,15 @@ function Badge({ type }: { type: string }) {
   );
 }
 
-function MenuItemRow({ item, index, accent, priceAccent, cardBg }: {
+function MenuItemRow({ item, index, accent, priceAccent, cardBg, isAdmin, onEdit, onDelete }: {
   item: MenuItem;
   index: number;
   accent?: string;
   priceAccent?: string;
   cardBg?: string;
+  isAdmin?: boolean;
+  onEdit?: (index: number) => void;
+  onDelete?: (index: number) => void;
 }) {
   const ac = accent || ACCENT_DEFAULT;
   const priceAc = priceAccent || ac;
@@ -239,6 +242,26 @@ function MenuItemRow({ item, index, accent, priceAccent, cardBg }: {
       }}
     >
       <div className="flex items-start justify-between gap-3">
+        {isAdmin && (
+          <div className="flex flex-col gap-1.5 shrink-0">
+            <button
+              onClick={() => onEdit?.(index)}
+              className="w-7 h-7 rounded-md flex items-center justify-center backdrop-blur-sm transition-all"
+              style={{ background: `${ac}1a`, border: `1px solid ${ac}33`, color: ac }}
+              title="تعديل الصنف"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => onDelete?.(index)}
+              className="w-7 h-7 rounded-md flex items-center justify-center backdrop-blur-sm transition-all"
+              style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.35)", color: "#f87171" }}
+              title="حذف الصنف"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h3
@@ -395,6 +418,18 @@ export default function MenuPage() {
   const [loading, setLoading] = useState(true);
   const [deckIndex, setDeckIndex] = useState(0);
   const [activeSub, setActiveSub] = useState("all");
+
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [editingItemIdx, setEditingItemIdx] = useState<number | null>(null);
+  const [itemDraft, setItemDraft] = useState<MenuItem | null>(null);
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
+  const [categoryDraft, setCategoryDraft] = useState("");
+  const [notice, setNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const adminAuthKey = menu?.id ? `menu_admin_auth_${menu.id}` : null;
 
   const items = menu?.items || [];
   const categories = menu?.categories || [];
@@ -604,6 +639,179 @@ export default function MenuPage() {
       .finally(() => setLoading(false));
   }, [slug]);
 
+  /* ---------- Admin Quick Edit ---------- */
+  useEffect(() => {
+    if (!adminAuthKey) return;
+    if (sessionStorage.getItem(adminAuthKey) === "true") setIsAdminMode(true);
+  }, [adminAuthKey]);
+
+  useEffect(() => {
+    if (!notice) return;
+    const t = setTimeout(() => setNotice(null), 3500);
+    return () => clearTimeout(t);
+  }, [notice]);
+
+  const flashNotice = useCallback((type: "success" | "error", message: string) => {
+    setNotice({ type, message });
+  }, []);
+
+  const syncMenu = useCallback(
+    async (newItems: MenuItem[], newCategories: MenuCategory[]) => {
+      if (!menu?.id) return;
+      try {
+        const res = await fetch(`/api/menus/${menu.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items: newItems, categories: newCategories }),
+        });
+        if (!res.ok) throw new Error();
+        setMenu((m) => (m ? { ...m, items: newItems, categories: newCategories } : m));
+        flashNotice("success", "تم حفظ التعديل ✓");
+      } catch {
+        flashNotice("error", "حدث خطأ في حفظ التعديل. حاول مرة أخرى.");
+      }
+    },
+    [menu?.id, flashNotice]
+  );
+
+  const handleLockClick = useCallback(() => {
+    if (!menu?.adminPin) {
+      flashNotice("error", "لم يتم تعيين كلمة سر لهذا المنيو من لوحة التحكم");
+      return;
+    }
+    if (isAdminMode) {
+      setIsAdminMode(false);
+      if (adminAuthKey) sessionStorage.removeItem(adminAuthKey);
+      return;
+    }
+    setPinInput("");
+    setPinError("");
+    setShowPinModal(true);
+  }, [menu?.adminPin, isAdminMode, adminAuthKey, flashNotice]);
+
+  const handlePinSubmit = useCallback(() => {
+    if (pinInput === (menu?.adminPin || "")) {
+      setIsAdminMode(true);
+      if (adminAuthKey) sessionStorage.setItem(adminAuthKey, "true");
+      setShowPinModal(false);
+      setPinInput("");
+      setPinError("");
+      flashNotice("success", "وضع التعديل نشط");
+    } else {
+      setPinError("كلمة السر غير صحيحة");
+    }
+  }, [pinInput, menu?.adminPin, adminAuthKey, flashNotice]);
+
+  const exitAdminMode = useCallback(() => {
+    setIsAdminMode(false);
+    setEditingItemIdx(null);
+    setEditingCategory(null);
+    if (adminAuthKey) sessionStorage.removeItem(adminAuthKey);
+    flashNotice("success", "تم الخروج من وضع التعديل");
+  }, [adminAuthKey, flashNotice]);
+
+  const submitItem = useCallback(
+    (index: number, updated: MenuItem) => {
+      const newItems = items.map((it, i) => (i === index ? updated : it));
+      setEditingItemIdx(null);
+      syncMenu(newItems, categories);
+    },
+    [items, categories, syncMenu]
+  );
+
+  const deleteItem = useCallback(
+    (index: number) => {
+      if (!confirm("هل أنت متأكد من حذف هذا الصنف؟")) return;
+      const newItems = items.filter((_, i) => i !== index);
+      setEditingItemIdx(null);
+      syncMenu(newItems, categories);
+    },
+    [items, categories, syncMenu]
+  );
+
+  const addItem = useCallback(
+    (category: string) => {
+      const blank: MenuItem = { name: "", price: "", description: "", category };
+      const newItems = [...items, blank];
+      setMenu((m) => (m ? { ...m, items: newItems } : m));
+      setEditingItemIdx(newItems.length - 1);
+      setItemDraft(blank);
+    },
+    [items]
+  );
+
+  const startEditItem = useCallback(
+    (index: number) => {
+      setItemDraft(items[index] ? { ...items[index] } : null);
+      setEditingItemIdx(index);
+    },
+    [items]
+  );
+
+  const startEditCategory = useCallback(
+    (name: string) => {
+      setCategoryDraft(name);
+      setEditingCategory(name);
+    },
+    []
+  );
+
+  const updateItemDraft = useCallback((patch: Partial<MenuItem>) => {
+    setItemDraft((d) => (d ? { ...d, ...patch } : d));
+  }, []);
+
+  const updateDraftSize = useCallback((si: number, field: "label" | "price", value: string) => {
+    setItemDraft((d) => {
+      if (!d) return d;
+      const sizes = [...(d.sizes || [])];
+      if (!sizes[si]) sizes[si] = { label: "", price: "" };
+      sizes[si] = { ...sizes[si], [field]: value };
+      return { ...d, sizes };
+    });
+  }, []);
+
+  const addDraftSize = useCallback(() => {
+    setItemDraft((d) =>
+      d ? { ...d, sizes: [...(d.sizes || []), { label: "", price: "" }] } : d
+    );
+  }, []);
+
+  const removeDraftSize = useCallback((si: number) => {
+    setItemDraft((d) =>
+      d ? { ...d, sizes: (d.sizes || []).filter((_, i) => i !== si) } : d
+    );
+  }, []);
+
+  const deleteCategory = useCallback(
+    (name: string) => {
+      if (!confirm(`هل أنت متأكد من حذف قسم "${name}" وكل أصنافه؟`)) return;
+      const newCats = categories.filter((c) => c.name !== name);
+      const newItems = items.filter((i) => i.category !== name);
+      setEditingCategory(null);
+      syncMenu(newItems, newCats);
+    },
+    [items, categories, syncMenu]
+  );
+
+  const submitCategoryRename = useCallback(
+    (oldName: string, newName: string) => {
+      const clean = newName.trim();
+      if (!clean || clean === oldName) {
+        setEditingCategory(null);
+        return;
+      }
+      const newCats = categories.map((c) =>
+        c.name === oldName ? { ...c, name: clean } : c
+      );
+      const newItems = items.map((i) =>
+        i.category === oldName ? { ...i, category: clean } : i
+      );
+      setEditingCategory(null);
+      syncMenu(newItems, newCats);
+    },
+    [items, categories, syncMenu]
+  );
+
   const shareMenu = async () => {
     const url = window.location.href;
     if (navigator.share) {
@@ -668,20 +876,175 @@ export default function MenuPage() {
               className="mb-3 pb-2"
               style={{ borderBottom: `1px solid ${accent}14` }}
             >
-              <h3
-                className="text-sm md:text-base font-bold tracking-wide"
-                style={{
-                  color: accent,
-                  fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
-                }}
-              >
-                {isAllScreen ? getBadgeText(group.name) : group.name}
-              </h3>
+              <div className="flex items-center justify-between gap-2">
+                {editingCategory === group.name ? (
+                  <div className="flex items-center gap-2 w-full">
+                    <input
+                      value={categoryDraft}
+                      onChange={(e) => setCategoryDraft(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && submitCategoryRename(group.name, categoryDraft)}
+                      className="flex-1 text-sm px-3 py-1.5 rounded-lg outline-none"
+                      style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${accent}40`, color: "#fff", fontFamily: "var(--font-cairo), sans-serif" }}
+                      autoFocus
+                    />
+                    <button
+                      onClick={() => submitCategoryRename(group.name, categoryDraft)}
+                      className="w-8 h-8 rounded-md flex items-center justify-center"
+                      style={{ background: `${accent}1a`, border: `1px solid ${accent}40`, color: accent }}
+                    >
+                      <Check className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setEditingCategory(null)}
+                      className="w-8 h-8 rounded-md flex items-center justify-center text-white/50 hover:text-white/80"
+                      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)" }}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <h3
+                    className="text-sm md:text-base font-bold tracking-wide"
+                    style={{
+                      color: accent,
+                      fontFamily: "var(--font-cairo), var(--font-outfit), sans-serif",
+                    }}
+                  >
+                    {isAllScreen ? getBadgeText(group.name) : group.name}
+                  </h3>
+                )}
+                {isAdminMode && editingCategory !== group.name && (
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => startEditCategory(group.name)}
+                      className="w-7 h-7 rounded-md flex items-center justify-center backdrop-blur-sm transition-all"
+                      style={{ background: `${accent}1a`, border: `1px solid ${accent}33`, color: accent }}
+                      title="تعديل اسم القسم"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => deleteCategory(group.name)}
+                      className="w-7 h-7 rounded-md flex items-center justify-center backdrop-blur-sm transition-all"
+                      style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.35)", color: "#f87171" }}
+                      title="حذف القسم"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </motion.div>
             <div className="space-y-3 md:space-y-4">
-              {group.items.map((item, i) => (
-                <MenuItemRow key={`${item.name}-${item.size || ""}-${i}`} item={item} index={i} accent={accent} priceAccent={priceAccent} cardBg={cardBg} />
-              ))}
+              {group.items.map((item, i) => {
+                const globalIdx = items.indexOf(item);
+                if (isAdminMode && editingItemIdx === globalIdx) {
+                  return (
+                    <div key={`edit-${globalIdx}`} className="rounded-xl border p-4 backdrop-blur-md" style={{ borderColor: `${accent}40`, background: "rgba(13,13,13,0.6)" }}>
+                      <label className="block text-[11px] text-white/50 mb-1" style={{ fontFamily: "var(--font-cairo), sans-serif" }}>اسم الصنف</label>
+                      <input
+                        value={itemDraft?.name || ""}
+                        onChange={(e) => updateItemDraft({ name: e.target.value })}
+                        className="w-full mb-3 px-3 py-2 rounded-lg outline-none text-sm text-white"
+                        style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${accent}30`, fontFamily: "var(--font-cairo), sans-serif" }}
+                      />
+                      <label className="block text-[11px] text-white/50 mb-1" style={{ fontFamily: "var(--font-cairo), sans-serif" }}>السعر الرئيسي</label>
+                      <input
+                        value={itemDraft?.price || ""}
+                        onChange={(e) => updateItemDraft({ price: e.target.value })}
+                        className="w-full mb-3 px-3 py-2 rounded-lg outline-none text-sm text-white"
+                        style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${accent}30`, fontFamily: "var(--font-cairo), sans-serif" }}
+                        placeholder="مثال: 50"
+                      />
+                      <label className="block text-[11px] text-white/50 mb-1" style={{ fontFamily: "var(--font-cairo), sans-serif" }}>التصنيف / القسم</label>
+                      <select
+                        value={itemDraft?.category || group.name}
+                        onChange={(e) => updateItemDraft({ category: e.target.value })}
+                        className="w-full mb-3 px-3 py-2 rounded-lg outline-none text-sm text-white"
+                        style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${accent}30`, fontFamily: "var(--font-cairo), sans-serif" }}
+                      >
+                        {categories.map((c) => (
+                          <option key={c.name} value={c.name} className="bg-[#111]">{c.name}</option>
+                        ))}
+                      </select>
+                      {(itemDraft?.sizes || []).map((s, si) => (
+                        <div key={si} className="flex items-center gap-2 mb-2">
+                          <input
+                            value={s.label}
+                            onChange={(e) => updateDraftSize(si, "label", e.target.value)}
+                            className="flex-1 px-3 py-2 rounded-lg outline-none text-sm text-white"
+                            style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${accent}30`, fontFamily: "var(--font-cairo), sans-serif" }}
+                            placeholder="الحجم (عادي / كومبو / كبير)"
+                          />
+                          <input
+                            value={s.price}
+                            onChange={(e) => updateDraftSize(si, "price", e.target.value)}
+                            className="w-24 px-3 py-2 rounded-lg outline-none text-sm text-white text-center"
+                            style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${accent}30`, fontFamily: "var(--font-outfit), sans-serif" }}
+                            placeholder="0"
+                          />
+                          <button onClick={() => removeDraftSize(si)} className="text-red-400/80 hover:text-red-400" title="حذف الحجم">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={addDraftSize}
+                        className="flex items-center gap-1 text-[11px] text-white/50 hover:text-white/80 mb-3"
+                        style={{ fontFamily: "var(--font-cairo), sans-serif" }}
+                      >
+                        <Plus className="w-3 h-3" /> إضافة حجم / سعر
+                      </button>
+                      <label className="block text-[11px] text-white/50 mb-1" style={{ fontFamily: "var(--font-cairo), sans-serif" }}>الوصف</label>
+                      <textarea
+                        value={itemDraft?.description || ""}
+                        onChange={(e) => updateItemDraft({ description: e.target.value })}
+                        className="w-full mb-4 px-3 py-2 rounded-lg outline-none text-sm text-white resize-none"
+                        style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${accent}30`, fontFamily: "var(--font-cairo), sans-serif" }}
+                        rows={2}
+                      />
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => itemDraft && submitItem(globalIdx, itemDraft)}
+                          className="flex-1 py-2.5 rounded-lg text-sm font-bold text-black"
+                          style={{ background: accent, fontFamily: "var(--font-cairo), sans-serif" }}
+                        >
+                          حفظ الصنف
+                        </button>
+                        <button
+                          onClick={() => { setEditingItemIdx(null); setItemDraft(null); }}
+                          className="px-5 py-2.5 rounded-lg text-sm text-white/70"
+                          style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", fontFamily: "var(--font-cairo), sans-serif" }}
+                        >
+                          إلغاء
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <MenuItemRow
+                    key={`${item.name}-${item.size || ""}-${i}`}
+                    item={item}
+                    index={globalIdx}
+                    accent={accent}
+                    priceAccent={priceAccent}
+                    cardBg={cardBg}
+                    isAdmin={isAdminMode}
+                    onEdit={startEditItem}
+                    onDelete={deleteItem}
+                  />
+                );
+              })}
+              {isAdminMode && (
+                <button
+                  onClick={() => addItem(group.name)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                  style={{ background: `${accent}14`, border: `1px dashed ${accent}40`, color: accent, fontFamily: "var(--font-cairo), sans-serif" }}
+                >
+                  <Plus className="w-4 h-4" /> إضافة صنف جديد
+                </button>
+              )}
             </div>
           </div>
         ))
@@ -699,6 +1062,107 @@ export default function MenuPage() {
       }}
     >
       <LuxuryDecorations color={accent} />
+
+      {/* Admin active banner */}
+      <AnimatePresence>
+        {isAdminMode && (
+          <motion.div
+            initial={{ y: -40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -40, opacity: 0 }}
+            className="fixed top-0 inset-x-0 z-[60]"
+          >
+            <div className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold"
+              style={{ background: `linear-gradient(90deg, ${accent}2e, ${accent}55, ${accent}2e)`, color: "#fff", borderBottom: `1px solid ${accent}55`, fontFamily: "var(--font-cairo), sans-serif" }}
+            >
+              <span>وضع التعديل نشط</span>
+              <button
+                onClick={exitAdminMode}
+                className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-white transition-all hover:opacity-90"
+                style={{ background: "rgba(239,68,68,0.85)" }}
+              >
+                <LogOut className="w-3 h-3" /> خروج
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Notice */}
+      <AnimatePresence>
+        {notice && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] px-4 py-2.5 rounded-xl text-sm font-bold shadow-2xl"
+            style={{
+              background: notice.type === "success" ? "rgba(22,110,60,0.92)" : "rgba(185,28,28,0.92)",
+              color: "#fff",
+              fontFamily: "var(--font-cairo), sans-serif",
+              border: `1px solid ${notice.type === "success" ? "rgba(74,222,128,0.5)" : "rgba(248,113,113,0.5)"}`,
+            }}
+          >
+            {notice.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* PIN Modal */}
+      <AnimatePresence>
+        {showPinModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowPinModal(false); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-xs rounded-2xl border p-6 text-center"
+              style={{ background: "rgba(13,13,13,0.92)", borderColor: `${accent}33`, boxShadow: `0 0 40px ${accent}22` }}
+            >
+              <div className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: `${accent}1a`, border: `1px solid ${accent}40` }}>
+                <Lock className="w-5 h-5" style={{ color: accent }} />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-1" style={{ fontFamily: "var(--font-cairo), sans-serif" }}>وضع التعديل</h3>
+              <p className="text-xs text-white/50 mb-4" style={{ fontFamily: "var(--font-cairo), sans-serif" }}>
+                أدخل كلمة سر التعديل للمتابعة
+              </p>
+              <input
+                type="password"
+                inputMode="numeric"
+                maxLength={6}
+                value={pinInput}
+                onChange={(e) => { setPinInput(e.target.value); setPinError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && handlePinSubmit()}
+                autoFocus
+                className="w-full px-4 py-3 rounded-lg text-center text-lg tracking-[0.3em] text-white outline-none mb-3"
+                style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${pinError ? "rgba(248,113,113,0.6)" : `${accent}40`}` }}
+              />
+              {pinError && <p className="text-xs text-red-400 mb-3" style={{ fontFamily: "var(--font-cairo), sans-serif" }}>{pinError}</p>}
+              <button
+                onClick={handlePinSubmit}
+                className="w-full py-3 rounded-lg text-sm font-bold text-black mb-2"
+                style={{ background: accent, fontFamily: "var(--font-cairo), sans-serif" }}
+              >
+                دخول
+              </button>
+              <button
+                onClick={() => setShowPinModal(false)}
+                className="text-xs text-white/40 hover:text-white/70 transition-colors"
+                style={{ fontFamily: "var(--font-cairo), sans-serif" }}
+              >
+                إلغاء
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="relative z-10 flex flex-col h-full w-full">
         <div className="max-w-lg mx-auto w-full px-4 md:px-5 flex flex-col h-full">
 
@@ -883,6 +1347,15 @@ export default function MenuPage() {
             <div className="flex items-center justify-center gap-4">
               <button onClick={shareMenu} className="flex items-center gap-1.5 text-[10px] tracking-wider text-white/40 hover:text-white/70 transition-colors">
                 <Share2 className="w-3 h-3" />Share
+              </button>
+              <button
+                onClick={handleLockClick}
+                className="flex items-center gap-1.5 text-[10px] tracking-wider transition-colors"
+                style={{ color: isAdminMode ? accent : "rgba(255,255,255,0.3)", opacity: 0.55 }}
+                title={isAdminMode ? "الخروج من وضع التعديل" : "وضع التعديل"}
+              >
+                {isAdminMode ? <LogOut className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                {isAdminMode ? "Exit Edit" : "Edit"}
               </button>
               <span className="text-[10px] tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
                 Powered by{" "}

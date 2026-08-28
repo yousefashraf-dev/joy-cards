@@ -24,6 +24,7 @@ export interface MenuDocument {
   categories: MenuCategory[];
   items: MenuItem[];
   theme: CafeTheme;
+  adminPin?: string;
   createdAt?: number;
 }
 

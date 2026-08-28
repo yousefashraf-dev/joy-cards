@@ -75,6 +75,14 @@ export default function MenuTable({ menus, onEdit, onRefresh }: MenuTableProps) 
               <tr key={menu.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                 <td className="px-4 py-3">
                   <span className="text-slate-light font-medium">{menu.name}</span>
+                  <span
+                    className={`ml-2 inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold ${
+                      menu.adminPin ? "bg-gold/15 text-gold" : "bg-white/5 text-slate-muted/40"
+                    }`}
+                    title={menu.adminPin ? "لصاحب المنيو كلمة سر للتعديل السريع" : "لا توجد كلمة سر للتعديل السريع"}
+                  >
+                    {menu.adminPin ? "🔒 سر" : "بدون سر"}
+                  </span>
                   <div className="text-xs text-slate-muted/50 mt-0.5" dir="ltr">
                     /ar/menu/{menu.slug}
                   </div>

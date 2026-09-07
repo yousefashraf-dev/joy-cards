@@ -3,7 +3,7 @@ import type { Theme, ThemeArchetype, ProductType } from "./types";
 export const GAS_URL = process.env.NEXT_PUBLIC_GAS_URL || "https://script.google.com/macros/s/AKfycbw-PmI1T_L_Gogf_ikeY2W-bZslG7Z2_8mcvxsioGI8lCv6R6FWgHLmhw8l21Vtnelfpg/exec";
 
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "201558599678";
-export const WHATSAPP_ORDERS_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_ORDERS_NUMBER || "201095976766";
+export const WHATSAPP_ORDERS_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_ORDERS_NUMBER || "201558599678";
 
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
 export const WHATSAPP_ORDERS_LINK = `https://wa.me/${WHATSAPP_ORDERS_NUMBER}`;

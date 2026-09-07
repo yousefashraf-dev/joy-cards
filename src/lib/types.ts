@@ -53,6 +53,7 @@ export interface AutoTapFields {
   orderNotes?: string;
   addressDetail: string;
   usernameValue?: string;
+  deliveryType: "shipping" | "no_shipping";
 }
 
 export interface AutoTapFormData {
@@ -68,6 +69,7 @@ export interface AutoTapFormData {
   logoWidthCm: string;
   displayName: string;
   theme: Theme;
+  deliveryType: "shipping" | "no_shipping";
 }
 
 export interface BusinessTapFields {

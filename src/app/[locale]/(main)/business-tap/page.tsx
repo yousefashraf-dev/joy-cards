@@ -9,6 +9,7 @@ import {
   CreditCard, ChevronRight, List, Camera, ThumbsUp, Sparkles,
 } from "lucide-react";
 import { WHATSAPP_BUSINESS_MSG } from "@/lib/constants";
+import MenuConversion from "@/components/business/MenuConversion";
 
 function NfcWaves() {
   return (
@@ -284,6 +285,8 @@ export default function BusinessTapPage() {
           </div>
         </div>
       </section>
+
+      <MenuConversion />
 
       <section className="py-20 lg:py-28 bg-gradient-to-b from-matte-dark/30 to-matte-black">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">

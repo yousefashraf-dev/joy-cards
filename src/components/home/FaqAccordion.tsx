@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import SectionHeading from "@/components/ui/SectionHeading";
 
-const faqIndices = [1, 2, 3];
+const faqIndices = [1, 2, 3, 4, 5, 6];
 
 export default function FaqAccordion() {
   const t = useTranslations("faq");
@@ -22,7 +22,7 @@ export default function FaqAccordion() {
           {faqIndices.map((idx, i) => (
             <div
               key={i}
-              className="glass-card rounded-xl overflow-hidden"
+              className="card-solid rounded-xl overflow-hidden"
             >
               <button
                 onClick={() => toggle(i)}

@@ -31,7 +31,7 @@ export default function HowItWorksSection() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.2 }}
               >
-                <div className="w-20 h-20 rounded-2xl glass-card flex items-center justify-center mx-auto mb-6">
+                <div className="w-20 h-20 rounded-2xl card-solid flex items-center justify-center mx-auto mb-6">
                   <Icon className="w-10 h-10 text-gold" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-light mb-3">

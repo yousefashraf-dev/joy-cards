@@ -28,7 +28,7 @@ export default function HeroMotion() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="absolute inset-0 rounded-full bg-gold/20 animate-pulse shadow-[0_0_60px_rgba(198,165,104,0.3)]" />
+            <div className="absolute inset-0 rounded-full bg-gold/20 shadow-[0_0_60px_rgba(198,165,104,0.3)]" />
             <div className="absolute inset-2 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center shadow-[0_0_40px_rgba(198,165,104,0.5)]">
               <span className="text-matte-dark font-black text-2xl md:text-3xl tracking-wider">NFC</span>
             </div>
@@ -55,8 +55,8 @@ export default function HeroMotion() {
                   x="12" y="14" width="76" height="155" rx="2"
                   fill="rgba(198,165,104,0.05)"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: [0, 0.15, 0.05, 0.1] }}
-                  transition={{ duration: 1, delay: 2.2, repeat: Infinity, repeatDelay: 3 }}
+                  animate={{ opacity: 0.08 }}
+                  transition={{ duration: 1, delay: 2.2 }}
                 />
                 {/* Status bar */}
                 <rect x="18" y="20" width="64" height="6" rx="3" fill="rgba(255,255,255,0.1)" />
@@ -72,7 +72,7 @@ export default function HeroMotion() {
                   fill="none" stroke="rgba(198,165,104,0.5)" strokeWidth="1"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0, 1, 0], scale: [1, 1.3, 1] }}
-                  transition={{ duration: 1.5, delay: 2.2, repeat: Infinity }}
+                  transition={{ duration: 1.5, delay: 2.2 }}
                 />
                 <text x="50" y="108" textAnchor="middle" fill="rgba(198,165,104,0.6)" fontSize="5" fontFamily="sans-serif">NFC</text>
                 {/* Bottom bar */}

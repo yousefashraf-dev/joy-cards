@@ -73,7 +73,6 @@ export default async function LocaleLayout({
       lang={locale}
       dir={isRtl ? "rtl" : "ltr"}
       className={`${inter.variable} ${notoKufi.variable} ${dancingScript.variable} ${playfairDisplay.variable} ${cairo.variable} ${outfit.variable} h-full antialiased`}
-      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-matte-black text-slate-light font-sans" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>

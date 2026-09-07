@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, NotebookText, Upload, Gift, Share2, Copy, Check } from "lucide-react";
+import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, NotebookText, Upload, Gift, Share2, Copy, Check, ClipboardList } from "lucide-react";
 import CafeForm from "@/components/admin/CafeForm";
 import CafeTable from "@/components/admin/CafeTable";
 import ProductForm from "@/components/admin/ProductForm";
@@ -13,6 +13,7 @@ import MenuForm from "@/components/admin/MenuForm";
 import MenuTable from "@/components/admin/MenuTable";
 import SurpriseForm from "@/components/admin/SurpriseForm";
 import SurpriseTable from "@/components/admin/SurpriseTable";
+import OrdersTable from "@/components/admin/OrdersTable";
 import CsvImport from "@/components/admin/CsvImport";
 import type { Cafe } from "@/lib/cafe-schema";
 import type { Product } from "@/lib/product-schema";
@@ -25,7 +26,7 @@ export default function AdminDashboardPage() {
   const t = useTranslations("admin");
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<"cafes" | "products" | "menus" | "import-csv" | "surprises">("cafes");
+  const [activeTab, setActiveTab] = useState<"cafes" | "products" | "menus" | "import-csv" | "surprises" | "orders">("cafes");
 
   useEffect(() => {
     setAuthenticated(sessionStorage.getItem("admin_auth") === "true");
@@ -204,17 +205,19 @@ export default function AdminDashboardPage() {
                 {copiedCreateLink ? <><Check className="w-4 h-4" /> تم النسخ!</> : <><Share2 className="w-4 h-4" /> نسخ لينك الإنشاء</>}
               </button>
             )}
-            <button
-              onClick={() => {
-                setEditingCafe(null);
-                setEditingProduct(null);
-                setShowForm(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gold text-matte-dark font-semibold hover:bg-gold-light transition-colors duration-200 text-sm"
-            >
-              <Plus className="w-4 h-4" />
-              {activeTab === "cafes" ? t("addCafe") : activeTab === "menus" ? "إضافة منيو" : activeTab === "surprises" ? "إضافة مفاجأة" : t("addProduct")}
-            </button>
+            {activeTab !== "orders" && (
+              <button
+                onClick={() => {
+                  setEditingCafe(null);
+                  setEditingProduct(null);
+                  setShowForm(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gold text-matte-dark font-semibold hover:bg-gold-light transition-colors duration-200 text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                {activeTab === "cafes" ? t("addCafe") : activeTab === "menus" ? "إضافة منيو" : activeTab === "surprises" ? "إضافة مفاجأة" : t("addProduct")}
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-dark-card border border-white/10 text-slate-muted hover:text-red-400 hover:border-red-400/30 transition-all duration-200 text-sm"
@@ -280,6 +283,17 @@ export default function AdminDashboardPage() {
           >
             <Gift className="w-4 h-4" />
             المفاجآت
+          </button>
+          <button
+            onClick={() => setActiveTab("orders")}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              activeTab === "orders"
+                ? "bg-gold/20 text-gold border border-gold/40 shadow-[0_0_15px_rgba(198,165,104,0.15)]"
+                : "bg-white/5 text-slate-muted border border-white/10 hover:bg-white/10"
+            }`}
+          >
+            <ClipboardList className="w-4 h-4" />
+            {t("ordersTab")}
           </button>
         </div>
 
@@ -358,6 +372,8 @@ export default function AdminDashboardPage() {
           />
         ) : activeTab === "import-csv" ? (
           <CsvImport onSuccess={() => setRefreshKey((k) => k + 1)} />
+        ) : activeTab === "orders" ? (
+          <OrdersTable />
         ) : (
           <div className="grid lg:grid-cols-2 gap-6">
             <div>

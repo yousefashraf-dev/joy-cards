@@ -32,7 +32,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 glass-strong bg-matte-black/80 border-b border-white/5">
+    <nav className="fixed top-0 inset-x-0 z-50 bg-matte-black/95 border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex items-center gap-2">
@@ -87,7 +87,7 @@ export default function Navbar() {
       </div>
 
       {isOpen && (
-        <div className="lg:hidden fixed inset-x-0 start-0 top-16 bg-matte-black/95 backdrop-blur-xl z-[60]">
+        <div className="lg:hidden fixed inset-x-0 start-0 top-16 bg-matte-black/95 z-[60]">
           <div className="flex flex-col items-stretch gap-2 h-full overflow-y-auto px-6 py-8">
             {links.map((link) => (
               <Link

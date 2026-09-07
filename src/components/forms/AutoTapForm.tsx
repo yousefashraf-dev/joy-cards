@@ -5,11 +5,11 @@ import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
-  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Check, Camera, Music2, Ghost, ThumbsUp, MessageCircle, Phone, Send,
+  ChevronRight, ChevronLeft, Upload, X, ImageIcon, Check, Camera, Music2, Ghost, ThumbsUp, MessageCircle, Phone, Send, Truck, Store,
 } from "lucide-react";
 import type { AutoTapFormData } from "@/lib/types";
 import { submitOrder } from "@/lib/submitOrder";
-import { calcTotal } from "@/lib/pricing";
+import { calcTotal, BASE_PRICE } from "@/lib/pricing";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SuccessModal from "./SuccessModal";
 import AutoTapPreview from "./AutoTapPreview";
@@ -36,6 +36,7 @@ const sizeImages: Record<string, string> = {
 export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTapFormProps) {
   const t = useTranslations("products.forms");
   const e = useTranslations("products.errors");
+  const at = useTranslations("products.autoTap");
   const tm = useTranslations("messages");
   const st = useTranslations("products.steps");
   const tc = useTranslations("currency");
@@ -124,7 +125,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       else if (!/^\+?[0-9]{7,15}$/.test(data.phone.replace(/[\s-]/g, ""))) {
         newErrors.phone = e("invalidPhone");
       }
-      if (!data.addressDetail.trim()) newErrors.addressDetail = e("required");
+      if (data.deliveryType === "shipping" && !data.addressDetail.trim()) newErrors.addressDetail = e("required");
     } else if (currentStep === "customization") {
       if (!data.displayName.trim()) newErrors.displayName = e("required");
     } else if (currentStep === "sizing") {
@@ -167,7 +168,9 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
       showToast(tm("networkError"), "error");
     }, TIMEOUT_MS);
 
-    const pricing = calcTotal(data.addressDetail);
+    const pricing = data.deliveryType === "shipping"
+      ? calcTotal(data.addressDetail)
+      : { basePrice: BASE_PRICE, shippingFee: 0, total: BASE_PRICE };
     setOrderPricing({ totalPrice: pricing.total, shippingFee: pricing.shippingFee });
 
     const formattedSocials: Record<string, string> = {};
@@ -184,7 +187,7 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
         phone: data.phone.trim(),
         governorate: "",
         city: "",
-        street: data.addressDetail.trim(),
+        street: data.deliveryType === "shipping" ? data.addressDetail.trim() : "",
         theme: data.theme,
         productType: "auto-tap",
         logo: data.logo || undefined,
@@ -193,8 +196,9 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
           stickerType: "username",
           logoWidthCm: data.logoWidthCm.trim() || "6",
           orderNotes: data.orderNotes.trim() || undefined,
-          addressDetail: data.addressDetail.trim(),
+          addressDetail: data.deliveryType === "shipping" ? data.addressDetail.trim() : "",
           usernameValue: data.usernameValue.trim() || undefined,
+          deliveryType: data.deliveryType,
         },
       }, pricing.total, locale);
       completedRef.current = true;
@@ -271,6 +275,10 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
     { id: "phoneSocial", icon: Phone, label: t("fields.phoneSocial") },
   ];
 
+  const reviewPricing = data.deliveryType === "shipping"
+    ? calcTotal(data.addressDetail)
+    : { basePrice: BASE_PRICE, shippingFee: 0, total: BASE_PRICE };
+
   return (
     <div>
       {renderStepIndicator()}
@@ -287,6 +295,45 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             <h3 className="text-lg font-semibold text-nardo mb-4">
               {t("section.personal")}
             </h3>
+
+            {/* Delivery type toggle */}
+            <div>
+              <label className="block text-sm text-slate-body mb-2">
+                {at("delivery.title")}
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleFieldChange("deliveryType", "shipping")}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-200 ${
+                    data.deliveryType === "shipping"
+                      ? "border-nardo bg-nardo/15 text-nardo shadow-[0_0_16px_rgba(192,192,192,0.12)]"
+                      : "border-white/20 bg-dark-card/50 text-slate-body hover:border-nardo/40"
+                  }`}
+                >
+                  <Truck className="w-4 h-4 shrink-0" />
+                  <span className="text-start leading-tight">{at("delivery.shippingOpt")}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleFieldChange("deliveryType", "no_shipping")}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-200 ${
+                    data.deliveryType === "no_shipping"
+                      ? "border-nardo bg-nardo/15 text-nardo shadow-[0_0_16px_rgba(192,192,192,0.12)]"
+                      : "border-white/20 bg-dark-card/50 text-slate-body hover:border-nardo/40"
+                  }`}
+                >
+                  <Store className="w-4 h-4 shrink-0" />
+                  <span className="text-start leading-tight">{at("delivery.noShippingOpt")}</span>
+                </button>
+              </div>
+              <p className="text-xs text-slate-muted/70 mt-2 flex items-center gap-1.5">
+                {data.deliveryType === "shipping"
+                  ? at("delivery.shippingHint")
+                  : at("delivery.noShippingHint")}
+              </p>
+            </div>
+
             <div>
               <label className="block text-sm text-slate-body mb-1.5">
                 {locale === "en" ? "الاسم الثلاثي بالعربي" : t("fields.customerName")}
@@ -314,20 +361,30 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
               />
               {renderError("phone")}
             </div>
-            <div>
-              <label className="block text-sm text-slate-body mb-1.5">
-                {locale === "en" ? "العنوان بالتفصيل" : t("fields.addressDetail")}
-              </label>
-              <input
-                type="text"
-                value={data.addressDetail}
-                onChange={(e) => handleFieldChange("addressDetail", e.target.value)}
-                placeholder={t("placeholders.addressDetail")}
-                lang="ar"
-                className={inputClass("addressDetail")}
-              />
-              {renderError("addressDetail")}
-            </div>
+            <AnimatePresence mode="wait">
+              {data.deliveryType === "shipping" && (
+                <motion.div
+                  key="address"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <label className="block text-sm text-slate-body mb-1.5">
+                    {locale === "en" ? "العنوان بالتفصيل" : t("fields.addressDetail")}
+                  </label>
+                  <input
+                    type="text"
+                    value={data.addressDetail}
+                    onChange={(e) => handleFieldChange("addressDetail", e.target.value)}
+                    placeholder={t("placeholders.addressDetail")}
+                    lang="ar"
+                    className={inputClass("addressDetail")}
+                  />
+                  {renderError("addressDetail")}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
@@ -592,9 +649,18 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
                 <p className="text-sm text-slate-light font-medium">{data.phone}</p>
               </div>
               <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
-                <p className="text-xs text-slate-muted mb-1">{t("fields.addressDetail")}</p>
-                <p className="text-sm text-slate-light font-medium">{data.addressDetail}</p>
+                <p className="text-xs text-slate-muted mb-1">{at("delivery.title")}</p>
+                <p className="text-sm text-slate-light font-medium">
+                  {data.deliveryType === "shipping" ? at("delivery.shippingOpt") : at("delivery.noShippingOpt")}
+                </p>
               </div>
+
+              {data.deliveryType === "shipping" && (
+                <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
+                  <p className="text-xs text-slate-muted mb-1">{t("fields.addressDetail")}</p>
+                  <p className="text-sm text-slate-light font-medium">{data.addressDetail}</p>
+                </div>
+              )}
 
               {data.displayName && (
                 <div className="p-4 rounded-xl bg-dark-card/50 border border-white/10">
@@ -627,14 +693,14 @@ export default function AutoTapForm({ data, onChange, onSubmitComplete }: AutoTa
             <div className="text-center mt-6 p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-gold/30">
               <div className="space-y-1">
                 <p className="text-sm text-slate-muted">
-                  {t("basePrice")}: <span className="text-gold font-bold">{calcTotal(data.addressDetail).basePrice} {tc("egp")}</span>
+                  {t("basePrice")}: <span className="text-gold font-bold">{reviewPricing.basePrice} {tc("egp")}</span>
                 </p>
                 <p className="text-sm text-slate-muted">
-                  {t("shippingLabel")}: <span className="text-gold font-bold">{calcTotal(data.addressDetail).shippingFee} {tc("egp")}</span>
+                  {t("shippingLabel")}: <span className="text-gold font-bold">{reviewPricing.shippingFee} {tc("egp")}</span>
                 </p>
                 <div className="w-full h-px bg-gold/20 my-2" />
                 <p className="text-lg text-gold font-bold">
-                  {t("total")}: {calcTotal(data.addressDetail).total} {tc("egp")}
+                  {t("total")}: {reviewPricing.total} {tc("egp")}
                 </p>
               </div>
             </div>

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360" fill="none">
+  <defs>
+    <radialGradient id="bgGlow" cx="20%" cy="10%" r="80%">
+      <stop offset="0%" stop-color="#232323"/>
+      <stop offset="45%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#0D0D0D"/>
+    </radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8E8E8" stop-opacity="0.22"/>
+      <stop offset="45%" stop-color="#FFFFFF" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#A8A8A8" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.42"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.13"/>
+    </linearGradient>
+    <linearGradient id="metalStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F2F2F2"/>
+      <stop offset="50%" stop-color="#C0C0C0"/>
+      <stop offset="100%" stop-color="#7A7A7A"/>
+    </linearGradient>
+    <linearGradient id="baseGlass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#C0C0C0" stop-opacity="0.18"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#C0C0C0" stop-opacity="0.18"/>
+    </linearGradient>
+    <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    <filter id="glowMetal" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="360" rx="28" fill="url(#bgGlow)"/>
+  <ellipse cx="130" cy="60" rx="210" ry="150" fill="#C0C0C0" opacity="0.06"/>
+  <ellipse cx="200" cy="252" rx="84" ry="10" fill="#000000" opacity="0.55"/>
+
+  <!-- Base pedestal -->
+  <rect x="140" y="218" width="120" height="20" rx="10" fill="url(#baseGlass)" stroke="url(#metalStroke)" stroke-width="1.4"/>
+
+  <!-- Standing acrylic plaque -->
+  <g filter="url(#softShadow)">
+    <path d="M166 50 Q166 44 176 44 L224 44 Q234 44 234 50 L240 218 L160 218 Z" fill="url(#glass)"/>
+  </g>
+  <path d="M166 50 Q166 44 176 44 L224 44 Q234 44 234 50 L240 218 L160 218 Z" fill="none" stroke="url(#metalStroke)" stroke-width="1.6"/>
+
+  <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1.2">
+    <path d="M186 56 L178 208"/>
+    <path d="M204 48 L198 216"/>
+    <path d="M226 56 L262 208"/>
+  </g>
+  <path d="M158 176 L244 118 L244 138 L158 200 Z" fill="url(#sheen)" opacity="0.45"/>
+
+  <!-- NFC chip -->
+  <g transform="translate(186,62)">
+    <rect x="0" y="0" width="28" height="34" rx="6" fill="url(#metalStroke)" opacity="0.95" filter="url(#glowGold)"/>
+    <rect x="5" y="5" width="18" height="24" rx="3" fill="#0D0D0D" opacity="0.9"/>
+    <line x1="14" y1="4" x2="14" y2="30" stroke="#D8D8D8" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="4" y1="17" x2="24" y2="17" stroke="#D8D8D8" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+
+  <text x="200" y="130" text-anchor="middle" fill="#F5F5F5" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="3">GoTap</text>
+  <text x="200" y="145" text-anchor="middle" fill="#C0C0C0" font-family="Arial, Helvetica, sans-serif" font-size="9" letter-spacing="3">SMART NFC STAND</text>
+  <line x1="172" y1="153" x2="228" y2="153" stroke="#C0C0C0" stroke-opacity="0.45" stroke-width="1"/>
+
+  <!-- NFC waves -->
+  <path d="M186 166 Q200 154 214 166" stroke="#D8D8D8" stroke-width="1.5" stroke-linecap="round" opacity="0.8" fill="none"/>
+  <path d="M180 178 Q200 158 220 178" stroke="#C0C0C0" stroke-width="1.5" stroke-linecap="round" opacity="0.6" fill="none"/>
+  <path d="M174 190 Q200 162 226 190" stroke="#A8A8A8" stroke-width="1.5" stroke-linecap="round" opacity="0.4" fill="none"/>
+
+  <rect x="176" y="198" width="48" height="5" rx="2.5" fill="#F5F5F5" opacity="0.35"/>
+  <rect x="176" y="207" width="38" height="4" rx="2" fill="#C0C0C0" opacity="0.55"/>
+
+  <text x="200" y="312" text-anchor="middle" fill="#7d7d7d" font-family="Arial, Helvetica, sans-serif" font-size="9" letter-spacing="2">SILVER ACRYLIC STAND · CUSTOM PRINTED</text>
+</svg>

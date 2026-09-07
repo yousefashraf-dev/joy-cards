@@ -36,10 +36,11 @@ export default function CafeShowcaseSection() {
           transition={{ duration: 0.6 }}
         >
           <Image
-            src="/nfc-cafe.png"
+            src="/nfc-cafe.webp"
             alt="GoTap NFC sticker on a marble table next to a smartphone displaying a digital menu"
             width={600}
             height={500}
+            loading="lazy"
             className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </motion.div>

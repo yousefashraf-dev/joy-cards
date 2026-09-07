@@ -1,21 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { CreditCard, MessageCircle, Check } from "lucide-react";
+import dynamic from "next/dynamic";
+const SmartOrderModal = dynamic(() => import("@/components/shop/SmartOrderModal"), { ssr: false, loading: () => null });
 
 export default function DigitalCardsPage() {
   const t = useTranslations("products.digitalCards");
   const locale = useLocale();
+  const [orderOpen, setOrderOpen] = useState(false);
 
   const canAddItems = t.raw("whatYouCanAdd") as string[];
-
-  const whatsappMsg = encodeURIComponent(
-    locale === "ar"
-      ? "السلام عليكم، أنا مهتم بطلب الكارت الذكي NFC."
-      : "Hello, I'm interested in the NFC Smart Card."
-  );
-  const WHATSAPP_DIGITAL_CARD_LINK = `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "201558599678"}?text=${whatsappMsg}`;
 
   return (
     <>
@@ -229,19 +226,25 @@ export default function DigitalCardsPage() {
               <p className="text-slate-muted text-base mb-8 max-w-md mx-auto">
                 {t("ctaDesc")}
               </p>
-              <a
-                href={WHATSAPP_DIGITAL_CARD_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => setOrderOpen(true)}
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-gold text-matte-dark font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-200 glow-gold hover:glow-gold-strong"
               >
                 <MessageCircle className="w-6 h-6" />
                 <span>{t("cta")}</span>
-              </a>
+              </button>
             </div>
           </motion.div>
         </div>
       </section>
+
+      <SmartOrderModal
+        open={orderOpen}
+        onClose={() => setOrderOpen(false)}
+        initialProductId="clear-card"
+        allowProductSwitch={false}
+      />
     </>
   );
 }

@@ -14,13 +14,13 @@ import MenuConversion from "@/components/business/MenuConversion";
 function NfcWaves() {
   return (
     <svg viewBox="0 0 120 120" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="60" cy="60" r="50" stroke="#D4AF37" strokeWidth="1.5" opacity="0.15" />
-      <circle cx="60" cy="60" r="38" stroke="#D4AF37" strokeWidth="1.5" opacity="0.25" />
-      <circle cx="60" cy="60" r="26" stroke="#D4AF37" strokeWidth="1.5" opacity="0.4" />
-      <circle cx="60" cy="60" r="14" stroke="#D4AF37" strokeWidth="2" opacity="0.6" />
-      <circle cx="60" cy="60" r="6" fill="#D4AF37" opacity="0.8" />
-      <path d="M60 10 C60 10 60 110 60 110" stroke="#D4AF37" strokeWidth="0.8" opacity="0.2" />
-      <path d="M10 60 C10 60 110 60 110 60" stroke="#D4AF37" strokeWidth="0.8" opacity="0.2" />
+      <circle cx="60" cy="60" r="50" stroke="#68B0B7" strokeWidth="1.5" opacity="0.15" />
+      <circle cx="60" cy="60" r="38" stroke="#68B0B7" strokeWidth="1.5" opacity="0.25" />
+      <circle cx="60" cy="60" r="26" stroke="#68B0B7" strokeWidth="1.5" opacity="0.4" />
+      <circle cx="60" cy="60" r="14" stroke="#68B0B7" strokeWidth="2" opacity="0.6" />
+      <circle cx="60" cy="60" r="6" fill="#68B0B7" opacity="0.8" />
+      <path d="M60 10 C60 10 60 110 60 110" stroke="#68B0B7" strokeWidth="0.8" opacity="0.2" />
+      <path d="M10 60 C10 60 110 60 110 60" stroke="#68B0B7" strokeWidth="0.8" opacity="0.2" />
     </svg>
   );
 }

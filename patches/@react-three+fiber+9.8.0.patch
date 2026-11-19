@@ -1,0 +1,13 @@
+diff --git a/node_modules/@react-three/fiber/dist/declarations/src/three-types.d.ts b/node_modules/@react-three/fiber/dist/declarations/src/three-types.d.ts
+index e0d3b15..8a1c193 100644
+--- a/node_modules/@react-three/fiber/dist/declarations/src/three-types.d.ts
++++ b/node_modules/@react-three/fiber/dist/declarations/src/three-types.d.ts
+@@ -34,7 +34,7 @@ export interface ReactProps<P> {
+ export type ElementProps<T extends ConstructorRepresentation, P = InstanceType<T>> = Partial<Overwrite<P, MathProps<P> & ReactProps<P> & EventProps<P>>>;
+ export type ThreeElement<T extends ConstructorRepresentation> = Mutable<Overwrite<ElementProps<T>, Omit<InstanceProps<InstanceType<T>, T>, 'object'>>>;
+ export type ThreeToJSXElements<T extends Record<string, any>> = {
+-    [K in keyof T & string as Uncapitalize<K>]: T[K] extends ConstructorRepresentation ? ThreeElement<T[K]> : never;
++    [K in keyof T & string as T[K] extends ConstructorRepresentation ? Uncapitalize<K> : never]: T[K] extends ConstructorRepresentation ? ThreeElement<T[K]> : never;
+ };
+ type ThreeExports = typeof THREE;
+ type ThreeElementsImpl = ThreeToJSXElements<ThreeExports>;

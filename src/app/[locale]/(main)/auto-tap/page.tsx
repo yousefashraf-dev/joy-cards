@@ -95,7 +95,7 @@ export default function AutoTapPage() {
             >
               <div className="relative w-72 h-96">
                 <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-gold/5 rounded-3xl rotate-6" />
-                <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(198,165,104,0.15)]">
+                <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(104,176,183,0.15)]">
                   <Image
                     src="/nfc-cafe.webp"
                     alt="Luxury car with NFC sticker"

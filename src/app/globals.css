@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   --color-nardo: #7A7A7A;
   --color-nardo-light: #A8A8A8;
   --color-matte-black: #1A1A1A;
@@ -20,10 +20,20 @@
   --color-gold: #C6A568;
   --color-gold-light: #E4CC94;
   --color-gold-dark: #9E7D45;
+  --color-teal: #68B0B7;
+  --color-teal-light: #A0CDD2;
+  --color-teal-dark: #4E8A90;
   --color-success: #4ADE80;
   --font-sans: 'Inter', 'Noto Kufi Arabic', system-ui, sans-serif;
   --font-cairo: 'Cairo', sans-serif;
   --font-outfit: 'Outfit', sans-serif;
+}
+
+/* Marketing landing pages only — stays outside admin/cafe/menu/profile routes */
+.marketing-shell {
+  --color-gold: #68B0B7;
+  --color-gold-light: #A0CDD2;
+  --color-gold-dark: #4E8A90;
 }
 
 @layer base {
@@ -50,28 +60,28 @@
   .glass-gold {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    background: linear-gradient(135deg, rgba(198,165,104,0.08), rgba(198,165,104,0.02));
-    border: 1px solid rgba(198,165,104,0.15);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-gold) 8%, transparent), color-mix(in srgb, var(--color-gold) 2%, transparent));
+    border: 1px solid color-mix(in srgb, var(--color-gold) 15%, transparent);
   }
   .glass-card {
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     background: linear-gradient(135deg, rgba(18,18,18,0.85), rgba(26,26,26,0.9));
-    border: 1px solid rgba(198,165,104,0.12);
-    box-shadow: 0 8px 32px rgba(198,165,104,0.06);
+    border: 1px solid color-mix(in srgb, var(--color-gold) 12%, transparent);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--color-gold) 6%, transparent);
   }
   .glass-card:hover {
-    border-color: rgba(198,165,104,0.3);
-    box-shadow: 0 8px 40px rgba(198,165,104,0.12);
+    border-color: color-mix(in srgb, var(--color-gold) 30%, transparent);
+    box-shadow: 0 8px 40px color-mix(in srgb, var(--color-gold) 12%, transparent);
   }
   .card-solid {
     background: linear-gradient(135deg, rgba(18,18,18,0.95), rgba(26,26,26,0.97));
-    border: 1px solid rgba(198,165,104,0.12);
-    box-shadow: 0 8px 32px rgba(198,165,104,0.06);
+    border: 1px solid color-mix(in srgb, var(--color-gold) 12%, transparent);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--color-gold) 6%, transparent);
   }
   .card-solid:hover {
-    border-color: rgba(198,165,104,0.3);
-    box-shadow: 0 8px 40px rgba(198,165,104,0.12);
+    border-color: color-mix(in srgb, var(--color-gold) 30%, transparent);
+    box-shadow: 0 8px 40px color-mix(in srgb, var(--color-gold) 12%, transparent);
   }
   .text-gradient-silver {
     background: linear-gradient(135deg, #C0C0C0, #7A7A7A);
@@ -95,31 +105,31 @@
     box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
   }
   .glow-gold {
-    box-shadow: 0 0 25px rgba(198, 165, 104, 0.3);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--color-gold) 30%, transparent);
   }
   .glow-gold-strong {
-    box-shadow: 0 0 50px rgba(198, 165, 104, 0.45);
+    box-shadow: 0 0 50px color-mix(in srgb, var(--color-gold) 45%, transparent);
   }
   .glow-gold-card {
-    box-shadow: 0 8px 32px rgba(198,165,104,0.08), 0 0 60px rgba(198,165,104,0.04);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--color-gold) 8%, transparent), 0 0 60px color-mix(in srgb, var(--color-gold) 4%, transparent);
   }
   .text-gradient-gold {
-    background: linear-gradient(135deg, #C6A568, #E4CC94, #C6A568);
+    background: linear-gradient(135deg, var(--color-gold), var(--color-gold-light), var(--color-gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .text-gradient-gold-strong {
-    background: linear-gradient(135deg, #E4CC94, #C6A568, #9E7D45, #C6A568);
+    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold), var(--color-gold-dark), var(--color-gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .bg-gradient-gold {
-    background: linear-gradient(135deg, #C6A568, #9E7D45);
+    background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
   }
   .bg-gradient-gold-light {
-    background: linear-gradient(135deg, rgba(198,165,104,0.15), rgba(198,165,104,0.05));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-gold) 15%, transparent), color-mix(in srgb, var(--color-gold) 5%, transparent));
   }
   .btn-gold {
     display: inline-flex;
@@ -130,14 +140,14 @@
     border-radius: 0.75rem;
     font-weight: 600;
     font-size: 0.875rem;
-    background: linear-gradient(135deg, #C6A568, #9E7D45);
+    background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
     color: #0D0D0D;
     transition: all 0.3s ease;
-    box-shadow: 0 0 25px rgba(198,165,104,0.25);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--color-gold) 25%, transparent);
   }
   .btn-gold:hover {
     opacity: 0.9;
-    box-shadow: 0 0 40px rgba(198,165,104,0.4);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--color-gold) 40%, transparent);
     transform: scale(1.02);
   }
   .btn-gold:active {
@@ -152,23 +162,23 @@
     border-radius: 0.75rem;
     font-weight: 600;
     font-size: 0.875rem;
-    background: rgba(198,165,104,0.08);
+    background: color-mix(in srgb, var(--color-gold) 8%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(198,165,104,0.25);
-    color: #C6A568;
+    border: 1px solid color-mix(in srgb, var(--color-gold) 25%, transparent);
+    color: var(--color-gold);
     transition: all 0.3s ease;
   }
   .btn-gold-outline:hover {
-    background: rgba(198,165,104,0.15);
-    border-color: rgba(198,165,104,0.5);
-    box-shadow: 0 0 25px rgba(198,165,104,0.15);
+    background: color-mix(in srgb, var(--color-gold) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-gold) 50%, transparent);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--color-gold) 15%, transparent);
   }
   .border-gold-subtle {
-    border-color: rgba(198,165,104,0.12);
+    border-color: color-mix(in srgb, var(--color-gold) 12%, transparent);
   }
   .hover-gold-border:hover {
-    border-color: rgba(198,165,104,0.35);
+    border-color: color-mix(in srgb, var(--color-gold) 35%, transparent);
   }
   .float-card {
     backdrop-filter: blur(24px);
@@ -226,8 +236,8 @@
   .form-input:focus,
   .form-select:focus,
   .form-textarea:focus {
-    border-color: rgba(198, 165, 104, 0.6);
-    box-shadow: 0 0 0 3px rgba(198, 165, 104, 0.15);
+    border-color: color-mix(in srgb, var(--color-gold) 60%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-gold) 15%, transparent);
   }
   .form-input.input-invalid,
   .form-select.input-invalid,
@@ -282,7 +292,7 @@
   }
   .swatch-selected {
     border-color: var(--color-gold);
-    box-shadow: 0 0 0 3px rgba(198, 165, 104, 0.35), inset 0 0 0 2px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-gold) 35%, transparent), inset 0 0 0 2px rgba(0, 0, 0, 0.35);
   }
   .swatch-transparent {
     background:

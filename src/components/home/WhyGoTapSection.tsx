@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Gem, Headphones, Zap, ShieldCheck } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { useTilt } from "@/hooks/useTilt";
 
 const items = [
   { key: "Quality", icon: Gem },
@@ -14,6 +15,7 @@ const items = [
 
 export default function WhyGoTapSection() {
   const t = useTranslations("home");
+  const tilt = useTilt(8);
 
   return (
     <section id="why-gotap" className="py-20 lg:py-28 bg-matte-dark/40">
@@ -26,13 +28,15 @@ export default function WhyGoTapSection() {
             return (
               <motion.div
                 key={item.key}
+                {...tilt.handlers}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="group card-solid rounded-2xl p-6 hover:border-gold/40 transition-all duration-500"
+                style={{ transformStyle: "preserve-3d", willChange: "transform" }}
               >
-                <div className="w-12 h-12 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(198,165,104,0.25)] transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(104,176,183,0.25)] transition-all duration-300">
                   <Icon className="w-6 h-6 text-gold" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-light mb-2">

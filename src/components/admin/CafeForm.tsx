@@ -56,6 +56,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [vodafoneCash, setVodafoneCash] = useState(cafe?.vodafoneCash || "");
   const [vodafoneCashExtra, setVodafoneCashExtra] = useState<string[]>(cafe?.vodafoneCashExtra || []);
   const [instaPay, setInstaPay] = useState(cafe?.instaPay || "");
+  const [bankAccount, setBankAccount] = useState(cafe?.bankAccount || "");
   const [theme, setTheme] = useState<CafeTheme>(cafe?.theme || "cafe");
   const [youtubeUrl, setYoutubeUrl] = useState(cafe?.youtubeUrl || "");
   const [bio, setBio] = useState(cafe?.bio || "");
@@ -182,6 +183,7 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         vodafoneCash: vodafoneCash.trim(),
         vodafoneCashExtra: vodafoneCashExtra.map((v) => v.trim()).filter(Boolean),
         instaPay: instaPay.trim(),
+        bankAccount: bankAccount.trim(),
         youtubeUrl: youtubeUrl.trim(),
         email: email.trim(),
         bio: bio.trim(),
@@ -887,6 +889,17 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                 placeholder="InstaPay"
                 dir="ltr"
               />
+            </div>
+            <div className="sm:col-span-2">
+              <input
+                type="text"
+                value={bankAccount}
+                onChange={(e) => setBankAccount(e.target.value)}
+                className={inputClass}
+                placeholder="Bank Account (IBAN / رقم الحساب)"
+                dir="ltr"
+              />
+              <p className="text-xs text-slate-muted/50 mt-1">يظهر للعميل كطريقة دفع، والضغط عليه ينسخ الرقم. اتركه فاضي لإخفائه.</p>
             </div>
           </div>
         </div>

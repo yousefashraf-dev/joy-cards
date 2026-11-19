@@ -12,11 +12,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <LoadingProvider>
       <ToastProvider>
-        <ScrollToTop />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <FloatingWhatsApp />
+        <div className="marketing-shell flex min-h-full flex-col">
+          <ScrollToTop />
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <FloatingWhatsApp />
+        </div>
         <LoadingOverlay />
         <Toast />
         <OnboardingTour />

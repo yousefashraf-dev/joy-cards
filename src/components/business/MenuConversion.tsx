@@ -54,7 +54,7 @@ export default function MenuConversion() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="group flex items-start gap-5"
                 >
-                  <div className="relative z-10 shrink-0 w-[52px] h-[52px] rounded-2xl bg-matte-dark border border-gold/40 flex items-center justify-center group-hover:shadow-[0_0_25px_rgba(198,165,104,0.3)] transition-all duration-300">
+                  <div className="relative z-10 shrink-0 w-[52px] h-[52px] rounded-2xl bg-matte-dark border border-gold/40 flex items-center justify-center group-hover:shadow-[0_0_25px_rgba(104,176,183,0.3)] transition-all duration-300">
                     <Icon className="w-6 h-6 text-gold" />
                     <span className="absolute -top-2 -end-2 w-6 h-6 rounded-full bg-gradient-gold text-matte-dark text-[11px] font-black flex items-center justify-center">
                       {i + 1}
@@ -95,7 +95,7 @@ export default function MenuConversion() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="rounded-2xl p-6 lg:p-8 border border-gold/40 bg-gold/[0.06] shadow-[0_0_40px_rgba(198,165,104,0.12)] relative overflow-hidden"
+            className="rounded-2xl p-6 lg:p-8 border border-gold/40 bg-gold/[0.06] shadow-[0_0_40px_rgba(104,176,183,0.12)] relative overflow-hidden"
           >
             <div className="absolute -top-20 -end-20 w-52 h-52 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
             <div className="w-12 h-12 rounded-2xl bg-gold/15 border border-gold/30 flex items-center justify-center mb-5">

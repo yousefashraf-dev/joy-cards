@@ -43,9 +43,9 @@ export default function ProductCard({
             <p className="text-slate-muted text-sm leading-relaxed mb-6 flex-1">
               {description}
             </p>
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-gold text-matte-dark font-semibold text-sm hover:opacity-90 group-hover:shadow-[0_0_30px_rgba(198,165,104,0.3)] transition-all duration-300">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-gold text-matte-dark font-semibold text-sm hover:opacity-90 group-hover:shadow-[0_0_30px_rgba(104,176,183,0.3)] transition-all duration-300">
               <span>{cta}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              <ArrowRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform duration-300" />
             </div>
           </div>
         </div>

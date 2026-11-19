@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Fingerprint, Share2, Link } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { useTilt } from "@/hooks/useTilt";
 
 const steps = [
   { icon: Fingerprint, key: "step1" },
@@ -13,6 +14,7 @@ const steps = [
 
 export default function HowItWorksSection() {
   const t = useTranslations("howItWorks");
+  const tilt = useTilt(7);
 
   return (
     <section className="py-20 lg:py-28 bg-matte-dark/50">
@@ -25,11 +27,13 @@ export default function HowItWorksSection() {
             return (
               <motion.div
                 key={step.key}
+                {...tilt.handlers}
                 className="text-center"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.2 }}
+                style={{ transformStyle: "preserve-3d", willChange: "transform" }}
               >
                 <div className="w-20 h-20 rounded-2xl card-solid flex items-center justify-center mx-auto mb-6">
                   <Icon className="w-10 h-10 text-gold" />

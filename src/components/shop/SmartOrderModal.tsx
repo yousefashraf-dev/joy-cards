@@ -228,7 +228,7 @@ export default function SmartOrderModal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 60, scale: 0.98 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="w-full sm:max-w-lg bg-matte-black/95 backdrop-blur-xl border border-gold/25 rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(198,165,104,0.25)] max-h-[94dvh] flex flex-col"
+            className="w-full sm:max-w-lg bg-matte-black/95 backdrop-blur-xl border border-gold/25 rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(104,176,183,0.25)] max-h-[94dvh] flex flex-col"
             dir={locale === "ar" ? "rtl" : "ltr"}
           >
             {/* Header */}
@@ -305,7 +305,7 @@ export default function SmartOrderModal({
                   onClick={() => setOrderType("shipping")}
                   className={`flex items-center gap-2 px-3 py-3 rounded-2xl border text-sm font-semibold transition-all ${
                     orderType === "shipping"
-                      ? "bg-gold/15 border-gold/50 text-gold shadow-[0_0_20px_rgba(198,165,104,0.15)]"
+                      ? "bg-gold/15 border-gold/50 text-gold shadow-[0_0_20px_rgba(104,176,183,0.15)]"
                       : "bg-white/5 border-white/10 text-slate-muted hover:bg-white/10"
                   }`}
                 >
@@ -319,7 +319,7 @@ export default function SmartOrderModal({
                   onClick={() => setOrderType("pickup")}
                   className={`flex items-center gap-2 px-3 py-3 rounded-2xl border text-sm font-semibold transition-all ${
                     orderType === "pickup"
-                      ? "bg-gold/15 border-gold/50 text-gold shadow-[0_0_20px_rgba(198,165,104,0.15)]"
+                      ? "bg-gold/15 border-gold/50 text-gold shadow-[0_0_20px_rgba(104,176,183,0.15)]"
                       : "bg-white/5 border-white/10 text-slate-muted hover:bg-white/10"
                   }`}
                 >
@@ -411,14 +411,14 @@ export default function SmartOrderModal({
                     <span className="text-sm">
                       {pricing.discountPercent > 0 ? (
                         <span className="flex items-center gap-2">
-                          <span className="text-slate-muted line-through">{product.base_price} {t("egp")}</span>
-                          <span className="text-gold font-bold text-lg" dir="ltr">
-                            {pricing.unitPrice} {t("egp")}
+                          <span className="text-slate-muted line-through"><bdi>{product.base_price}</bdi> {t("egp")}</span>
+                          <span className="text-gold font-bold text-lg">
+                            <bdi>{pricing.unitPrice}</bdi> {t("egp")}
                           </span>
                         </span>
                       ) : (
-                        <span className="text-slate-light font-bold" dir="ltr">
-                          {pricing.unitPrice} {t("egp")}
+                        <span className="text-slate-light font-bold">
+                          <bdi>{pricing.unitPrice}</bdi> {t("egp")}
                         </span>
                       )}
                     </span>
@@ -432,8 +432,8 @@ export default function SmartOrderModal({
                   <div className="w-full h-px bg-gold/20" />
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-slate-muted">{t("total")}</span>
-                    <span className="text-xl font-black text-gradient-gold" dir="ltr">
-                      {pricing.total} {t("egp")}
+                    <span className="text-xl font-black text-gradient-gold">
+                      <bdi>{pricing.total}</bdi> {t("egp")}
                     </span>
                   </div>
                   {pricing.nextTier && (
@@ -458,14 +458,14 @@ export default function SmartOrderModal({
                         type="button"
                         onClick={() => toggleFeature(id)}
                         aria-pressed={on}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-semibold transition-all ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs leading-snug font-semibold transition-all ${
                           on
-                            ? "bg-gold/20 border-gold/50 text-gold shadow-[0_0_14px_rgba(198,165,104,0.12)]"
+                            ? "bg-gold/20 border-gold/50 text-gold shadow-[0_0_14px_rgba(104,176,183,0.12)]"
                             : "bg-white/5 border-white/10 text-slate-muted hover:border-gold/30 hover:text-slate-body"
                         }`}
                       >
-                        <Check className="w-3 h-3" />
-                        {t(`features.${id}`)}
+                        <Check className="w-3 h-3 shrink-0" />
+                        <span className="min-w-0 break-words">{t(`features.${id}`)}</span>
                       </button>
                     );
                   })}
@@ -643,7 +643,7 @@ export default function SmartOrderModal({
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-4 rounded-2xl bg-gradient-gold text-matte-dark font-black text-base hover:shadow-[0_0_35px_rgba(198,165,104,0.35)] hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-4 rounded-2xl bg-gradient-gold text-matte-dark font-black text-base hover:shadow-[0_0_35px_rgba(104,176,183,0.35)] hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

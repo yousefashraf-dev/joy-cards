@@ -41,12 +41,12 @@ export default function StickyCta() {
           <div className="flex-1 min-w-0 leading-tight">
             <p className="text-sm font-bold text-slate-light truncate">{featured.name[locale]}</p>
             <p className="text-[11px] text-slate-muted">
-              {t("from")} <span className="text-gold font-bold" dir="ltr">{basePrice} {tc("egp")}</span> · {t("tagline")}
+              {t("from")} <span className="text-gold font-bold"><bdi>{basePrice}</bdi> {tc("egp")}</span> · {t("tagline")}
             </p>
           </div>
           <button
             onClick={() => setOpen(true)}
-            className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-gold text-matte-dark font-black text-sm hover:shadow-[0_0_25px_rgba(198,165,104,0.4)] active:scale-95 transition-all"
+            className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gradient-gold text-matte-dark font-black text-sm hover:shadow-[0_0_25px_rgba(104,176,183,0.4)] active:scale-95 transition-all"
           >
             <MessageCircle className="w-4 h-4" />
             {t("orderNow")}

@@ -67,6 +67,7 @@ export interface Cafe {
   vodafoneCash?: string;
   vodafoneCashExtra?: string[];
   instaPay?: string;
+  bankAccount?: string;
   youtubeUrl?: string;
   email?: string;
   bio?: string;
@@ -138,6 +139,7 @@ export async function getAllCafes(): Promise<Cafe[]> {
         vodafoneCash: data.vodafoneCash,
         vodafoneCashExtra: data.vodafoneCashExtra || [],
         instaPay: data.instaPay,
+        bankAccount: data.bankAccount,
         youtubeUrl: data.youtubeUrl,
         email: data.email,
         bio: data.bio,
@@ -181,6 +183,7 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     vodafoneCash: data.vodafoneCash,
     vodafoneCashExtra: data.vodafoneCashExtra || [],
     instaPay: data.instaPay,
+    bankAccount: data.bankAccount,
     youtubeUrl: data.youtubeUrl,
     email: data.email,
     bio: data.bio,

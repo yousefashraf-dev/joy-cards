@@ -22,6 +22,7 @@ import {
   Clock,
   Share2,
   ChevronRight,
+  Landmark,
 } from "lucide-react";
 import type { Cafe } from "@/lib/cafe-schema";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
@@ -199,6 +200,7 @@ export default function CafePage() {
   const [vodafoneModal, setVodafoneModal] = useState(false);
   const [locationsModal, setLocationsModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedBank, setCopiedBank] = useState(false);
   const [menuImages, setMenuImages] = useState<string[]>([]);
 
   const theme: CafeTheme = cafe?.theme || "cafe";
@@ -231,6 +233,17 @@ export default function CafePage() {
       await navigator.clipboard.writeText(cafe.wifiPassword);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleCopyBankAccount = async () => {
+    if (!cafe?.bankAccount) return;
+    try {
+      await navigator.clipboard.writeText(cafe.bankAccount);
+      setCopiedBank(true);
+      setTimeout(() => setCopiedBank(false), 2000);
     } catch {
       // fallback
     }
@@ -353,7 +366,12 @@ export default function CafePage() {
     },
   ].filter((item) => item.href);
 
-  const hasPayments = cafe.vodafoneCash || (cafe.vodafoneCashExtra && cafe.vodafoneCashExtra.length > 0) || cafe.instaPay;
+  const bankAccount = cafe.bankAccount?.trim() || "";
+  const hasPayments =
+    cafe.vodafoneCash ||
+    (cafe.vodafoneCashExtra && cafe.vodafoneCashExtra.length > 0) ||
+    cafe.instaPay ||
+    bankAccount;
   const allVodafoneNumbers = [
     cafe.vodafoneCash,
     ...(cafe.vodafoneCashExtra || []),
@@ -363,6 +381,10 @@ export default function CafePage() {
       ? cafe.instaPay
       : `instapay://payment?to=${cafe.instaPay}`
     : "";
+  const paymentCount =
+    (allVodafoneNumbers.length > 0 ? 1 : 0) +
+    (instaPayLink ? 1 : 0) +
+    (bankAccount ? 1 : 0);
 
   const makeVodafoneLink = (num: string) =>
     num.startsWith("http://") || num.startsWith("https://")
@@ -600,7 +622,7 @@ export default function CafePage() {
               <p className="text-xs mb-4 uppercase tracking-widest text-center" style={{ color: `${accentHex}99` }}>
                 Payment Methods
               </p>
-              <div className={`grid gap-4 ${allVodafoneNumbers.length > 0 && instaPayLink ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
+              <div className={`grid gap-4 ${paymentCount > 1 ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
                 {allVodafoneNumbers.length > 0 && (
                   allVodafoneNumbers.length === 1 ? (
                     <a
@@ -660,6 +682,30 @@ export default function CafePage() {
                       Pay via InstaPay
                     </span>
                   </a>
+                )}
+                {bankAccount && (
+                  <button
+                    onClick={handleCopyBankAccount}
+                    aria-label="Copy bank account"
+                    className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02] ${paymentCount === 3 ? "col-span-2" : ""}`}
+                    style={{
+                      backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                      borderColor: `${accentHex}4D`,
+                      color: accentHex,
+                    }}
+                  >
+                    <Landmark className="w-10 h-10 group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-bold text-center leading-tight">
+                      Bank Account
+                    </span>
+                    <span dir="ltr" className="max-w-full truncate text-xs opacity-80">
+                      {bankAccount}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] opacity-70">
+                      {copiedBank ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedBank ? "Copied!" : "Copy account"}
+                    </span>
+                  </button>
                 )}
               </div>
             </motion.div>

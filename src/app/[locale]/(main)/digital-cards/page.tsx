@@ -51,8 +51,8 @@ export default function DigitalCardsPage() {
                   <svg viewBox="0 0 320 380" className="w-full h-full p-4" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                       <radialGradient id="nfcGlow" cx="35%" cy="50%" r="60%">
-                        <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
+                        <stop offset="0%" stopColor="#68B0B7" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#68B0B7" stopOpacity="0" />
                       </radialGradient>
                       <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0%" stopColor="#2a2a2a" />
@@ -88,13 +88,13 @@ export default function DigitalCardsPage() {
                       <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.5s" repeatCount="indefinite" />
                     </ellipse>
 
-                    <path d="M130 190 Q150 170 170 190" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" fill="none">
+                    <path d="M130 190 Q150 170 170 190" stroke="#68B0B7" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" fill="none">
                       <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite" />
                     </path>
-                    <path d="M115 190 Q145 155 175 190" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" opacity="0.35" fill="none">
+                    <path d="M115 190 Q145 155 175 190" stroke="#68B0B7" strokeWidth="1.5" strokeLinecap="round" opacity="0.35" fill="none">
                       <animate attributeName="opacity" values="0.15;0.5;0.15" dur="2.5s" repeatCount="indefinite" />
                     </path>
-                    <path d="M100 190 Q140 140 180 190" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" opacity="0.2" fill="none">
+                    <path d="M100 190 Q140 140 180 190" stroke="#68B0B7" strokeWidth="1.5" strokeLinecap="round" opacity="0.2" fill="none">
                       <animate attributeName="opacity" values="0.1;0.4;0.1" dur="3s" repeatCount="indefinite" />
                     </path>
 
@@ -102,38 +102,38 @@ export default function DigitalCardsPage() {
                     <g filter="url(#glow)">
                       <motion.rect
                         x="30" y="150" width="95" height="62" rx="6"
-                        fill="url(#cardGrad)" stroke="#D4AF37" strokeWidth="1.5"
+                        fill="url(#cardGrad)" stroke="#68B0B7" strokeWidth="1.5"
                         animate={{ x: [0, 5, 0], y: [0, -3, 0] }}
                         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                       />
-                      <rect x="40" y="160" width="35" height="4" rx="2" fill="#D4AF37" opacity="0.6" />
-                      <rect x="40" y="169" width="55" height="3" rx="1.5" fill="#D4AF37" opacity="0.3" />
-                      <rect x="40" y="177" width="40" height="3" rx="1.5" fill="#D4AF37" opacity="0.2" />
-                      <rect x="80" y="190" width="30" height="16" rx="3" fill="#D4AF37" opacity="0.15" />
-                      <text x="95" y="201" textAnchor="middle" fill="#D4AF37" fontSize="7" fontWeight="bold" opacity="0.7">NFC</text>
+                      <rect x="40" y="160" width="35" height="4" rx="2" fill="#68B0B7" opacity="0.6" />
+                      <rect x="40" y="169" width="55" height="3" rx="1.5" fill="#68B0B7" opacity="0.3" />
+                      <rect x="40" y="177" width="40" height="3" rx="1.5" fill="#68B0B7" opacity="0.2" />
+                      <rect x="80" y="190" width="30" height="16" rx="3" fill="#68B0B7" opacity="0.15" />
+                      <text x="95" y="201" textAnchor="middle" fill="#68B0B7" fontSize="7" fontWeight="bold" opacity="0.7">NFC</text>
                     </g>
 
                     {/* Smartphone */}
                     <g>
                       <rect x="195" y="100" width="82" height="170" rx="14" fill="#1a1a1a" stroke="#333" strokeWidth="1.5" />
                       <rect x="201" y="112" width="70" height="140" rx="4" fill="url(#screenGrad)" />
-                      <rect x="207" y="118" width="30" height="4" rx="2" fill="#D4AF37" opacity="0.5" />
-                      <circle cx="263" cy="120" r="2.5" fill="#D4AF37" opacity="0.4" />
-                      <rect x="211" y="136" width="16" height="16" rx="3" fill="#D4AF37" opacity="0.15" />
-                      <rect x="233" y="136" width="16" height="16" rx="3" fill="#D4AF37" opacity="0.15" />
-                      <rect x="255" y="136" width="16" height="16" rx="3" fill="#D4AF37" opacity="0.15" />
+                      <rect x="207" y="118" width="30" height="4" rx="2" fill="#68B0B7" opacity="0.5" />
+                      <circle cx="263" cy="120" r="2.5" fill="#68B0B7" opacity="0.4" />
+                      <rect x="211" y="136" width="16" height="16" rx="3" fill="#68B0B7" opacity="0.15" />
+                      <rect x="233" y="136" width="16" height="16" rx="3" fill="#68B0B7" opacity="0.15" />
+                      <rect x="255" y="136" width="16" height="16" rx="3" fill="#68B0B7" opacity="0.15" />
                       <motion.rect
-                        x="215" y="202" width="42" height="32" rx="4" fill="#D4AF37" opacity="0"
+                        x="215" y="202" width="42" height="32" rx="4" fill="#68B0B7" opacity="0"
                         animate={{ opacity: [0, 0.2, 0] }}
                         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                       />
                       <motion.text
-                        x="236" y="215" textAnchor="middle" fill="#D4AF37" fontSize="5" opacity="0" fontWeight="bold"
+                        x="236" y="215" textAnchor="middle" fill="#68B0B7" fontSize="5" opacity="0" fontWeight="bold"
                         animate={{ opacity: [0, 0.8, 0] }}
                         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                       >PROFILE</motion.text>
                       <motion.text
-                        x="236" y="225" textAnchor="middle" fill="#D4AF37" fontSize="4" opacity="0"
+                        x="236" y="225" textAnchor="middle" fill="#68B0B7" fontSize="4" opacity="0"
                         animate={{ opacity: [0, 0.5, 0] }}
                         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                       >TAP RECEIVED</motion.text>
@@ -142,35 +142,35 @@ export default function DigitalCardsPage() {
 
                     {/* Floating social icons */}
                     <g filter="url(#softGlow)">
-                      <circle cx="290" cy="110" r="14" fill="#D4AF37" opacity="0.1">
+                      <circle cx="290" cy="110" r="14" fill="#68B0B7" opacity="0.1">
                         <animate attributeName="opacity" values="0.06;0.18;0.06" dur="3s" repeatCount="indefinite" />
                       </circle>
-                      <rect x="284" y="104" width="12" height="12" rx="2.5" stroke="#D4AF37" strokeWidth="1.2" fill="none" opacity="0.45">
+                      <rect x="284" y="104" width="12" height="12" rx="2.5" stroke="#68B0B7" strokeWidth="1.2" fill="none" opacity="0.45">
                         <animate attributeName="opacity" values="0.25;0.6;0.25" dur="3s" repeatCount="indefinite" />
                       </rect>
-                      <circle cx="298" cy="180" r="14" fill="#D4AF37" opacity="0.08">
+                      <circle cx="298" cy="180" r="14" fill="#68B0B7" opacity="0.08">
                         <animate attributeName="opacity" values="0.05;0.16;0.05" dur="3.5s" repeatCount="indefinite" />
                       </circle>
-                      <path d="M293 175 Q291 175 291 177 L291 182 L294 181 L301 181 Q303 181 303 179 L303 175 Q303 173 301 173 L295 173 Q293 173 293 175Z" stroke="#D4AF37" strokeWidth="1.2" fill="none" opacity="0.4">
+                      <path d="M293 175 Q291 175 291 177 L291 182 L294 181 L301 181 Q303 181 303 179 L303 175 Q303 173 301 173 L295 173 Q293 173 293 175Z" stroke="#68B0B7" strokeWidth="1.2" fill="none" opacity="0.4">
                         <animate attributeName="opacity" values="0.2;0.55;0.2" dur="3.5s" repeatCount="indefinite" />
                       </path>
-                      <circle cx="285" cy="250" r="14" fill="#D4AF37" opacity="0.09">
+                      <circle cx="285" cy="250" r="14" fill="#68B0B7" opacity="0.09">
                         <animate attributeName="opacity" values="0.05;0.16;0.05" dur="4s" repeatCount="indefinite" />
                       </circle>
-                      <path d="M280 246 Q285 243 290 246" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.5">
+                      <path d="M280 246 Q285 243 290 246" stroke="#68B0B7" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.5">
                         <animate attributeName="opacity" values="0.3;0.7;0.3" dur="4s" repeatCount="indefinite" />
                       </path>
                     </g>
 
-                    <circle cx="155" cy="160" r="2.5" fill="#D4AF37" opacity="0.7">
+                    <circle cx="155" cy="160" r="2.5" fill="#68B0B7" opacity="0.7">
                       <animate attributeName="cx" values="155;175;195" dur="2s" repeatCount="indefinite" />
                       <animate attributeName="opacity" values="0.7;0;0" dur="2s" repeatCount="indefinite" />
                     </circle>
-                    <circle cx="155" cy="200" r="2" fill="#D4AF37" opacity="0.5">
+                    <circle cx="155" cy="200" r="2" fill="#68B0B7" opacity="0.5">
                       <animate attributeName="cx" values="155;180;205" dur="2.5s" repeatCount="indefinite" />
                       <animate attributeName="opacity" values="0.5;0;0" dur="2.5s" repeatCount="indefinite" />
                     </circle>
-                    <circle cx="150" cy="180" r="2" fill="#D4AF37" opacity="0.6">
+                    <circle cx="150" cy="180" r="2" fill="#68B0B7" opacity="0.6">
                       <animate attributeName="cx" values="150;173;195" dur="1.8s" repeatCount="indefinite" />
                       <animate attributeName="opacity" values="0.6;0;0" dur="1.8s" repeatCount="indefinite" />
                     </circle>

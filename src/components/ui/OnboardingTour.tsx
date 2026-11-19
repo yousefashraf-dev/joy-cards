@@ -10,13 +10,12 @@ const FADE_MS = 500;
 
 export default function OnboardingTour() {
   const t = useTranslations("onboarding");
-  const [activeIndex, setActiveIndex] = useState(() => {
-    if (typeof window !== "undefined") {
-      const completed = localStorage.getItem("gotap_tour_completed");
-      return completed ? -1 : 0;
-    }
-    return -1;
-  });
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
+
+  useEffect(() => {
+    const completed = localStorage.getItem("gotap_tour_completed");
+    if (!completed) setActiveIndex(0);
+  }, []);
 
   const advance = useCallback(() => {
     setActiveIndex((prev) => {

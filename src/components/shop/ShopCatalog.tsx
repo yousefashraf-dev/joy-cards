@@ -65,7 +65,7 @@ export default function ShopCatalog() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group card-solid rounded-2xl overflow-hidden h-full flex flex-col hover:border-gold/40 hover:shadow-[0_0_35px_rgba(198,165,104,0.15)] transition-all duration-500"
+              className="group card-solid rounded-2xl overflow-hidden h-full flex flex-col hover:border-gold/40 hover:shadow-[0_0_35px_rgba(104,176,183,0.15)] transition-all duration-500"
             >
               <div className="relative h-56 overflow-hidden bg-matte-dark flex items-center justify-center p-4">
                 {product.images?.[0] ? (
@@ -103,9 +103,9 @@ export default function ShopCatalog() {
                 <p className="text-xs text-gold/80 font-semibold mb-2">{product.tagline[locale]}</p>
                 <ul className="space-y-1.5 mb-4 flex-1">
                   {product.features.slice(0, 3).map((f, fi) => (
-                    <li key={fi} className="flex items-start gap-1.5 text-xs text-slate-muted/90">
+                    <li key={fi} className="flex items-start gap-1.5 text-xs leading-relaxed text-slate-muted/90">
                       <Check className="w-3.5 h-3.5 text-success mt-0.5 shrink-0" />
-                      {f[locale]}
+                      <span className="min-w-0 break-words">{f[locale]}</span>
                     </li>
                   ))}
                 </ul>
@@ -125,8 +125,8 @@ export default function ShopCatalog() {
                           ) : (
                             <span className="text-[10px] text-slate-muted/60">{t("noDiscount")}</span>
                           )}
-                          <span className="font-bold text-slate-light" dir="ltr">
-                            {unit} {tc("egp")}
+                          <span className="font-bold text-slate-light">
+                            <bdi>{unit}</bdi> {tc("egp")}
                           </span>
                         </span>
                       </div>
@@ -136,7 +136,7 @@ export default function ShopCatalog() {
 
                 <button
                   onClick={() => setOrderProductId(product.id)}
-                  className="w-full py-3 rounded-xl bg-gradient-gold text-matte-dark font-black text-sm hover:shadow-[0_0_30px_rgba(198,165,104,0.35)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="w-full py-3 rounded-xl bg-gradient-gold text-matte-dark font-black text-sm hover:shadow-[0_0_30px_rgba(104,176,183,0.35)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   {t("orderNow")}
                 </button>

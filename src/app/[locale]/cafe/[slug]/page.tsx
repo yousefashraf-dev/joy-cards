@@ -200,8 +200,9 @@ export default function CafePage() {
   const [hoursModal, setHoursModal] = useState(false);
   const [vodafoneModal, setVodafoneModal] = useState(false);
   const [locationsModal, setLocationsModal] = useState(false);
+  const [bankModal, setBankModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [copiedBank, setCopiedBank] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const [menuImages, setMenuImages] = useState<string[]>([]);
 
   const theme: CafeTheme = cafe?.theme || "cafe";
@@ -239,12 +240,12 @@ export default function CafePage() {
     }
   };
 
-  const handleCopyBankAccount = async () => {
-    if (!cafe?.bankAccount) return;
+  const handleCopyField = async (field: string, value: string) => {
+    if (!value) return;
     try {
-      await navigator.clipboard.writeText(cafe.bankAccount);
-      setCopiedBank(true);
-      setTimeout(() => setCopiedBank(false), 2000);
+      await navigator.clipboard.writeText(value);
+      setCopiedField(field);
+      window.setTimeout(() => setCopiedField((current) => (current === field ? null : current)), 2000);
     } catch {
       // fallback
     }
@@ -684,8 +685,8 @@ export default function CafePage() {
                 )}
                 {bankAccount && (
                   <button
-                    onClick={handleCopyBankAccount}
-                    aria-label="Copy bank account"
+                    onClick={() => setBankModal(true)}
+                    aria-label="View bank account details"
                     className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02] ${paymentCount === 3 ? "col-span-2" : ""}`}
                     style={{
                       backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
@@ -707,8 +708,8 @@ export default function CafePage() {
                       {bankAccount}
                     </span>
                     <span className="inline-flex items-center gap-1 text-[11px] opacity-70">
-                      {copiedBank ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                      {copiedBank ? "Copied!" : "Copy account"}
+                      <Copy className="w-3.5 h-3.5" />
+                      Tap to copy
                     </span>
                   </button>
                 )}
@@ -955,6 +956,94 @@ export default function CafePage() {
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Bank Account Modal */}
+        <AnimatePresence>
+          {bankModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 z-50"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setBankModal(false);
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="w-full max-w-sm backdrop-blur-xl border rounded-2xl p-8"
+                style={{
+                  backgroundColor: `${themeCfg.ringOffset}F2`,
+                  borderColor: `${accentHex}4D`,
+                  boxShadow: `0 0 40px ${accentHex}26`,
+                }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <Landmark className="w-6 h-6" style={{ color: accentHex }} />
+                    <h3 className="text-lg font-bold" style={{ color: accentHex }}>
+                      Bank Account
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setBankModal(false)}
+                    className="text-slate-muted hover:text-slate-light transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {[
+                    { key: "bankName", label: "Bank Name", value: bankName },
+                    { key: "bankAccountName", label: "Account Holder", value: bankAccountName },
+                    { key: "bankAccount", label: "Account Number / IBAN", value: bankAccount },
+                  ]
+                    .filter((row) => row.value)
+                    .map((row) => (
+                      <div key={row.key}>
+                        <p className="text-xs text-slate-muted mb-1">{row.label}</p>
+                        <div className="flex items-center gap-2">
+                          <div
+                            dir={row.key === "bankAccount" ? "ltr" : undefined}
+                            className="flex-1 min-w-0 px-4 py-3 rounded-lg backdrop-blur-md border font-mono text-base break-all"
+                            style={{
+                              backgroundColor: isVape ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.05)",
+                              borderColor: `${accentHex}33`,
+                              color: accentHex,
+                            }}
+                          >
+                            {row.value}
+                          </div>
+                          <button
+                            onClick={() => handleCopyField(row.key, row.value)}
+                            aria-label={`Copy ${row.label}`}
+                            className="p-3 rounded-lg border transition-all duration-200 shrink-0"
+                            style={{
+                              backgroundColor: `${accentHex}33`,
+                              borderColor: `${accentHex}66`,
+                              color: accentHex,
+                            }}
+                          >
+                            {copiedField === row.key ? (
+                              <Check className="w-5 h-5" />
+                            ) : (
+                              <Copy className="w-5 h-5" />
+                            )}
+                          </button>
+                        </div>
+                        {copiedField === row.key && (
+                          <p className="text-xs text-green-400 mt-2">Copied!</p>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </motion.div>
             </motion.div>

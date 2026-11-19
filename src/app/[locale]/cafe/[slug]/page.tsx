@@ -25,6 +25,7 @@ import {
   Landmark,
 } from "lucide-react";
 import type { Cafe } from "@/lib/cafe-schema";
+import { normalizeProvider, walletTelLink, WALLET_LABELS } from "@/lib/wallets";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
 import type { CafeTheme } from "@/lib/cafe-themes";
 import { BASE_URL } from "@/lib/constants";
@@ -367,29 +368,27 @@ export default function CafePage() {
   ].filter((item) => item.href);
 
   const bankAccount = cafe.bankAccount?.trim() || "";
-  const hasPayments =
-    cafe.vodafoneCash ||
-    (cafe.vodafoneCashExtra && cafe.vodafoneCashExtra.length > 0) ||
-    cafe.instaPay ||
-    bankAccount;
-  const allVodafoneNumbers = [
-    cafe.vodafoneCash,
-    ...(cafe.vodafoneCashExtra || []),
-  ].filter(Boolean) as string[];
+  const bankName = cafe.bankName?.trim() || "";
+  const bankAccountName = cafe.bankAccountName?.trim() || "";
+  const extraProviders = cafe.vodafoneCashExtraProviders || [];
+  const wallets = [
+    ...(cafe.vodafoneCash
+      ? [{ number: cafe.vodafoneCash, provider: normalizeProvider(cafe.walletProvider) }]
+      : []),
+    ...(cafe.vodafoneCashExtra || [])
+      .map((number, i) => ({ number, provider: normalizeProvider(extraProviders[i]) }))
+      .filter((wallet) => wallet.number),
+  ];
+  const hasPayments = wallets.length > 0 || cafe.instaPay || bankAccount;
   const instaPayLink = cafe.instaPay
     ? cafe.instaPay.startsWith("http://") || cafe.instaPay.startsWith("https://")
       ? cafe.instaPay
       : `instapay://payment?to=${cafe.instaPay}`
     : "";
   const paymentCount =
-    (allVodafoneNumbers.length > 0 ? 1 : 0) +
+    (wallets.length > 0 ? 1 : 0) +
     (instaPayLink ? 1 : 0) +
     (bankAccount ? 1 : 0);
-
-  const makeVodafoneLink = (num: string) =>
-    num.startsWith("http://") || num.startsWith("https://")
-      ? num
-      : `tel:%2A9%2A7%2A${num}%23`;
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: themeCfg.bg }}>
@@ -623,10 +622,10 @@ export default function CafePage() {
                 Payment Methods
               </p>
               <div className={`grid gap-4 ${paymentCount > 1 ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
-                {allVodafoneNumbers.length > 0 && (
-                  allVodafoneNumbers.length === 1 ? (
+                {wallets.length > 0 && (
+                  wallets.length === 1 ? (
                     <a
-                      href={makeVodafoneLink(allVodafoneNumbers[0])}
+                      href={walletTelLink(wallets[0].provider, wallets[0].number)}
                       className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
                       style={{
                         backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
@@ -640,7 +639,7 @@ export default function CafePage() {
                         <circle cx="26" cy="16" r="2.5" fill="white" />
                       </svg>
                       <span className="text-sm font-bold text-center leading-tight">
-                        Pay via Vodafone Cash
+                        Pay via {WALLET_LABELS[wallets[0].provider]}
                       </span>
                     </a>
                   ) : (
@@ -659,7 +658,7 @@ export default function CafePage() {
                         <circle cx="26" cy="16" r="2.5" fill="white" />
                       </svg>
                       <span className="text-sm font-bold text-center leading-tight">
-                        Pay via Vodafone Cash
+                        Pay via Mobile Wallet
                       </span>
                     </button>
                   )
@@ -698,6 +697,12 @@ export default function CafePage() {
                     <span className="text-sm font-bold text-center leading-tight">
                       Bank Account
                     </span>
+                    {bankName && (
+                      <span className="text-xs font-semibold text-center opacity-90">{bankName}</span>
+                    )}
+                    {bankAccountName && (
+                      <span className="text-[11px] text-center opacity-70">{bankAccountName}</span>
+                    )}
                     <span dir="ltr" className="max-w-full truncate text-xs opacity-80">
                       {bankAccount}
                     </span>
@@ -887,7 +892,7 @@ export default function CafePage() {
           )}
         </AnimatePresence>
 
-        {/* Vodafone Cash Selection Modal */}
+        {/* Mobile Wallet Selection Modal */}
         <AnimatePresence>
           {vodafoneModal && (
             <motion.div
@@ -918,7 +923,7 @@ export default function CafePage() {
                       <circle cx="26" cy="16" r="2.5" fill="white" />
                     </svg>
                     <h3 className="text-lg font-bold" style={{ color: accentHex }}>
-                      Choose Vodafone Cash Number
+                      Choose Wallet
                     </h3>
                   </div>
                   <button
@@ -930,10 +935,10 @@ export default function CafePage() {
                 </div>
 
                 <div className="space-y-3">
-                  {allVodafoneNumbers.map((num, i) => (
+                  {wallets.map((wallet, i) => (
                     <a
                       key={i}
-                      href={makeVodafoneLink(num)}
+                      href={walletTelLink(wallet.provider, wallet.number)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
@@ -943,7 +948,10 @@ export default function CafePage() {
                         color: accentHex,
                       }}
                     >
-                      <span dir="ltr" className="text-sm font-bold tracking-wide">{num}</span>
+                      <span className="flex flex-col items-start">
+                        <span className="text-[11px] opacity-70">{WALLET_LABELS[wallet.provider]}</span>
+                        <span dir="ltr" className="text-sm font-bold tracking-wide">{wallet.number}</span>
+                      </span>
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   ))}

@@ -523,6 +523,7 @@ export default function MenuPage() {
   useEffect(() => {
     if (deckIndex >= screens.length) {
       const target = Math.max(0, screens.length - 1);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDeckIndex(target);
       slideX.set(-target * 100);
     }
@@ -642,6 +643,7 @@ export default function MenuPage() {
   /* ---------- Admin Quick Edit ---------- */
   useEffect(() => {
     if (!adminAuthKey) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (sessionStorage.getItem(adminAuthKey) === "true") setIsAdminMode(true);
   }, [adminAuthKey]);
 
@@ -655,11 +657,13 @@ export default function MenuPage() {
     setNotice({ type, message });
   }, []);
 
+  const menuId = menu?.id;
+
   const syncMenu = useCallback(
     async (newItems: MenuItem[], newCategories: MenuCategory[]) => {
-      if (!menu?.id) return;
+      if (!menuId) return;
       try {
-        const res = await fetch(`/api/menus/${menu.id}`, {
+        const res = await fetch(`/api/menus/${menuId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ items: newItems, categories: newCategories }),
@@ -671,7 +675,7 @@ export default function MenuPage() {
         flashNotice("error", "حدث خطأ في حفظ التعديل. حاول مرة أخرى.");
       }
     },
-    [menu?.id, flashNotice]
+    [menuId, flashNotice]
   );
 
   const handleLockClick = useCallback(() => {
@@ -837,7 +841,7 @@ export default function MenuPage() {
             <UtensilsCrossed className="w-8 h-8" style={{ color: `${accent}66` }} />
           </div>
           <h1 className="text-xl font-bold" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "var(--font-cairo), sans-serif" }}>Not found</h1>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>This menu doesn't exist or was deleted</p>
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-cairo), sans-serif" }}>This menu doesn&apos;t exist or was deleted</p>
         </motion.div>
       </div>
     );

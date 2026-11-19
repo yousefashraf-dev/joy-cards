@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Send, Download, ListOrdered } from "lucide-react";
+import { X, Upload, ImageIcon, FileText, Link as LinkIcon, Trash2, Download, ListOrdered } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import type { Cafe, WorkingHour, MenuItem, MenuCategory, CafeLocation } from "@/lib/cafe-schema";
+import { WALLET_PROVIDERS, normalizeProvider, type WalletProvider } from "@/lib/wallets";
 import MenuBuilder from "./MenuBuilder";
 
 import { compressImage } from "@/lib/compressImage";
@@ -56,6 +57,14 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
   const [vodafoneCash, setVodafoneCash] = useState(cafe?.vodafoneCash || "");
   const [vodafoneCashExtra, setVodafoneCashExtra] = useState<string[]>(cafe?.vodafoneCashExtra || []);
   const [instaPay, setInstaPay] = useState(cafe?.instaPay || "");
+  const [walletProvider, setWalletProvider] = useState<WalletProvider>(normalizeProvider(cafe?.walletProvider));
+  const [extraProviders, setExtraProviders] = useState<WalletProvider[]>(() => {
+    const numbers = cafe?.vodafoneCashExtra || [];
+    const providers = cafe?.vodafoneCashExtraProviders || [];
+    return numbers.map((_, i) => normalizeProvider(providers[i]));
+  });
+  const [bankName, setBankName] = useState(cafe?.bankName || "");
+  const [bankAccountName, setBankAccountName] = useState(cafe?.bankAccountName || "");
   const [bankAccount, setBankAccount] = useState(cafe?.bankAccount || "");
   const [theme, setTheme] = useState<CafeTheme>(cafe?.theme || "cafe");
   const [youtubeUrl, setYoutubeUrl] = useState(cafe?.youtubeUrl || "");
@@ -183,6 +192,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
         vodafoneCash: vodafoneCash.trim(),
         vodafoneCashExtra: vodafoneCashExtra.map((v) => v.trim()).filter(Boolean),
         instaPay: instaPay.trim(),
+        walletProvider,
+        vodafoneCashExtraProviders: extraProviders,
+        bankName: bankName.trim(),
+        bankAccountName: bankAccountName.trim(),
         bankAccount: bankAccount.trim(),
         youtubeUrl: youtubeUrl.trim(),
         email: email.trim(),
@@ -840,17 +853,41 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <input
-                type="text"
-                value={vodafoneCash}
-                onChange={(e) => setVodafoneCash(e.target.value)}
-                className={inputClass}
-                placeholder="Vodafone Cash (الرقم الأساسي)"
-                dir="ltr"
-              />
-              <p className="text-xs text-slate-muted/50 mt-1">الرقم الأساسي (رقم واحد فقط)</p>
+              <div className="flex items-center gap-2">
+                <select
+                  value={walletProvider}
+                  onChange={(e) => setWalletProvider(normalizeProvider(e.target.value))}
+                  className={`${inputClass} max-w-[46%]`}
+                >
+                  {WALLET_PROVIDERS.map((p) => (
+                    <option key={p.value} value={p.value}>{p.label}</option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  value={vodafoneCash}
+                  onChange={(e) => setVodafoneCash(e.target.value)}
+                  className={inputClass}
+                  placeholder="رقم المحفظة الأساسي"
+                  dir="ltr"
+                />
+              </div>
+              <p className="text-xs text-slate-muted/50 mt-1">رقم المحفظة الأساسي (فودافون / أورنج / اتصالات / WE)</p>
               {vodafoneCashExtra.map((v, i) => (
                 <div key={i} className="flex items-center gap-2 mt-2">
+                  <select
+                    value={extraProviders[i] || "vodafone"}
+                    onChange={(e) => {
+                      const updated = [...extraProviders];
+                      updated[i] = normalizeProvider(e.target.value);
+                      setExtraProviders(updated);
+                    }}
+                    className={`${inputClass} max-w-[46%]`}
+                  >
+                    {WALLET_PROVIDERS.map((p) => (
+                      <option key={p.value} value={p.value}>{p.label}</option>
+                    ))}
+                  </select>
                   <input
                     type="text"
                     value={v}
@@ -865,7 +902,10 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                   />
                   <button
                     type="button"
-                    onClick={() => setVodafoneCashExtra((prev) => prev.filter((_, idx) => idx !== i))}
+                    onClick={() => {
+                      setVodafoneCashExtra((prev) => prev.filter((_, idx) => idx !== i));
+                      setExtraProviders((prev) => prev.filter((_, idx) => idx !== i));
+                    }}
                     className="p-2 rounded-lg text-red-400 hover:bg-red-400/10 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -874,10 +914,13 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
               ))}
               <button
                 type="button"
-                onClick={() => setVodafoneCashExtra((prev) => [...prev, ""])}
+                onClick={() => {
+                  setVodafoneCashExtra((prev) => [...prev, ""]);
+                  setExtraProviders((prev) => [...prev, "vodafone"]);
+                }}
                 className="mt-2 px-4 py-2 rounded-lg border border-dashed border-white/20 text-sm text-slate-muted hover:text-slate-light hover:border-white/40 transition-all duration-200"
               >
-                + إضافة رقم فودافون كاش إضافي
+                + إضافة محفظة إضافية
               </button>
             </div>
             <div>
@@ -890,16 +933,30 @@ export default function CafeForm({ cafe, onSuccess, onCancel }: CafeFormProps) {
                 dir="ltr"
               />
             </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input
+                type="text"
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+                className={inputClass}
+                placeholder="اسم البنك (مثال: CIB / الأهلي)"
+              />
+              <input
+                type="text"
+                value={bankAccountName}
+                onChange={(e) => setBankAccountName(e.target.value)}
+                className={inputClass}
+                placeholder="اسم صاحب الحساب"
+              />
               <input
                 type="text"
                 value={bankAccount}
                 onChange={(e) => setBankAccount(e.target.value)}
                 className={inputClass}
-                placeholder="Bank Account (IBAN / رقم الحساب)"
+                placeholder="رقم الحساب / IBAN"
                 dir="ltr"
               />
-              <p className="text-xs text-slate-muted/50 mt-1">يظهر للعميل كطريقة دفع، والضغط عليه ينسخ الرقم. اتركه فاضي لإخفائه.</p>
+              <p className="text-xs text-slate-muted/50 sm:col-span-3">تظهر بيانات الحساب البنكي للعميل كطريقة دفع، والضغط عليها ينسخ رقم الحساب. اتركها فاضية لإخفائها.</p>
             </div>
           </div>
         </div>

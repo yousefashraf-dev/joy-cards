@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, NotebookText, Upload, Gift, Share2, Copy, Check, ClipboardList } from "lucide-react";
+import { Lock, LogOut, Plus, Shield, ShoppingBag, Store, NotebookText, Upload, Gift, Share2, Check, ClipboardList } from "lucide-react";
 import CafeForm from "@/components/admin/CafeForm";
 import CafeTable from "@/components/admin/CafeTable";
 import ProductForm from "@/components/admin/ProductForm";
@@ -29,6 +29,7 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<"cafes" | "products" | "menus" | "import-csv" | "surprises" | "orders">("cafes");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAuthenticated(sessionStorage.getItem("admin_auth") === "true");
   }, []);
 

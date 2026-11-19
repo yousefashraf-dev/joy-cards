@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { X, Copy, Check, Plus, Trash2, Upload, ImageIcon } from "lucide-react";
+import { X, Copy, Check, Plus, Trash2, ImageIcon } from "lucide-react";
 import type { Surprise, GalleryPhoto } from "@/lib/surprise-schema";
 import { compressImage } from "@/lib/compressImage";
 
@@ -31,7 +31,6 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
   const [photos, setPhotos] = useState<GalleryPhoto[]>(surprise?.photos || []);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [newPhotoCaptions, setNewPhotoCaptions] = useState<string[]>([]);
-  const [photoUploading, setPhotoUploading] = useState(false);
   const [finalLetter, setFinalLetter] = useState(surprise?.finalLetter || "");
   const [copiedLink, setCopiedLink] = useState(false);
   const [createdId, setCreatedId] = useState<string | null>(null);
@@ -292,7 +291,7 @@ export default function SurpriseForm({ surprise, onSuccess, onCancel }: Surprise
           </div>
 
           {photos.length === 0 && photoFiles.length === 0 && (
-            <p className="text-xs text-slate-muted/60">اضغط "إضافة صور" لرفع صور المعرض (حد أقصى 10)</p>
+            <p className="text-xs text-slate-muted/60">اضغط &quot;إضافة صور&quot; لرفع صور المعرض (حد أقصى 10)</p>
           )}
 
           <div className="space-y-3">

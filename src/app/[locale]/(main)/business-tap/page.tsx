@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import {
   Utensils, Star, Wifi, Globe, MessageCircle,
   QrCode, Smartphone, MapPin,
-  CreditCard, ChevronRight, List, Camera, ThumbsUp, Sparkles,
+  CreditCard, ChevronRight, List, Camera, ThumbsUp,
 } from "lucide-react";
 import { WHATSAPP_BUSINESS_MSG } from "@/lib/constants";
 import MenuConversion from "@/components/business/MenuConversion";
@@ -97,12 +97,6 @@ export default function BusinessTapPage() {
     { icon: Star, key: "googleReviews" },
     { icon: Wifi, key: "wifiAccess" },
     { icon: Globe, key: "socialHub" },
-  ];
-
-  const steps = [
-    { icon: null, key: "step1", customIcon: "qr" },
-    { icon: null, key: "step2", customIcon: "links" },
-    { icon: null, key: "step3", customIcon: "menu" },
   ];
 
   return (

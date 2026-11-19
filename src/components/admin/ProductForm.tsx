@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { X, Upload, ImageIcon } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import type { Product } from "@/lib/product-schema";
 import { compressImage } from "@/lib/compressImage";
 import { useToast } from "@/components/ui/ToastProvider";
@@ -35,7 +35,7 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
     setSaving(true);
 
     try {
-      let allImages = [...existingImages];
+      const allImages = [...existingImages];
       for (const file of imageFiles) {
         const compressed = await compressImage(file);
         const fd = new FormData();

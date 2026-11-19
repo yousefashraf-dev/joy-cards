@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { seededRandom } from "@/lib/seeded-random";
 
 interface SurpriseData {
   title: string;
@@ -49,10 +50,12 @@ function useLiveTimer(targetDate: string) {
 function TypingEffect({ text, onDone }: { text: string; onDone?: () => void }) {
   const [displayed, setDisplayed] = useState("");
   const callbackRef = useRef(onDone);
-  callbackRef.current = onDone;
 
   useEffect(() => {
-    setDisplayed("");
+    callbackRef.current = onDone;
+  }, [onDone]);
+
+  useEffect(() => {
     let i = 0;
     const id = setInterval(() => {
       i++;
@@ -198,9 +201,9 @@ export default function SurprisePage() {
       <div className="min-h-screen bg-gradient-to-br from-[#1a0a1e] via-[#2d0a2e] to-[#1a0a1e] flex items-center justify-center p-5 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(244,63,94,0.08)_0%,transparent_70%)]" />
         {[...Array(18)].map((_, i) => (
-          <motion.div key={i} className="absolute pointer-events-none select-none" style={{ fontSize: `${10 + Math.random() * 16}px` }}
-            initial={{ x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000), y: (typeof window !== "undefined" ? window.innerHeight : 900) + 50, opacity: 0.08 + Math.random() * 0.12 }}
-            animate={{ y: -100 }} transition={{ duration: 10 + Math.random() * 8, repeat: Infinity, delay: Math.random() * 6, ease: "linear" }}>❤️</motion.div>
+          <motion.div key={i} className="absolute pointer-events-none select-none" style={{ fontSize: `${10 + seededRandom(i, 1) * 16}px` }}
+            initial={{ x: seededRandom(i, 2) * (typeof window !== "undefined" ? window.innerWidth : 1000), y: (typeof window !== "undefined" ? window.innerHeight : 900) + 50, opacity: 0.08 + seededRandom(i, 3) * 0.12 }}
+            animate={{ y: -100 }} transition={{ duration: 10 + seededRandom(i, 4) * 8, repeat: Infinity, delay: seededRandom(i, 5) * 6, ease: "linear" }}>❤️</motion.div>
         ))}
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: "easeOut" }} className="w-full max-w-sm relative z-10">
           <div className="backdrop-blur-2xl bg-white/[0.06] border border-white/[0.08] rounded-[2rem] p-8 sm:p-10 shadow-[0_0_60px_rgba(244,63,94,0.1)] text-center">
@@ -258,9 +261,9 @@ export default function SurprisePage() {
       {/* Floating hearts */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {[...Array(10)].map((_, i) => (
-          <motion.div key={i} className="absolute pointer-events-none select-none opacity-[0.06]" style={{ fontSize: `${10 + Math.random() * 12}px`, left: `${Math.random() * 100}%` }}
+          <motion.div key={i} className="absolute pointer-events-none select-none opacity-[0.06]" style={{ fontSize: `${10 + seededRandom(i, 1) * 12}px`, left: `${seededRandom(i, 2) * 100}%` }}
             initial={{ y: "110vh" }} animate={{ y: "-10vh" }}
-            transition={{ duration: 14 + Math.random() * 8, repeat: Infinity, delay: Math.random() * 8, ease: "linear" }}>❤️</motion.div>
+            transition={{ duration: 14 + seededRandom(i, 3) * 8, repeat: Infinity, delay: seededRandom(i, 4) * 8, ease: "linear" }}>❤️</motion.div>
         ))}
       </div>
 
@@ -275,7 +278,7 @@ export default function SurprisePage() {
             {data.senderName && <p className="text-white/30 text-sm mb-4 font-light tracking-wide">رسالة من {data.senderName}{data.recipientName ? ` إلى ${data.recipientName}` : ""}</p>}
             <GoldDivider />
             <p className="text-white text-xl sm:text-2xl leading-[2.2] font-medium min-h-[100px] mt-4">
-              <TypingEffect text={data.message} />
+              <TypingEffect key={data.message} text={data.message} />
             </p>
           </div>
         </motion.div>
@@ -394,7 +397,7 @@ export default function SurprisePage() {
               <GoldDivider />
               {data.finalLetter ? (
                 <div className="text-white/70 text-sm sm:text-base leading-[2] whitespace-pre-wrap max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar mt-4">
-                  <TypingEffect text={data.finalLetter} />
+                  <TypingEffect key={data.finalLetter} text={data.finalLetter} />
                 </div>
               ) : (
                 <p className="text-white/30 text-center text-4xl py-10">❤️</p>

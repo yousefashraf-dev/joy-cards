@@ -1,16 +1,6 @@
 import { GAS_URL } from "./constants";
 import type { OrderPayload } from "./types";
 
-function stripUndefined<T>(obj: T): T {
-  if (obj === null || obj === undefined || typeof obj !== "object") return obj;
-  if (Array.isArray(obj)) return obj.map(stripUndefined) as unknown as T;
-  return Object.fromEntries(
-    Object.entries(obj as Record<string, unknown>)
-      .filter((entry) => entry[1] !== undefined)
-      .map(([k, v]) => [k, stripUndefined(v)])
-  ) as T;
-}
-
 function buildAddress(data: OrderPayload): string {
   const parts: string[] = [];
   if (data.street) parts.push(data.street);

@@ -15,6 +15,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { CafeTheme } from "./cafe-themes";
 
 import { normalizeCategories, type MenuCategory } from "./category-icons";
+import type { WalletProvider } from "./wallets";
 
 export { normalizeCategories, type MenuCategory };
 
@@ -66,7 +67,11 @@ export interface Cafe {
   wifiPassword?: string;
   vodafoneCash?: string;
   vodafoneCashExtra?: string[];
+  walletProvider?: WalletProvider;
+  vodafoneCashExtraProviders?: WalletProvider[];
   instaPay?: string;
+  bankName?: string;
+  bankAccountName?: string;
   bankAccount?: string;
   youtubeUrl?: string;
   email?: string;
@@ -136,13 +141,17 @@ export async function getAllCafes(): Promise<Cafe[]> {
       locations: data.locations || [],
       wifiName: data.wifiName,
       wifiPassword: data.wifiPassword,
-        vodafoneCash: data.vodafoneCash,
-        vodafoneCashExtra: data.vodafoneCashExtra || [],
-        instaPay: data.instaPay,
-        bankAccount: data.bankAccount,
-        youtubeUrl: data.youtubeUrl,
-        email: data.email,
-        bio: data.bio,
+      vodafoneCash: data.vodafoneCash,
+      vodafoneCashExtra: data.vodafoneCashExtra || [],
+      walletProvider: data.walletProvider || "vodafone",
+      vodafoneCashExtraProviders: data.vodafoneCashExtraProviders || [],
+      instaPay: data.instaPay,
+      bankName: data.bankName,
+      bankAccountName: data.bankAccountName,
+      bankAccount: data.bankAccount,
+      youtubeUrl: data.youtubeUrl,
+      email: data.email,
+      bio: data.bio,
         workingHours: data.workingHours || [],
         createdAt: data.createdAt?.toMillis() || Date.now(),
       } as Cafe;
@@ -182,7 +191,11 @@ export async function getCafeBySlug(slug: string): Promise<Cafe | null> {
     wifiPassword: data.wifiPassword,
     vodafoneCash: data.vodafoneCash,
     vodafoneCashExtra: data.vodafoneCashExtra || [],
+    walletProvider: data.walletProvider || "vodafone",
+    vodafoneCashExtraProviders: data.vodafoneCashExtraProviders || [],
     instaPay: data.instaPay,
+    bankName: data.bankName,
+    bankAccountName: data.bankAccountName,
     bankAccount: data.bankAccount,
     youtubeUrl: data.youtubeUrl,
     email: data.email,

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Copy, Check, Plus, Trash2, ImageIcon } from "lucide-react";
 import { compressImage } from "@/lib/compressImage";
+import { seededRandom } from "@/lib/seeded-random";
 import type { GalleryPhoto } from "@/lib/surprise-schema";
 
 export default function SurpriseCreatePage() {
@@ -139,7 +140,7 @@ export default function SurpriseCreatePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-950 via-pink-950 to-rose-950 flex items-center justify-center p-4 relative overflow-hidden">
         {[...Array(15)].map((_, i) => (
-          <motion.div key={i} className="absolute text-pink-400/20 pointer-events-none" initial={{ x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000), y: typeof window !== "undefined" ? window.innerHeight + 50 : 900, scale: 0.5 + Math.random() }} animate={{ y: -100 }} transition={{ duration: 8 + Math.random() * 7, repeat: Infinity, delay: Math.random() * 5 }}>❤️</motion.div>
+          <motion.div key={i} className="absolute text-pink-400/20 pointer-events-none" initial={{ x: seededRandom(i, 1) * (typeof window !== "undefined" ? window.innerWidth : 1000), y: typeof window !== "undefined" ? window.innerHeight + 50 : 900, scale: 0.5 + seededRandom(i, 2) }} animate={{ y: -100 }} transition={{ duration: 8 + seededRandom(i, 3) * 7, repeat: Infinity, delay: seededRandom(i, 4) * 5 }}>❤️</motion.div>
         ))}
         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="w-full max-w-lg relative z-10 text-center">
           <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl">
@@ -162,7 +163,7 @@ export default function SurpriseCreatePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-950 via-pink-950 to-rose-950 flex items-center justify-center p-4 relative overflow-hidden">
       {[...Array(15)].map((_, i) => (
-        <motion.div key={i} className="absolute text-pink-400/20 pointer-events-none" initial={{ x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000), y: typeof window !== "undefined" ? window.innerHeight + 50 : 900, scale: 0.5 + Math.random() }} animate={{ y: -100 }} transition={{ duration: 8 + Math.random() * 7, repeat: Infinity, delay: Math.random() * 5 }}>❤️</motion.div>
+        <motion.div key={i} className="absolute text-pink-400/20 pointer-events-none" initial={{ x: seededRandom(i, 1) * (typeof window !== "undefined" ? window.innerWidth : 1000), y: typeof window !== "undefined" ? window.innerHeight + 50 : 900, scale: 0.5 + seededRandom(i, 2) }} animate={{ y: -100 }} transition={{ duration: 8 + seededRandom(i, 3) * 7, repeat: Infinity, delay: seededRandom(i, 4) * 5 }}>❤️</motion.div>
       ))}
 
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg relative z-10">

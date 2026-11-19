@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n/routing";
 import HeroSection from "@/components/home/HeroSection";
-import ModelShowcase from "@/components/three/ModelShowcase";
 import ShopProducts from "@/components/shop/ShopProducts";
 import WhyGoTapSection from "@/components/home/WhyGoTapSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
@@ -52,7 +51,6 @@ export default async function HomePage({ params }: HomePageProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <main>
         <HeroSection />
-        <ModelShowcase />
         <ShopProducts />
         <WhyGoTapSection />
         <HowItWorksSection />

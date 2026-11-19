@@ -31,7 +31,6 @@ const inputClass =
   "w-full px-4 py-2.5 rounded-lg bg-dark-card border border-white/10 text-sm text-slate-light placeholder:text-slate-muted/40 focus:outline-none focus:border-neon-green/50 transition-all duration-200";
 
 export default function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
-  const t = useTranslations("admin.form");
   const ta = useTranslations("admin");
   const { showToast } = useToast();
   const [saving, setSaving] = useState(false);
@@ -41,7 +40,7 @@ export default function MenuForm({ menu, onSuccess, onCancel }: MenuFormProps) {
   const [categories, setCategories] = useState<MenuCategory[]>(menu?.categories || []);
   const [items, setItems] = useState<MenuItem[]>(menu?.items || []);
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [existingLogo, setExistingLogo] = useState(menu?.logo || "");
+  const [existingLogo] = useState(menu?.logo || "");
   const [adminPin, setAdminPin] = useState(menu?.adminPin || "");
 
   const qrRef = useRef<HTMLDivElement>(null);

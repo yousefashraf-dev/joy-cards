@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback } from "react";
-import { useTranslations } from "next-intl";
 import { Copy, ExternalLink, Pencil, Trash2 } from "lucide-react";
 import type { MenuDocument } from "@/lib/menu-schema";
 import { BASE_URL } from "@/lib/constants";
@@ -14,7 +13,6 @@ interface MenuTableProps {
 }
 
 export default function MenuTable({ menus, onEdit, onRefresh }: MenuTableProps) {
-  const t = useTranslations("admin");
   const { showToast } = useToast();
 
   const handleDelete = useCallback(

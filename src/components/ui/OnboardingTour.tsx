@@ -14,6 +14,7 @@ export default function OnboardingTour() {
 
   useEffect(() => {
     const completed = localStorage.getItem("gotap_tour_completed");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!completed) setActiveIndex(0);
   }, []);
 

@@ -23,9 +23,11 @@ import {
   Share2,
   ChevronRight,
   Landmark,
+  Wallet,
 } from "lucide-react";
 import type { Cafe } from "@/lib/cafe-schema";
-import { normalizeProvider, walletTelLink, WALLET_LABELS } from "@/lib/wallets";
+import { normalizeProvider, walletTelLink, walletTransferCode, WALLET_LABELS, type WalletProvider } from "@/lib/wallets";
+import { formatSocialLink } from "@/lib/formatSocialLink";
 import { CAFE_THEMES } from "@/lib/cafe-themes";
 import type { CafeTheme } from "@/lib/cafe-themes";
 import { BASE_URL } from "@/lib/constants";
@@ -155,6 +157,44 @@ function isOvernight(open: string, close: string) {
   return ch * 60 + cm <= oh * 60 + om;
 }
 
+function WalletIcon({ provider, className }: { provider?: WalletProvider; className?: string }) {
+  if (provider === "etisalat") {
+    return (
+      <svg className={className} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#00A651" />
+        <path d="M32 19.5c-1.7-1.9-4.2-3-7-3-5.3 0-9.6 3.4-9.6 7.5s4.3 7.5 9.6 7.5c2.8 0 5.3-1.1 7-3" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
+        <path d="M20 24h11" stroke="white" strokeWidth="3" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (provider === "orange") {
+    return (
+      <svg className={className} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#FF7900" />
+        <rect x="14" y="14" width="20" height="20" rx="2" fill="white" />
+      </svg>
+    );
+  }
+  if (provider === "we") {
+    return (
+      <svg className={className} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#7B2D8E" />
+        <text x="24" y="30" textAnchor="middle" fontSize="15" fontWeight="700" fill="white" fontFamily="Arial, sans-serif">WE</text>
+      </svg>
+    );
+  }
+  if (provider === "vodafone") {
+    return (
+      <svg className={className} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#E60000" />
+        <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
+        <circle cx="26" cy="16" r="2.5" fill="white" />
+      </svg>
+    );
+  }
+  return <Wallet className={className} />;
+}
+
 const THEME_DECORATIONS: Record<CafeTheme, { component: typeof CoffeeCupSvg; position: string }[]> = {
   cafe: [
     { component: CoffeeCupSvg, position: "left-0 top-1/4 -translate-x-1/4 w-64 h-64" },
@@ -268,8 +308,8 @@ export default function CafePage() {
     );
   }
 
-  const sanitizedWhatsApp = cafe.whatsapp
-    ? cafe.whatsapp.replace(/[^0-9]/g, "")
+  const whatsappLink = cafe.whatsapp
+    ? formatSocialLink(cafe.whatsapp, "whatsapp")
     : "";
 
   const cafeLocations = (cafe.locations || [])
@@ -361,9 +401,7 @@ export default function CafePage() {
     },
     {
       key: "whatsapp",
-      href: sanitizedWhatsApp
-        ? `https://wa.me/${sanitizedWhatsApp}`
-        : "",
+      href: whatsappLink,
       icon: <MessageCircle className="w-5 h-5" />,
     },
   ].filter((item) => item.href);
@@ -622,47 +660,26 @@ export default function CafePage() {
               <p className="text-xs mb-4 uppercase tracking-widest text-center" style={{ color: `${accentHex}99` }}>
                 Payment Methods
               </p>
-              <div className={`grid gap-4 ${paymentCount > 1 ? "grid-cols-2" : "max-w-xs mx-auto"}`}>
+              <div className={`grid gap-4 ${paymentCount === 1 ? "max-w-xs mx-auto" : paymentCount === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3"}`}>
                 {wallets.length > 0 && (
-                  wallets.length === 1 ? (
-                    <a
-                      href={walletTelLink(wallets[0].provider, wallets[0].number)}
-                      className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
-                      style={{
-                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
-                        borderColor: `${accentHex}4D`,
-                        color: accentHex,
-                      }}
-                    >
-                      <svg className="w-10 h-10 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
-                        <circle cx="24" cy="24" r="22" fill="#E60000" />
-                        <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
-                        <circle cx="26" cy="16" r="2.5" fill="white" />
-                      </svg>
-                      <span className="text-sm font-bold text-center leading-tight">
-                        Pay via {WALLET_LABELS[wallets[0].provider]}
-                      </span>
-                    </a>
-                  ) : (
-                    <button
-                      onClick={() => setVodafoneModal(true)}
-                      className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
-                      style={{
-                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
-                        borderColor: `${accentHex}4D`,
-                        color: accentHex,
-                      }}
-                    >
-                      <svg className="w-10 h-10 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
-                        <circle cx="24" cy="24" r="22" fill="#E60000" />
-                        <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
-                        <circle cx="26" cy="16" r="2.5" fill="white" />
-                      </svg>
-                      <span className="text-sm font-bold text-center leading-tight">
-                        Pay via Mobile Wallet
-                      </span>
-                    </button>
-                  )
+                  <button
+                    onClick={() => setVodafoneModal(true)}
+                    aria-label={wallets.length === 1 ? `Pay via ${WALLET_LABELS[wallets[0].provider]}` : "Choose mobile wallet"}
+                    className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
+                    style={{
+                      backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                      borderColor: `${accentHex}4D`,
+                      color: accentHex,
+                    }}
+                  >
+                    <WalletIcon
+                      provider={wallets.length === 1 ? wallets[0].provider : undefined}
+                      className="w-10 h-10 group-hover:scale-110 transition-transform"
+                    />
+                    <span className="text-sm font-bold text-center leading-tight">
+                      {wallets.length === 1 ? `Pay via ${WALLET_LABELS[wallets[0].provider]}` : "Pay via Mobile Wallet"}
+                    </span>
+                  </button>
                 )}
                 {instaPayLink && (
                   <a
@@ -687,7 +704,7 @@ export default function CafePage() {
                   <button
                     onClick={() => setBankModal(true)}
                     aria-label="View bank account details"
-                    className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02] ${paymentCount === 3 ? "col-span-2" : ""}`}
+                    className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
                     style={{
                       backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
                       borderColor: `${accentHex}4D`,
@@ -697,19 +714,6 @@ export default function CafePage() {
                     <Landmark className="w-10 h-10 group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-bold text-center leading-tight">
                       Bank Account
-                    </span>
-                    {bankName && (
-                      <span className="text-xs font-semibold text-center opacity-90">{bankName}</span>
-                    )}
-                    {bankAccountName && (
-                      <span className="text-[11px] text-center opacity-70">{bankAccountName}</span>
-                    )}
-                    <span dir="ltr" className="max-w-full truncate text-xs opacity-80">
-                      {bankAccount}
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] opacity-70">
-                      <Copy className="w-3.5 h-3.5" />
-                      Tap to copy
                     </span>
                   </button>
                 )}
@@ -918,13 +922,12 @@ export default function CafePage() {
               >
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" style={{ color: accentHex }}>
-                      <circle cx="24" cy="24" r="22" fill="#E60000" />
-                      <path d="M18 18 C18 18, 14 23, 17 27 C19 31, 26 30, 28 26" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
-                      <circle cx="26" cy="16" r="2.5" fill="white" />
-                    </svg>
+                    <WalletIcon
+                      provider={wallets.length === 1 ? wallets[0].provider : undefined}
+                      className="w-7 h-7"
+                    />
                     <h3 className="text-lg font-bold" style={{ color: accentHex }}>
-                      Choose Wallet
+                      {wallets.length === 1 ? WALLET_LABELS[wallets[0].provider] : "Choose Wallet"}
                     </h3>
                   </div>
                   <button
@@ -935,27 +938,69 @@ export default function CafePage() {
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  {wallets.map((wallet, i) => (
-                    <a
-                      key={i}
-                      href={walletTelLink(wallet.provider, wallet.number)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl backdrop-blur-md border transition-all duration-300 group hover:scale-[1.02]"
-                      style={{
-                        backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
-                        borderColor: `${accentHex}4D`,
-                        color: accentHex,
-                      }}
-                    >
-                      <span className="flex flex-col items-start">
-                        <span className="text-[11px] opacity-70">{WALLET_LABELS[wallet.provider]}</span>
-                        <span dir="ltr" className="text-sm font-bold tracking-wide">{wallet.number}</span>
-                      </span>
-                      <ChevronRight className="w-4 h-4" />
-                    </a>
-                  ))}
+                <div className="space-y-4">
+                  {wallets.map((wallet, i) => {
+                    const copyKey = `wallet-${i}`;
+                    const isCopied = copiedField === copyKey;
+                    const code = walletTransferCode(wallet.provider, wallet.number);
+                    return (
+                      <div
+                        key={copyKey}
+                        className="rounded-2xl backdrop-blur-md border p-4"
+                        style={{
+                          backgroundColor: isVape ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.08)",
+                          borderColor: `${accentHex}4D`,
+                          color: accentHex,
+                        }}
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <WalletIcon provider={wallet.provider} className="w-8 h-8 shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-[11px] opacity-70">{WALLET_LABELS[wallet.provider]}</p>
+                            <p dir="ltr" className="text-sm font-bold tracking-wide">{wallet.number}</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            onClick={() => handleCopyField(copyKey, wallet.number)}
+                            className="flex items-center justify-center gap-2 py-3 rounded-xl border text-xs font-bold transition-all duration-200"
+                            style={{
+                              backgroundColor: `${accentHex}1A`,
+                              borderColor: `${accentHex}66`,
+                              color: accentHex,
+                            }}
+                          >
+                            {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                            {isCopied ? "Copied!" : "Copy Number"}
+                          </button>
+                          <a
+                            href={walletTelLink(wallet.provider, wallet.number)}
+                            aria-label={`Pay via ${WALLET_LABELS[wallet.provider]}`}
+                            className="flex items-center justify-center gap-2 py-3 rounded-xl border text-xs font-bold transition-all duration-200 hover:scale-[1.02]"
+                            style={{
+                              backgroundColor: `${accentHex}33`,
+                              borderColor: `${accentHex}66`,
+                              color: accentHex,
+                            }}
+                          >
+                            <Phone className="w-4 h-4" />
+                            Pay Now
+                          </a>
+                        </div>
+
+                        <div className="mt-3 flex items-center justify-between gap-2 text-[11px] opacity-70">
+                          <span>USSD</span>
+                          <code dir="ltr" className="font-mono">{code}</code>
+                        </div>
+                        <p className="mt-2 text-[11px] leading-relaxed opacity-60">
+                          {wallet.provider === "vodafone"
+                            ? "Dial the code, then enter the amount and your PIN."
+                            : "Dial the code, then enter your PIN, amount, and recipient number when prompted."}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               </motion.div>
             </motion.div>

@@ -19,13 +19,22 @@ export type Platform =
   | "onlineOrdering"
   | "pdfProfile";
 
+export function normalizeWhatsAppNumber(input: string): string {
+  let digits = input.replace(/[^0-9]/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("00")) digits = digits.slice(2);
+  if (/^01[0125]\d{8}$/.test(digits)) return `20${digits.slice(1)}`;
+  if (/^1[0125]\d{8}$/.test(digits)) return `20${digits}`;
+  return digits;
+}
+
 const PLATFORM_CONFIG: Record<Platform, { prefix?: string; transform?: (input: string) => string }> = {
   instagram: { prefix: "https://instagram.com/" },
   facebook: { prefix: "https://facebook.com/" },
   tiktok: { prefix: "https://tiktok.com/@" },
   snapchat: { prefix: "https://snapchat.com/add/" },
   telegram: { prefix: "https://t.me/" },
-  whatsapp: { prefix: "https://wa.me/", transform: (input) => input.replace(/[^0-9]/g, "") },
+  whatsapp: { prefix: "https://wa.me/", transform: normalizeWhatsAppNumber },
   phoneSocial: { prefix: "tel:+", transform: (input) => input.replace(/[^0-9]/g, "") },
   linkedin: { prefix: "https://linkedin.com/company/" },
   website: { prefix: "https://", transform: (input) => input.replace(/^https?:\/\//, "") },
